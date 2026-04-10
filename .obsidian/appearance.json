@@ -1,0 +1,13 @@
+{
+  "cssTheme": "Catppuccin",
+  "accentColor": "#93ef6b",
+  "showViewHeader": true,
+  "interfaceFontFamily": "Supply",
+  "textFontFamily": "Supply",
+  "monospaceFontFamily": "Supply",
+  "baseFontSize": 17,
+  "baseFontSizeAction": true,
+  "enabledCssSnippets": [
+    "cosmic-colors"
+  ]
+}

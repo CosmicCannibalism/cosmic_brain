@@ -1,0 +1,43 @@
+{
+  "calendarSources": [
+    {
+      "type": "caldav",
+      "name": "Calendar",
+      "url": "https://caldav.icloud.com",
+      "homeUrl": "https://caldav.icloud.com/1917892085/calendars/A0D7E7EB-3008-487C-807B-396EA949534B/",
+      "color": "#0E61B9",
+      "username": "dominic.kientz@gmx.de",
+      "password": "uunq-xgyv-xwsk-vbju"
+    },
+    {
+      "type": "caldav",
+      "name": "Privat",
+      "url": "https://caldav.icloud.com",
+      "homeUrl": "https://caldav.icloud.com/1917892085/calendars/home/",
+      "color": "#34AADC",
+      "username": "dominic.kientz@gmx.de",
+      "password": "uunq-xgyv-xwsk-vbju"
+    },
+    {
+      "type": "caldav",
+      "name": "Arbeit",
+      "url": "https://caldav.icloud.com",
+      "homeUrl": "https://caldav.icloud.com/1917892085/calendars/work/",
+      "color": "#CC73E1",
+      "username": "dominic.kientz@gmx.de",
+      "password": "uunq-xgyv-xwsk-vbju"
+    },
+    {
+      "type": "local",
+      "color": "#c75192",
+      "directory": "daily"
+    }
+  ],
+  "defaultCalendar": 0,
+  "firstDay": 1,
+  "initialView": {
+    "desktop": "timeGridWeek",
+    "mobile": "timeGrid3Days"
+  },
+  "timeFormat24h": true
+}

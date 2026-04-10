@@ -1,0 +1,11 @@
+{
+  "hidden": false,
+  "hiddenList": [
+    "projects/esp_ai_art/doc/pdf",
+    "projects/esp_ai_art/P1_Cosmic_Orakel",
+    "projects/esp_ai_art/P2_kNN_ElementalGestures",
+    "projects/esp_ai_art/P3_Regression_Growth",
+    "projects/esp_ai_art/P4_Tree_EcosystemDecides",
+    "projects/esp_ai_art/P5_MLP_SoundSkin"
+  ]
+}

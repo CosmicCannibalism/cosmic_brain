@@ -16,6 +16,52 @@ resources/            Referenzmaterial & Ressourcen
 ```
 
 ---
+## Setup — Symlinks
+
+Ein Symlink ist eine Verknüpfung im Dateisystem.
+Der echte Ordner bleibt wo er ist — Obsidian sieht ihn trotzdem als Teil des Vaults.
+
+### Symlink erstellen
+
+```bash
+ln -s /pfad/zur/quelle /pfad/zum/ziel
+```
+
+Beispiel `esp_ai_art`:
+```bash
+ln -s ~/Desktop/art/cosmiccannibalism/esp_ai_art/doc/md ~/Brain/projects/esp_ai_art
+```
+
+### Symlink prüfen / löschen
+
+```bash
+ls -la ~/Brain/projects/          # zeigt Pfeil zur Quelle
+rm ~/Brain/projects/esp_ai_art    # löscht nur den Symlink, nicht die echten Files
+```
+
+> Wichtig: kein `/` am Ende beim Löschen — sonst wird der Inhalt des echten Ordners gelöscht!
+
+| Aktion | Befehl |
+|---|---|
+| Erstellen | `ln -s <quelle> <ziel>` |
+| Prüfen | `ls -la <ordner>` |
+| Löschen | `rm <symlink>` (kein `/` am Ende!) |
+
+---
+
+## Setup — Obsidian
+
+### Symlinks aktivieren
+
+Settings → Files & Links → **Follow symlinks** → einschalten
+
+### Ordner ausblenden
+
+**Aus Suche & Graph-View** (nativ):
+`Settings → Files & Links → Excluded files` → Pfad eintragen
+
+**Komplett aus dem Explorer** (Plugin):
+Plugin **File Hider** → Rechtsklick auf Ordner → "Hide"
 
 ## Glossar-Workflow
 
@@ -76,51 +122,3 @@ Block 2:        rohe Begriffe → werden zu neuen Dokumenten
 
 → KI-Instruktionen direkt in [[__glossar__#Glossar-Workflow — KI-Instruktionen]]
 
----
-
-## Setup — Symlinks
-
-Ein Symlink ist eine Verknüpfung im Dateisystem.
-Der echte Ordner bleibt wo er ist — Obsidian sieht ihn trotzdem als Teil des Vaults.
-
-### Symlink erstellen
-
-```bash
-ln -s /pfad/zur/quelle /pfad/zum/ziel
-```
-
-Beispiel `esp_ai_art`:
-```bash
-ln -s ~/Desktop/art/cosmiccannibalism/esp_ai_art/doc/md ~/Brain/projects/esp_ai_art
-```
-
-### Symlink prüfen / löschen
-
-```bash
-ls -la ~/Brain/projects/          # zeigt Pfeil zur Quelle
-rm ~/Brain/projects/esp_ai_art    # löscht nur den Symlink, nicht die echten Files
-```
-
-> Wichtig: kein `/` am Ende beim Löschen — sonst wird der Inhalt des echten Ordners gelöscht!
-
-| Aktion | Befehl |
-|---|---|
-| Erstellen | `ln -s <quelle> <ziel>` |
-| Prüfen | `ls -la <ordner>` |
-| Löschen | `rm <symlink>` (kein `/` am Ende!) |
-
----
-
-## Setup — Obsidian
-
-### Symlinks aktivieren
-
-Settings → Files & Links → **Follow symlinks** → einschalten
-
-### Ordner ausblenden
-
-**Aus Suche & Graph-View** (nativ):
-`Settings → Files & Links → Excluded files` → Pfad eintragen
-
-**Komplett aus dem Explorer** (Plugin):
-Plugin **File Hider** → Rechtsklick auf Ordner → "Hide"

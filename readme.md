@@ -1,93 +1,19 @@
-# Symlinks — Obsidian Brain Vault
+# cosmic_brain — Obsidian Brain Vault
 
-Ein Symlink ist eine Verknüpfung im Dateisystem.
-Der echte Ordner bleibt wo er ist — Obsidian sieht ihn trotzdem als Teil des Vaults.
-
----
-
-## Symlink erstellen
-
-```bash
-ln -s /pfad/zur/quelle /pfad/zum/ziel
-```
-
-### Beispiel esp_ai_art:
-```bash
-ln -s ~/Desktop/art/cosmiccannibalism/esp_ai_art/doc/md ~/Brain/projects/esp_ai_art
-```
-
-### Weiteres Projekt hinzufügen:
-```bash
-ln -s ~/Desktop/art/cosmiccannibalism/projekt2/md ~/Brain/projects/projekt2
-```
+Persönliches Wissenssystem für Medienkunst-Recherche, Theoriefragmente und Projektdokumentation.
+Ideen, Begriffe, Projekte und offene Fragen landen hier — strukturiert, verlinkbar, durchsuchbar.
 
 ---
 
-## Symlink prüfen
+## Struktur
 
-```bash
-ls -la ~/Brain/projects/
 ```
-
-Ausgabe zeigt Pfeil zur Quelle:
+__glossar__.md        Begriffe aus Recherche & Theorie — alphabetisch, medienkünstlerisch kontextualisiert
+__sandbox__.md        Rohe Ideen, Fragmente, offene Fragen
+daily/                Tagesnotizen & Kalenderevents
+projects/             Projektdokumentation (ggf. als Symlinks)
+resources/            Referenzmaterial & Ressourcen
 ```
-esp_ai_art -> /Users/cosmic/Desktop/art/cosmiccannibalism/esp_ai_art/doc/md
-```
-
----
-
-## Symlink löschen
-
-```bash
-rm ~/Brain/projects/esp_ai_art
-```
-
-> Wichtig: kein `/` am Ende — sonst wird der Inhalt des echten Ordners gelöscht!
-> `rm` löscht nur den Symlink, nicht die echten Files.
-
----
-
-## Obsidian: Symlinks aktivieren
-
-Settings → Files & Links → **Follow symlinks** → einschalten
-
----
-
-## Übersicht
-
-| Aktion | Befehl |
-|---|---|
-| Erstellen | `ln -s <quelle> <ziel>` |
-| Prüfen | `ls -la <ordner>` |
-| Löschen | `rm <symlink>` (kein `/` am Ende!) |
-
----
-
-## Ordner in Obsidian ausblenden
-
-### Aus Suche & Graph-View (nativ)
-
-`Settings → Files & Links → Excluded files` → Pfad eintragen:
-```
-projects/esp_ai_art/_templates
-projects/esp_ai_art/pdf
-```
-Ordner werden grau im Explorer angezeigt, aber nicht durchsucht.
-
-### Komplett aus dem Explorer ausblenden (Plugin)
-
-Plugin: **File Hider** (Community Plugins → Browse → installieren → aktivieren)
-
-Danach:
-1. Rechtsklick auf den Ordner im File Explorer
-2. **"Hide"** klicken → Ordner verschwindet komplett
-
-Versteckte Ordner verwalten:
-`Settings → File Hider` → Liste der versteckten Pfade
-
-> Hinweis: Bei Symlink-Ordnern kann es Probleme geben — teste zuerst mit einem normalen Vault-Ordner.
-> Falls es nicht klappt: Obsidian neu starten nach Plugin-Aktivierung.
-
 
 ---
 
@@ -149,3 +75,52 @@ Block 2:        rohe Begriffe → werden zu neuen Dokumenten
 ```
 
 → KI-Instruktionen direkt in [[__glossar__#Glossar-Workflow — KI-Instruktionen]]
+
+---
+
+## Setup — Symlinks
+
+Ein Symlink ist eine Verknüpfung im Dateisystem.
+Der echte Ordner bleibt wo er ist — Obsidian sieht ihn trotzdem als Teil des Vaults.
+
+### Symlink erstellen
+
+```bash
+ln -s /pfad/zur/quelle /pfad/zum/ziel
+```
+
+Beispiel `esp_ai_art`:
+```bash
+ln -s ~/Desktop/art/cosmiccannibalism/esp_ai_art/doc/md ~/Brain/projects/esp_ai_art
+```
+
+### Symlink prüfen / löschen
+
+```bash
+ls -la ~/Brain/projects/          # zeigt Pfeil zur Quelle
+rm ~/Brain/projects/esp_ai_art    # löscht nur den Symlink, nicht die echten Files
+```
+
+> Wichtig: kein `/` am Ende beim Löschen — sonst wird der Inhalt des echten Ordners gelöscht!
+
+| Aktion | Befehl |
+|---|---|
+| Erstellen | `ln -s <quelle> <ziel>` |
+| Prüfen | `ls -la <ordner>` |
+| Löschen | `rm <symlink>` (kein `/` am Ende!) |
+
+---
+
+## Setup — Obsidian
+
+### Symlinks aktivieren
+
+Settings → Files & Links → **Follow symlinks** → einschalten
+
+### Ordner ausblenden
+
+**Aus Suche & Graph-View** (nativ):
+`Settings → Files & Links → Excluded files` → Pfad eintragen
+
+**Komplett aus dem Explorer** (Plugin):
+Plugin **File Hider** → Rechtsklick auf Ordner → "Hide"

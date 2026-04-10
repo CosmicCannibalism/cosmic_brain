@@ -3,7 +3,7 @@
 > Begriffe aus Recherche, Lektüre und Projekten — kurz definiert, medienkünstlerisch kontextualisiert, verlinkt.
 > Alphabetisch sortiert. Neue Begriffe ans Ende schreiben — ich sortiere sie ein.
 
-> **Workflow** → [[__readmeBITCH__#Glossar-Workflow]]
+> **Workflow** → [[readme#Glossar-Workflow]]
 > Neuen Begriff ans Ende schreiben und Copilot sagen: *"sortier das Glossar"*
 
 > [!info]- KI-Instruktionen — Glossar-Workflow
@@ -64,7 +64,7 @@
 > ```Begriff```
 > ```
 >
-> → Workflow-Details: [[__readmeBITCH__#Glossar-Workflow]]
+> → Workflow-Details: [[readme#Glossar-Workflow]]
 
 ---
 

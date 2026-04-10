@@ -235,6 +235,7 @@
   },
   "active": "dc9f50713983a233",
   "lastOpenFiles": [
+    "readme.md",
     "__sandbox__.md",
     "__readmeBITCH__.md",
     "__glossar__.md",
@@ -269,7 +270,6 @@
     "projects/esp_ai_art/doc/md/theorie/feature_engineering.md",
     "projects/esp_ai_art/doc/md/theorie/ai_ml_grundlagen.md",
     "projects/esp_ai_art/doc/pdf/theorie/04_neuronentypen_verbindungen.pdf",
-    "projects/esp_ai_art/doc/pdf/theorie/03_feature_engineering.pdf",
-    "projects/esp_ai_art/doc/md/cannabis/vierzehn_tage_plan.md"
+    "projects/esp_ai_art/doc/pdf/theorie/03_feature_engineering.pdf"
   ]
 }

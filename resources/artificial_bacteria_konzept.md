@@ -12,7 +12,7 @@ status: in-progress
 
 > Eine Maschine die sich nach biologischen Prinzipien verhält: Aufbau, Stabilität, Abbau, Tod, Wiedergeburt. Kein lebender Organismus — aber ein System das denselben Regeln folgt. Die Frage ist nicht ob es lebt, sondern was es bedeutet dass es so aussieht als ob.
 
-**Verwandte Themen:** [[__cosmicbrain__]] | [[anabolismus_katabolismus]] | [[quorum_sensing]] | [[biosemiotik]] | [[semipermeable_membran]] | [[turing_land_duchamp_land]] | [[pataphysik]] | [[__sandbox__]] | [[artificial_bacteria_technik]]
+**Verwandte Themen:** [[__cosmicbrain__]] | [[anabolismus_katabolismus]] | [[quorum_sensing]] | [[biosemiotik]] | [[semipermeable_membran]] | [[zellulaere_automaten]] | [[reaktions_diffusion]] | [[bakterielle_vermehrung]] | [[zellteilung]] | [[bakterielle_adaptation]] | [[turing_land_duchamp_land]] | [[pataphysik]] | [[__sandbox__]] | [[artificial_bacteria_technik]]
 
 ---
 
@@ -103,7 +103,7 @@ Eine Zelle. Sie hat Metabolismus, Lebenszyklus, Zustände. Reservoir (Sol, 65°C
 **Ebene 2 — Das Netzwerk**
 Mehrere Einheiten teilen ein gemeinsames Medium im Reservoir. Abbauprodukte einer Einheit beeinflussen die Abbaurate der anderen über pH-Drift und Enzymkonzentration. Kein zentraler Controller. Das ist Quorum Sensing als physisches System.
 
-**Ebene 3 — Emergenz**
+**Ebene 3 — [[emergenz|Emergenz]]**
 Welche Muster entstehen wenn 5–20 Einheiten nach metabolischen Regeln interagieren? Nicht vorhersagbar. Manche Cluster stabilisieren sich. Manche erzeugen Katabolismus-Wellen. Manche Einheiten werden durch Nachbarn am Leben gehalten.
 
 ```mermaid

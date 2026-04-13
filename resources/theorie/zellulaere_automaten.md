@@ -12,7 +12,7 @@ bereich: ki
 
 > Ein zellulärer Automat ist ein Gitter aus Zellen. Jede Zelle hat einen Zustand. Jede Generation berechnet jede Zelle ihren nächsten Zustand — ausschließlich basierend auf sich selbst und ihren direkten Nachbarn. Keine Zelle weiß was das Ganze tut. Und trotzdem entsteht Komplexität.
 
-**Verwandte Konzepte:** [[emergenz]] | [[quorum_sensing]] | [[biosemiotik]] | [[artificial_bacteria_konzept]] | [[biomodalitaet]] | [[turing_land_duchamp_land]] | [[pataphysik]]
+**Verwandte Konzepte:** [[emergenz]] | [[quorum_sensing]] | [[biosemiotik]] | [[artificial_bacteria_konzept]] | [[biomodalitaet]] | [[bakterielle_vermehrung]] | [[reaktions_diffusion]] | [[schmetterlings_effekt]] | [[turing_land_duchamp_land]] | [[pataphysik]]
 
 ---
 
@@ -43,6 +43,30 @@ John Horton Conway, 1970. Die einfachstmögliche Regel die nicht-triviales Verha
 | Tote Zelle, alle anderen | **bleibt tot** |
 
 Drei Zahlen: `B3/S23` — *Birth bei 3 Nachbarn, Survival bei 2 oder 3.* Das ist die vollständige Spezifikation.
+
+### B/S-Notation — die Sprache der Regelsets
+
+Das **B/S-Format** (Golly-Standard) beschreibt jedes 2-Zustands-Zellautomat-Regelset kompakt:
+
+- **B** = Birth: bei welchen Nachbar-Zählungen entsteht eine neue Zelle
+- **S** = Survival: bei welchen Nachbar-Zählungen überlebt eine Zelle
+
+Mögliche Werte für B und S: 0–8 (0 bis 8 lebende Nachbarn in der Moore-Nachbarschaft).
+
+Conway `B3/S23`: Geburt bei 3, Überleben bei 2 oder 3. 5 Bit Information → Turing-Vollständigkeit.
+
+**Andere charakteristische Regelsets:**
+| Regelset | Name | Charakter |
+|---|---|---|
+| `B3/S23` | Conway's Life | Balance, Turing-vollständig |
+| `B36/S23` | HighLife | wie Life, aber selbstreproduzierenде Strukturen |
+| `B2/S` | Seeds | explodiert, kein Überleben — nur Geburt |
+| `B1357/S1357` | Replicator | alles repliziert sich |
+| `B3678/S34678` | Day & Night | symmetrisch: lebendig ↔ tot austauschbar |
+| `B2/S2345` | Life without Death | Zellen sterben nie, wächst unbegrenzt |
+| `B3/S012345678` | Immortal | alles überlebt, Geburt normal |
+
+→ [[schmetterlings_effekt]]: minimale Regeländerung (eine Zahl) → vollständig andere emergente Dynamik
 
 ---
 

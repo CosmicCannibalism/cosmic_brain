@@ -51,7 +51,7 @@ Abbau komplexer Moleküle in einfache Bausteine. Energie-freisetzend.
 
 - Verdauung: Nahrung → Aminosäuren, Zucker, Fettsäuren
 - Zellatmung: Glukose → CO₂ + H₂O + ATP
-- **Autophagie** — Selbstverdauung: Zellen bauen beschädigte Organellen und Proteine ab und recyceln die Bausteine. Kein Versagen, sondern Wartung und Reinigung des Systems.
+- **[[autophagie|Autophagie]]** — Selbstverdauung: Zellen bauen beschädigte Organellen und Proteine ab und recyceln die Bausteine. Kein Versagen, sondern Wartung und Reinigung des Systems.
 - Apoptose: programmierter Zelltod als Abbau im Dienst des Organismus
 
 ```mermaid

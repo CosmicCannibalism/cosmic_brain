@@ -9,9 +9,9 @@ bereich: biologie
 
 # Quorum Sensing — Kollektive Entscheidung ohne Zentrum
 
-> Kommunikationsmechanismus von Bakterien: Einzelzellen produzieren Signalmoleküle. Wenn ihre Konzentration einen Schwellenwert übersteigt — Quorum — schaltet die gesamte Population kollektiv Gene an oder ab. Keine Hierarchie. Kein Anführer. Emergenz aus Dichte.
+> Kommunikationsmechanismus von Bakterien: Einzelzellen produzieren Signalmoleküle. Wenn ihre Konzentration einen Schwellenwert übersteigt — Quorum — schaltet die gesamte Population kollektiv Gene an oder ab. Keine Hierarchie. Kein Anführer. [[emergenz|Emergenz]] aus Dichte.
 
-**Verwandte Themen:** [[__cosmicbrain__]] | [[biosemiotik]] | [[biomodalitaet]] | [[artificial_bacteria_konzept]] | [[artificial_bacteria_technik]] | [[__sandbox__]]
+**Verwandte Themen:** [[__cosmicbrain__]] | [[biosemiotik]] | [[biomodalitaet]] | [[artificial_bacteria_konzept]] | [[artificial_bacteria_technik]] | [[bakterielle_vermehrung]] | [[__sandbox__]]
 
 ---
 

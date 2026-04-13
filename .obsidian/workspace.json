@@ -9,19 +9,6 @@
         "dimension": 70,
         "children": [
           {
-            "id": "e51ef45eaa6d8769",
-            "type": "leaf",
-            "state": {
-              "type": "bases",
-              "state": {
-                "file": "__base__.base",
-                "viewName": "Table"
-              },
-              "icon": "lucide-table",
-              "title": "__base__"
-            }
-          },
-          {
             "id": "2fb8ec0ae0a803dd",
             "type": "leaf",
             "state": {
@@ -53,14 +40,13 @@
             "id": "f14999afea948a16",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "bases",
               "state": {
-                "file": "readme.md",
-                "mode": "preview",
-                "source": false
+                "file": "__base__.base",
+                "viewName": "Table"
               },
-              "icon": "lucide-file",
-              "title": "readme"
+              "icon": "lucide-table",
+              "title": "__base__"
             }
           },
           {
@@ -92,7 +78,7 @@
             }
           }
         ],
-        "currentTab": 3,
+        "currentTab": 2,
         "stacked": true
       },
       {
@@ -169,8 +155,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 378.0024719238281,
-    "collapsed": true
+    "width": 378.0024719238281
   },
   "right": {
     "id": "5ce19b0ad1f582b1",
@@ -291,8 +276,10 @@
   },
   "active": "f14999afea948a16",
   "lastOpenFiles": [
-    "__cosmicbrain__.md",
+    "__base__.base",
+    "__base__.base",
     "readme.md",
+    "__cosmicbrain__.md",
     "resources/theorie/zellulaere_automaten.md",
     "__glossar__.md",
     "resources/artificial_bacteria_konzept.md",
@@ -319,9 +306,7 @@
     "resources/sternzeichen",
     "resources/elemente/aether.md",
     "resources/elemente/erde.md",
-    "resources/elemente/feuer.md",
     "resources/elemente",
-    "__base__.base",
     "resources/theorie",
     "resources/biologie",
     "Untitled",

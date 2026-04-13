@@ -32,5 +32,6 @@
     "useInternalPlugins": false
   },
   "__sandbox__.md": "LiTriangle",
-  "__glossar__.md": "LiTriangle"
+  "__base__.base": "LiTriangle",
+  "__cosmicbrain__.md": "LiTriangle"
 }

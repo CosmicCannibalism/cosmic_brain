@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Primordial Soup</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; overflow:hidden; font-family:monospace; }
+canvas { display:block; }
+
+#hud {
+  position:fixed; bottom:0; left:0; right:0;
+  display:flex; align-items:center; justify-content:center;
+  gap:8px; padding:10px 16px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.85));
+  flex-wrap:wrap;
+}
+button {
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.12);
+  color:rgba(255,255,255,0.55);
+  font:0.72rem monospace;
+  padding:4px 11px; cursor:pointer; letter-spacing:.07em;
+  transition:all .12s;
+}
+button:hover { background:rgba(255,255,255,0.12); color:#fff; }
+button.on    { border-color:rgba(255,255,255,.45); color:#fff; }
+
+#info {
+  position:fixed; top:10px; right:14px;
+  font-size:.68rem; color:rgba(255,255,255,.22);
+  line-height:1.9; text-align:right; letter-spacing:.08em;
+}
+#legend {
+  position:fixed; top:10px; left:14px;
+  font-size:.68rem; line-height:2; letter-spacing:.07em;
+}
+.dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:5px; vertical-align:middle; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="info">
+  GEN <span id="gen">0</span><br>
+  POP <span id="pop">0</span><br>
+  FPS <span id="fps">0</span>
+</div>
+<div id="legend"></div>
+<div id="hud">
+  <button id="bPlay">▶</button>
+  <button id="bStep">›</button>
+  <button id="bMode">mode: classic</button>
+  <button id="bRnd">noise</button>
+  <button id="bGun">glider gun</button>
+  <button id="bPulsar">pulsar</button>
+  <button id="bAnt">langton ant</button>
+  <button id="bClear">clear</button>
+  <button id="bSpd">fps: 30</button>
+  <button id="bBW">b&w</button>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+//  PRIMORDIAL SOUP  —  multi-mode life simulation
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+const CELL   = 7;
+
+let W, H, COLS, ROWS;
+
+function resize() {
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = W; canvas.height = H;
+  COLS = Math.floor(W / CELL);
+  ROWS = Math.floor(H / CELL);
+}
+resize();
+window.addEventListener('resize', () => { resize(); initGrids(); randomFill(); });
+
+// ── Typen ─────────────────────────────────────────────────────────────────────
+// Jede Zelle hat einen TYP (0–5) und ein ALTER.
+// Typ 0 = tot
+// Typ 1–5 = verschiedene Spezies mit eigenen Regeln
+
+const TYPES = [
+  null,
+  { name:'Pioneer',   birth:[3],        survive:[2,3],      color:[80,200,255]  },  // Conway-klassisch
+  { name:'Spreader',  birth:[3,6],      survive:[2,3,4],    color:[255,120,60]  },  // breitet sich aggressiv aus
+  { name:'Clusterer', birth:[3,4,5],    survive:[4,5,6,7],  color:[60,220,120]  },  // bildet dichte Klumpen
+  { name:'Nomad',     birth:[3],        survive:[1,2,3,4],  color:[220,80,220]  },  // wandernde Strukturen
+  { name:'Ghost',     birth:[2,5],      survive:[1,2,3,5,6],color:[180,240,200] },  // instabil, geisterhaft
+];
+
+// ── Grids ─────────────────────────────────────────────────────────────────────
+let type_grid; // Uint8Array: Typ der Zelle
+let age_grid;  // Uint16Array: Alter
+let trail;     // Float32Array: Nachleuchten (0–1)
+
+function initGrids() {
+  type_grid = new Uint8Array(ROWS * COLS);
+  age_grid  = new Uint16Array(ROWS * COLS);
+  trail     = new Float32Array(ROWS * COLS);
+}
+initGrids();
+
+const i = (r,c) => r * COLS + c;
+
+function alive(r,c) {
+  return type_grid[i((r+ROWS)%ROWS, (c+COLS)%COLS)] > 0;
+}
+function typeAt(r,c) {
+  return type_grid[i((r+ROWS)%ROWS, (c+COLS)%COLS)];
+}
+
+// ── Simulation Modes ──────────────────────────────────────────────────────────
+// classic   = alle Zellen Typ 1, reine Conway-Regeln
+// multispec = 5 Spezies, eigene Regeln + Konkurrenz
+// predator  = Räuber-Beute (Typ 1 frisst Typ 2, Typ 2 frisst Typ 3 …)
+// lenia     = kontinuierliche Variante (weiche Übergänge)
+
+const MODES = ['classic','multispec','predator'];
+let modeIdx = 0;
+
+// ── Classic (Conway) ──────────────────────────────────────────────────────────
+function stepClassic() {
+  const nt = new Uint8Array(ROWS * COLS);
+  const na = new Uint16Array(ROWS * COLS);
+  for (let r=0; r<ROWS; r++) {
+    for (let c=0; c<COLS; c++) {
+      let n = 0;
+      for (let dr=-1;dr<=1;dr++) for (let dc=-1;dc<=1;dc++) {
+        if (dr===0&&dc===0) continue;
+        if (alive(r+dr,c+dc)) n++;
+      }
+      const t = typeAt(r,c);
+      const idx = i(r,c);
+      if (t>0 && (n===2||n===3)) { nt[idx]=t; na[idx]=age_grid[idx]+1; }
+      else if (t===0 && n===3)   { nt[idx]=1; na[idx]=1; }
+      else if (t>0)              { trail[idx]=1.0; }
+    }
+  }
+  type_grid=nt; age_grid=na;
+}
+
+// ── Multi-Species ─────────────────────────────────────────────────────────────
+function stepMultiSpec() {
+  const nt = new Uint8Array(ROWS * COLS);
+  const na = new Uint16Array(ROWS * COLS);
+
+  for (let r=0; r<ROWS; r++) {
+    for (let c=0; c<COLS; c++) {
+      // Nachbarzählung pro Typ
+      const nc = new Uint8Array(6); // nc[t] = Anzahl Nachbarn vom Typ t
+      for (let dr=-1;dr<=1;dr++) for (let dc=-1;dc<=1;dc++) {
+        if (dr===0&&dc===0) continue;
+        nc[typeAt(r+dr,c+dc)]++;
+      }
+      const total = nc[1]+nc[2]+nc[3]+nc[4]+nc[5];
+      const self  = typeAt(r,c);
+      const idx   = i(r,c);
+
+      if (self > 0) {
+        const spec = TYPES[self];
+        if (spec.survive.includes(total)) {
+          nt[idx] = self;
+          na[idx] = age_grid[idx]+1;
+        } else {
+          trail[idx] = 0.8;
+        }
+      } else {
+        // Leere Zelle: wird von der häufigsten Spezies in der Nachbarschaft besiedelt
+        // wenn Geburts-Bedingung erfüllt
+        let winner = 0, maxN = 0;
+        for (let t=1; t<=5; t++) {
+          if (nc[t] > maxN) { maxN=nc[t]; winner=t; }
+        }
+        if (winner > 0 && TYPES[winner].birth.includes(total)) {
+          nt[idx] = winner;
+          na[idx] = 1;
+        }
+      }
+    }
+  }
+  type_grid=nt; age_grid=na;
+}
+
+// ── Predator-Beute (Rock-Paper-Scissors Variante) ─────────────────────────────
+// 1 frisst 5, 2 frisst 1, 3 frisst 2, 4 frisst 3, 5 frisst 4
+function eats(a,b) {
+  if (a===0||b===0) return false;
+  return b === (a % 5) + 1; // a frisst (a%5)+1
+}
+
+function stepPredator() {
+  const nt = new Uint8Array(ROWS * COLS);
+  const na = new Uint16Array(ROWS * COLS);
+
+  for (let r=0; r<ROWS; r++) {
+    for (let c=0; c<COLS; c++) {
+      const nc = new Uint8Array(6);
+      for (let dr=-1;dr<=1;dr++) for (let dc=-1;dc<=1;dc++) {
+        if (dr===0&&dc===0) continue;
+        nc[typeAt(r+dr,c+dc)]++;
+      }
+      const self = typeAt(r,c);
+      const idx  = i(r,c);
+
+      if (self > 0) {
+        // Finde Predator unter Nachbarn
+        let eaten = false;
+        for (let t=1; t<=5; t++) {
+          if (nc[t] >= 3 && eats(t, self)) { eaten=true; break; }
+        }
+        if (eaten) {
+          trail[idx] = 1.0;
+        } else {
+          nt[idx] = self;
+          na[idx] = age_grid[idx]+1;
+        }
+      } else {
+        // Leere Zelle: wird von Spezies mit 3 gleichartigen Nachbarn besiedelt
+        let spawned = false;
+        for (let t=1; t<=5; t++) {
+          if (nc[t] === 3) { nt[idx]=t; na[idx]=1; spawned=true; break; }
+        }
+        if (!spawned && nc[0] === 0) {
+          // Wenn alle Nachbarn besetzt, probabilistische Mutation
+          // (kleine Chance für spontane Entstehung)
+        }
+      }
+    }
+  }
+  type_grid=nt; age_grid=na;
+}
+
+// ── Master Step ───────────────────────────────────────────────────────────────
+let generation = 0;
+
+function step() {
+  if      (MODES[modeIdx]==='classic')   stepClassic();
+  else if (MODES[modeIdx]==='multispec') stepMultiSpec();
+  else if (MODES[modeIdx]==='predator')  stepPredator();
+  generation++;
+
+  // trail abklingen
+  for (let k=0; k<trail.length; k++) if (trail[k]>0) trail[k]*=0.5;
+}
+
+// ── Rendering ─────────────────────────────────────────────────────────────────
+const offscreen = document.createElement('canvas');
+const offCtx    = offscreen.getContext('2d');
+
+function draw() {
+  if (offscreen.width !== W || offscreen.height !== H) {
+    offscreen.width=W; offscreen.height=H;
+  }
+
+  // Schwarzer Hintergrund mit leichtem Fade für Ghosting-Effekt
+  offCtx.fillStyle = 'rgba(0,0,0,0.3)';
+  offCtx.fillRect(0,0,W,H);
+
+  let pop = 0;
+
+  for (let r=0; r<ROWS; r++) {
+    for (let c=0; c<COLS; c++) {
+      const idx = i(r,c);
+      const t   = type_grid[idx];
+      const a   = age_grid[idx];
+      const g   = trail[idx];
+      const x   = c*CELL, y = r*CELL;
+
+      if (t > 0) {
+        const spec = TYPES[t];
+        // B&W mode: Alter bestimmt Helligkeit (jung=hellgrau, alt=weiß)
+        const brightness = a < 30 ? a/30 : 1 - (a-30)/200;
+        const bv = Math.round(120 + 135 * Math.min(brightness, 1));
+        const rgb  = bwMode ? [bv,bv,bv] : spec.color;
+        const alpha = 0.4 + 0.6 * Math.min(brightness, 1);
+
+        // Glow
+        const glow = offCtx.createRadialGradient(
+          x+CELL/2, y+CELL/2, 0,
+          x+CELL/2, y+CELL/2, CELL*1.1
+        );
+        glow.addColorStop(0,   `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha})`);
+        glow.addColorStop(0.4, `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha*0.4})`);
+        glow.addColorStop(1,   `rgba(${rgb[0]},${rgb[1]},${rgb[2]},0)`);
+        offCtx.fillStyle = glow;
+        offCtx.fillRect(x-3, y-3, CELL+6, CELL+6);
+
+        // Kern — Größe leicht variiert nach Spezies + Alter
+        const sz = Math.max(2, CELL - 2 - (t % 2));
+        offCtx.fillStyle = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},1)`;
+        offCtx.beginPath();
+        // Formen pro Spezies: Kreis, Raute, Quadrat, Dreieck, Stern
+        switch(t) {
+          case 1: // Kreis
+            offCtx.arc(x+CELL/2, y+CELL/2, sz/2, 0, Math.PI*2);
+            offCtx.fill();
+            break;
+          case 2: // Raute
+            offCtx.moveTo(x+CELL/2, y+1);
+            offCtx.lineTo(x+CELL-1, y+CELL/2);
+            offCtx.lineTo(x+CELL/2, y+CELL-1);
+            offCtx.lineTo(x+1,      y+CELL/2);
+            offCtx.closePath();
+            offCtx.fill();
+            break;
+          case 3: // Quadrat
+            offCtx.fillRect(x+1, y+1, CELL-2, CELL-2);
+            break;
+          case 4: // kleines Kreuz
+            offCtx.fillRect(x+CELL/2-1, y+1, 3, CELL-2);
+            offCtx.fillRect(x+1, y+CELL/2-1, CELL-2, 3);
+            break;
+          case 5: // Dreieck
+            offCtx.moveTo(x+CELL/2, y+1);
+            offCtx.lineTo(x+CELL-1, y+CELL-1);
+            offCtx.lineTo(x+1,      y+CELL-1);
+            offCtx.closePath();
+            offCtx.fill();
+            break;
+        }
+        pop++;
+      } else if (g > 0.04) {
+        // Nachleuchten
+        const tc = bwMode ? `rgba(180,180,180,${g*0.35})` : `rgba(80,130,200,${g*0.4})`;
+        offCtx.fillStyle = tc;
+        offCtx.fillRect(x, y, CELL, CELL);
+      }
+    }
+  }
+
+  ctx.clearRect(0,0,W,H);
+  ctx.drawImage(offscreen,0,0);
+
+  document.getElementById('gen').textContent = generation;
+  document.getElementById('pop').textContent = pop;
+}
+
+// ── Langton's Ant ─────────────────────────────────────────────────────────────
+let ants = [];
+function spawnAnts(n=6) {
+  ants = [];
+  for (let k=0; k<n; k++) {
+    ants.push({
+      r: Math.floor(ROWS/2) + Math.floor(Math.random()*20-10),
+      c: Math.floor(COLS/2) + Math.floor(Math.random()*20-10),
+      dir: Math.floor(Math.random()*4), // 0=up 1=right 2=down 3=left
+      type: (k%5)+1
+    });
+  }
+}
+
+let antMode = false;
+let antTimer = 0;
+
+function stepAnts() {
+  const dr = [-1,0,1,0];
+  const dc = [0,1,0,-1];
+  for (const ant of ants) {
+    const idx = i(ant.r, ant.c);
+    if (type_grid[idx] === 0) {
+      // weißes Feld: drehe rechts, setze Farbe, geh vor
+      ant.dir = (ant.dir+1)%4;
+      type_grid[idx] = ant.type;
+      age_grid[idx]  = 1;
+    } else {
+      // farbiges Feld: drehe links, lösche, geh vor
+      ant.dir = (ant.dir+3)%4;
+      trail[idx] = 0.6;
+      type_grid[idx] = 0;
+      age_grid[idx]  = 0;
+    }
+    ant.r = ((ant.r + dr[ant.dir]) + ROWS) % ROWS;
+    ant.c = ((ant.c + dc[ant.dir]) + COLS) % COLS;
+  }
+}
+
+// ── Muster ────────────────────────────────────────────────────────────────────
+function randomFill() {
+  initGrids();
+  generation = 0;
+  antMode = false;
+  const numTypes = MODES[modeIdx] === 'classic' ? 1 : 5;
+  for (let k=0; k<ROWS*COLS; k++) {
+    if (Math.random() < 0.28) {
+      type_grid[k] = Math.floor(Math.random()*numTypes)+1;
+      age_grid[k]  = 1;
+    }
+  }
+}
+
+function placePattern(pattern, r0, c0, t=1) {
+  pattern.forEach(([dr,dc]) => {
+    const r=(r0+dr+ROWS)%ROWS, c=(c0+dc+COLS)%COLS;
+    type_grid[i(r,c)]=t; age_grid[i(r,c)]=1;
+  });
+}
+
+const GLIDER_GUN = [
+  [0,24],[1,22],[1,24],[2,12],[2,13],[2,20],[2,21],[2,34],[2,35],
+  [3,11],[3,15],[3,20],[3,21],[3,34],[3,35],[4,0],[4,1],[4,10],[4,16],[4,20],[4,21],
+  [5,0],[5,1],[5,10],[5,14],[5,16],[5,17],[5,22],[5,24],[6,10],[6,16],[6,24],
+  [7,11],[7,15],[8,12],[8,13]
+];
+const PULSAR = [
+  [0,2],[0,3],[0,4],[0,8],[0,9],[0,10],[2,0],[2,5],[2,7],[2,12],
+  [3,0],[3,5],[3,7],[3,12],[4,0],[4,5],[4,7],[4,12],[5,2],[5,3],[5,4],[5,8],[5,9],[5,10],
+  [7,2],[7,3],[7,4],[7,8],[7,9],[7,10],[8,0],[8,5],[8,7],[8,12],
+  [9,0],[9,5],[9,7],[9,12],[10,0],[10,5],[10,7],[10,12],[12,2],[12,3],[12,4],[12,8],[12,9],[12,10],
+];
+
+// ── Legende ───────────────────────────────────────────────────────────────────
+function updateLegend() {
+  const leg = document.getElementById('legend');
+  if (MODES[modeIdx] === 'classic' || bwMode) { leg.innerHTML=''; return; }
+  leg.innerHTML = TYPES.slice(1).map(t =>
+    `<div><span class="dot" style="background:rgb(${t.color.join(',')})"></span><span style="color:rgba(255,255,255,.35);font-size:.67rem">${t.name}</span></div>`
+  ).join('');
+}
+updateLegend();
+
+// ── Malen ─────────────────────────────────────────────────────────────────────
+let painting=false, paintType=1;
+
+canvas.addEventListener('mousedown', e => {
+  painting=true;
+  const r=Math.floor(e.clientY/CELL), c=Math.floor(e.clientX/CELL);
+  const idx=i(r,c);
+  paintType = type_grid[idx]>0 ? 0 : (modeIdx===0?1:(Math.floor(Math.random()*5)+1));
+  type_grid[idx]=paintType; age_grid[idx]=paintType?1:0;
+  draw();
+});
+canvas.addEventListener('mousemove', e => {
+  if (!painting) return;
+  const r=Math.floor(e.clientY/CELL), c=Math.floor(e.clientX/CELL);
+  const idx=i(r,c);
+  type_grid[idx]=paintType; age_grid[idx]=paintType?1:0;
+  draw();
+});
+canvas.addEventListener('mouseup',    ()=>painting=false);
+canvas.addEventListener('mouseleave', ()=>painting=false);
+
+// ── Haupt-Loop ────────────────────────────────────────────────────────────────
+let bwMode = false;
+
+let running=false, lastTs=0, lastFps=performance.now(), fpsCount=0;
+const SPEEDS=[66,33,16];
+const SPNAMES=['15','30','60'];
+let spdIdx=1;
+
+function loop(ts) {
+  if (!running) return;
+  requestAnimationFrame(loop);
+  if (ts-lastTs < SPEEDS[spdIdx]) return;
+  lastTs=ts;
+
+  if (antMode) stepAnts();
+  else         step();
+  draw();
+
+  fpsCount++;
+  if (ts-lastFps > 1000) {
+    document.getElementById('fps').textContent=fpsCount;
+    fpsCount=0; lastFps=ts;
+  }
+}
+
+function startStop() {
+  running=!running;
+  document.getElementById('bPlay').textContent=running?'⏸':'▶';
+  document.getElementById('bPlay').classList.toggle('on',running);
+  if (running) requestAnimationFrame(loop);
+}
+
+// ── Buttons ───────────────────────────────────────────────────────────────────
+document.getElementById('bPlay').onclick   = startStop;
+document.getElementById('bStep').onclick   = ()=>{ if(!running){ if(antMode)stepAnts();else step(); draw(); } };
+document.getElementById('bRnd').onclick    = ()=>{ randomFill(); draw(); };
+document.getElementById('bClear').onclick  = ()=>{ if(running)startStop(); initGrids(); generation=0; antMode=false; draw(); };
+document.getElementById('bSpd').onclick    = ()=>{
+  spdIdx=(spdIdx+1)%SPEEDS.length;
+  document.getElementById('bSpd').textContent=`fps: ${SPNAMES[spdIdx]}`;
+};
+document.getElementById('bBW').onclick     = ()=>{
+  bwMode=!bwMode;
+  document.getElementById('bBW').classList.toggle('on',bwMode);
+  updateLegend();
+  draw();
+};
+document.getElementById('bMode').onclick   = ()=>{
+  modeIdx=(modeIdx+1)%MODES.length;
+  document.getElementById('bMode').textContent=`mode: ${MODES[modeIdx]}`;
+  antMode=false;
+  randomFill(); updateLegend(); draw();
+};
+document.getElementById('bGun').onclick    = ()=>{
+  antMode=false;
+  initGrids(); generation=0;
+  placePattern(GLIDER_GUN, Math.floor(ROWS/2)-4, Math.floor(COLS/2)-18, 1);
+  draw();
+};
+document.getElementById('bPulsar').onclick = ()=>{
+  antMode=false;
+  initGrids(); generation=0;
+  // mehrere Pulsare versetzt platzieren
+  for(let k=0;k<4;k++)
+    placePattern(PULSAR,
+      Math.floor(ROWS/4)*(k%2+1)-6,
+      Math.floor(COLS/4)*(Math.floor(k/2)+1)-6,
+      (k%5)+1);
+  draw();
+};
+document.getElementById('bAnt').onclick    = ()=>{
+  initGrids(); generation=0;
+  antMode=true;
+  spawnAnts(8);
+  draw();
+};
+document.addEventListener('keydown', e=>{ if(e.code==='Space'){e.preventDefault();startStop();} });
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+randomFill();
+draw();
+</script>
+</body>
+</html>

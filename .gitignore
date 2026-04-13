@@ -1,0 +1,8 @@
+# Obsidian intern
+.obsidian/
+
+# Sensitive Dateien
+resources/security.md
+
+# macOS
+.DS_Store

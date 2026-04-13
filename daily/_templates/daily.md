@@ -1,3 +1,11 @@
+---
+tags:
+  - daily
+  - template
+typ: template
+bereich: system
+---
+
 # {{date:DD.MM.YYYY}}
 
 ## Todos

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Primordial Soup</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: monospace;
+      overflow: hidden;
+    }
+    canvas { cursor: crosshair; display: block; }
+    #ui {
+      position: fixed;
+      bottom: 18px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    button {
+      background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.5);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 5px 14px;
+      font-family: monospace;
+      font-size: 0.78rem;
+      cursor: pointer;
+      letter-spacing: 0.08em;
+      transition: all 0.15s;
+    }
+    button:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    button.on    { color: #fff; border-color: rgba(255,255,255,0.4); }
+    #stats {
+      position: fixed;
+      top: 14px;
+      right: 18px;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 0.1em;
+      text-align: right;
+      line-height: 1.8;
+    }
+    #palette {
+      position: fixed;
+      top: 14px;
+      left: 18px;
+      display: flex;
+      gap: 6px;
+    }
+    .swatch {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border 0.15s;
+    }
+    .swatch.sel { border-color: #fff; }
+  </style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+
+<div id="stats">
+  GEN <span id="gen">0</span><br>
+  POP <span id="pop">0</span>
+</div>
+
+<div id="palette"></div>
+
+<div id="ui">
+  <button id="bPlay">▶</button>
+  <button id="bStep">›</button>
+  <button id="bRnd">noise</button>
+  <button id="bGlider">glider gun</button>
+  <button id="bPulsar">pulsar</button>
+  <button id="bClear">clear</button>
+  <button id="bSpeed">fps: mid</button>
+</div>
+
+<script>
+// ── Größe = volles Fenster ────────────────────────────────────────────────────
+const CELL = 8;
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+
+let COLS, ROWS;
+function resize() {
+  COLS = Math.floor(window.innerWidth  / CELL);
+  ROWS = Math.floor(window.innerHeight / CELL);
+  canvas.width  = COLS * CELL;
+  canvas.height = ROWS * CELL;
+}
+resize();
+
+// ── Farbschemata ─────────────────────────────────────────────────────────────
+const PALETTES = [
+  { name: 'plasma',  bg: '#000',    young: [180,0,255],  old: [255,60,120],  ghost: [40,0,60]   },
+  { name: 'biolum',  bg: '#000510', young: [0,255,180],  old: [0,120,255],   ghost: [0,30,50]   },
+  { name: 'lava',    bg: '#000',    young: [255,200,0],  old: [255,50,0],    ghost: [40,10,0]   },
+  { name: 'ice',     bg: '#000814', young: [200,240,255],old: [60,120,255],  ghost: [10,20,40]  },
+  { name: 'ghost',   bg: '#000',    young: [255,255,255],old: [100,100,100], ghost: [20,20,20]  },
+];
+let paletteIdx = 0;
+
+// Farbschema-Swatches rendern
+const palDiv = document.getElementById('palette');
+PALETTES.forEach((p, i) => {
+  const s = document.createElement('div');
+  s.className = 'swatch' + (i === 0 ? ' sel' : '');
+  s.style.background = `rgb(${p.young.join(',')})`;
+  s.title = p.name;
+  s.addEventListener('click', () => {
+    paletteIdx = i;
+    document.querySelectorAll('.swatch').forEach((el, j) =>
+      el.classList.toggle('sel', j === i));
+    draw();
+  });
+  palDiv.appendChild(s);
+});
+
+// ── Grid: Alter pro Zelle (0 = tot, >0 = Alter in Generationen) ──────────────
+let age;   // 2D Uint16Array: alter der Zelle (0 = tot)
+let ghost; // für Nachleuchten toter Zellen
+
+function createGrids() {
+  age   = Array.from({ length: ROWS }, () => new Uint16Array(COLS));
+  ghost = Array.from({ length: ROWS }, () => new Float32Array(COLS));
+}
+createGrids();
+
+// ── Conway-Kern ───────────────────────────────────────────────────────────────
+function countNeighbors(row, col) {
+  let n = 0;
+  for (let dr = -1; dr <= 1; dr++)
+    for (let dc = -1; dc <= 1; dc++) {
+      if (dr === 0 && dc === 0) continue;
+      if (age[(row + dr + ROWS) % ROWS][(col + dc + COLS) % COLS] > 0) n++;
+    }
+  return n;
+}
+
+let generation = 0;
+
+function step() {
+  const nextAge   = Array.from({ length: ROWS }, () => new Uint16Array(COLS));
+  let   population = 0;
+
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const n     = countNeighbors(r, c);
+      const alive = age[r][c] > 0;
+
+      if (alive && (n === 2 || n === 3)) {
+        nextAge[r][c] = age[r][c] + 1;  // überlebt → Alter +1
+        population++;
+      } else if (!alive && n === 3) {
+        nextAge[r][c] = 1;               // neu geboren
+        population++;
+      } else if (alive) {
+        ghost[r][c] = 1.0;               // ist gestorben → Nachleucht-Impuls
+      }
+      // Nachleuchten abklingen lassen
+      if (!nextAge[r][c] && ghost[r][c] > 0) ghost[r][c] *= 0.55;
+    }
+  }
+
+  age = nextAge;
+  generation++;
+  document.getElementById('gen').textContent = generation;
+  document.getElementById('pop').textContent = population;
+  draw();
+}
+
+// ── Rendering ─────────────────────────────────────────────────────────────────
+function lerpColor(a, b, t) {
+  return [
+    Math.round(a[0] + (b[0] - a[0]) * t),
+    Math.round(a[1] + (b[1] - a[1]) * t),
+    Math.round(a[2] + (b[2] - a[2]) * t),
+  ];
+}
+
+function draw() {
+  const pal = PALETTES[paletteIdx];
+  ctx.fillStyle = pal.bg;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const a = age[r][c];
+      const g = ghost[r][c];
+
+      if (a > 0) {
+        // Farbe interpoliert zwischen jung (young) und alt (old), max bei Alter 40
+        const t   = Math.min(a / 40, 1);
+        const rgb = lerpColor(pal.young, pal.old, t);
+        const alpha = 0.85 + 0.15 * (1 - t);
+
+        // Glüheffekt: etwas größer, weich
+        const glow = ctx.createRadialGradient(
+          c * CELL + CELL/2, r * CELL + CELL/2, 0,
+          c * CELL + CELL/2, r * CELL + CELL/2, CELL * 0.9
+        );
+        glow.addColorStop(0,   `rgba(${rgb.join(',')},${alpha})`);
+        glow.addColorStop(0.5, `rgba(${rgb.join(',')},${alpha * 0.6})`);
+        glow.addColorStop(1,   `rgba(${rgb.join(',')},0)`);
+        ctx.fillStyle = glow;
+        ctx.fillRect(c * CELL - 2, r * CELL - 2, CELL + 4, CELL + 4);
+
+        // Kern
+        ctx.fillStyle = `rgba(${rgb.join(',')},1)`;
+        ctx.fillRect(c * CELL + 1, r * CELL + 1, CELL - 2, CELL - 2);
+
+      } else if (g > 0.05) {
+        // Nachleuchten
+        const eg = pal.ghost;
+        ctx.fillStyle = `rgba(${eg.join(',')},${g})`;
+        ctx.fillRect(c * CELL, r * CELL, CELL, CELL);
+      }
+    }
+  }
+}
+
+// ── Muster ────────────────────────────────────────────────────────────────────
+function setAlive(r, c) {
+  if (r >= 0 && r < ROWS && c >= 0 && c < COLS) age[r][c] = 1;
+}
+
+function placePattern(pattern, startR, startC) {
+  pattern.forEach(([dr, dc]) => setAlive(startR + dr, startC + dc));
+}
+
+// Gosper Glider Gun
+const GLIDER_GUN = [
+  [0,24],[1,22],[1,24],[2,12],[2,13],[2,20],[2,21],[2,34],[2,35],
+  [3,11],[3,15],[3,20],[3,21],[3,34],[3,35],[4,0],[4,1],[4,10],[4,16],[4,20],[4,21],
+  [5,0],[5,1],[5,10],[5,14],[5,16],[5,17],[5,22],[5,24],[6,10],[6,16],[6,24],
+  [7,11],[7,15],[8,12],[8,13]
+];
+
+// Pulsar
+const PULSAR = [
+  [0,2],[0,3],[0,4],[0,8],[0,9],[0,10],
+  [2,0],[2,5],[2,7],[2,12],[3,0],[3,5],[3,7],[3,12],
+  [4,0],[4,5],[4,7],[4,12],[5,2],[5,3],[5,4],[5,8],[5,9],[5,10],
+  [7,2],[7,3],[7,4],[7,8],[7,9],[7,10],[8,0],[8,5],[8,7],[8,12],
+  [9,0],[9,5],[9,7],[9,12],[10,0],[10,5],[10,7],[10,12],
+  [12,2],[12,3],[12,4],[12,8],[12,9],[12,10],
+];
+
+function addGliderGun() {
+  const r = Math.floor(ROWS/2) - 4;
+  const c = Math.floor(COLS/2) - 18;
+  placePattern(GLIDER_GUN, r, c);
+}
+
+function addPulsar() {
+  const r = Math.floor(ROWS/2) - 6;
+  const c = Math.floor(COLS/2) - 6;
+  placePattern(PULSAR, r, c);
+}
+
+function addNoise() {
+  for (let r = 0; r < ROWS; r++)
+    for (let c = 0; c < COLS; c++)
+      age[r][c] = Math.random() < 0.28 ? 1 : 0;
+}
+
+// ── Simulation ────────────────────────────────────────────────────────────────
+let running    = false;
+let frameId    = null;
+const SPEEDS   = [120, 50, 16];
+const SPNAMES  = ['slow', 'mid', 'fast'];
+let speedIdx   = 1;
+let lastTime   = 0;
+
+function loop(ts) {
+  if (!running) return;
+  if (ts - lastTime >= SPEEDS[speedIdx]) {
+    step();
+    lastTime = ts;
+  }
+  frameId = requestAnimationFrame(loop);
+}
+
+function startStop() {
+  running = !running;
+  document.getElementById('bPlay').textContent = running ? '⏸' : '▶';
+  document.getElementById('bPlay').classList.toggle('on', running);
+  if (running) frameId = requestAnimationFrame(loop);
+}
+
+// ── Maus ─────────────────────────────────────────────────────────────────────
+let painting = false, paintVal = 1;
+
+function cellAt(e) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    r: Math.floor((e.clientY - rect.top)  / CELL),
+    c: Math.floor((e.clientX - rect.left) / CELL)
+  };
+}
+
+canvas.addEventListener('mousedown', e => {
+  painting = true;
+  const { r, c } = cellAt(e);
+  paintVal = age[r][c] > 0 ? 0 : 1;
+  age[r][c] = paintVal;
+  draw();
+});
+canvas.addEventListener('mousemove', e => {
+  if (!painting) return;
+  const { r, c } = cellAt(e);
+  age[r][c] = paintVal;
+  draw();
+});
+canvas.addEventListener('mouseup',    () => painting = false);
+canvas.addEventListener('mouseleave', () => painting = false);
+
+// ── Buttons ───────────────────────────────────────────────────────────────────
+document.getElementById('bPlay').addEventListener('click', startStop);
+document.getElementById('bStep').addEventListener('click', () => { if (!running) step(); });
+document.getElementById('bRnd').addEventListener('click', () => {
+  createGrids(); addNoise(); generation = 0; draw();
+});
+document.getElementById('bGlider').addEventListener('click', () => {
+  createGrids(); addGliderGun(); generation = 0; draw();
+});
+document.getElementById('bPulsar').addEventListener('click', () => {
+  createGrids(); addPulsar(); generation = 0; draw();
+});
+document.getElementById('bClear').addEventListener('click', () => {
+  if (running) startStop();
+  createGrids(); generation = 0; draw();
+});
+document.getElementById('bSpeed').addEventListener('click', () => {
+  speedIdx = (speedIdx + 1) % SPEEDS.length;
+  document.getElementById('bSpeed').textContent = `fps: ${SPNAMES[speedIdx]}`;
+});
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space') { e.preventDefault(); startStop(); }
+});
+window.addEventListener('resize', () => { resize(); createGrids(); addNoise(); generation = 0; draw(); });
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+addNoise();
+draw();
+</script>
+</body>
+</html>

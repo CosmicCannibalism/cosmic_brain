@@ -14,12 +14,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "resources/biologie/bakterielle_vermehrung.md",
-                "mode": "source",
+                "file": "projects/petroglyphen_einer_denkmaschine/konzept_moodboard.md",
+                "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "bakterielle_vermehrung"
+              "title": "konzept_moodboard"
             }
           },
           {
@@ -28,16 +28,15 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "resources/theorie/interoception_affective_labeling.md",
+                "file": "resources/biologie/quorum_sensing.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "interoception_affective_labeling"
+              "title": "quorum_sensing"
             }
           }
         ],
-        "currentTab": 1,
         "stacked": true
       },
       {
@@ -55,34 +54,6 @@
               "pinned": true,
               "icon": "lucide-git-fork",
               "title": "Graph view"
-            }
-          },
-          {
-            "id": "a5aa612cf0b605ef",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "resources/theorie/leopardenmuster.md",
-                "mode": "preview",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "leopardenmuster"
-            }
-          },
-          {
-            "id": "aaad82d5860b9d01",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "__cosmicbrain__.md",
-                "mode": "preview",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "__cosmicbrain__"
             }
           }
         ]
@@ -117,7 +88,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "tag:readme",
+                "query": "quorum sensing",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -262,22 +233,25 @@
       "periodic-notes:Open today": false
     }
   },
-  "active": "defd8fc50f6e2c47",
+  "active": "f14999afea948a16",
   "lastOpenFiles": [
+    "resources/biologie/bakterielle_vermehrung.md",
+    "resources/biologie/quorum_sensing.md",
+    "__cosmicbrain__.md",
+    "projects/petroglyphen_einer_denkmaschine/konzept_moodboard.md",
+    "resources/theorie/interoception_affective_labeling.md",
+    "projects/petroglyphen_einer_denkmaschine",
     "resources/theorie/emergenz.md",
     "resources/theorie/schmetterlings_effekt.md",
     "resources/theorie/reaktions_diffusion.md",
-    "resources/theorie/interoception_affective_labeling.md",
     "resources/biologie/autophagie.md",
     "resources/biologie/bakterielle_adaptation.md",
     "resources/biologie/zellteilung.md",
-    "__cosmicbrain__.md",
     "resources/theorie/leopardenmuster.md",
     "resources/theorie/alan_turing.md",
     "resources/elemente/feuer.md",
     "resources/theorie/marcel_duchamp.md",
     "resources/social_media_emotionale_granularitaet.md",
-    "resources/biologie/bakterielle_vermehrung.md",
     "__glossar__.md",
     "projects/esp_ai_art/README.md",
     "projects/esp_ai_art/doc/md/karmi_kat.pdf",
@@ -293,12 +267,9 @@
     "resources/elemente/luft.md",
     "resources/elemente/wasser.md",
     "resources/sternzeichen/aquarius.md",
-    "resources/sternzeichen/gemini.md",
-    "resources/sternzeichen/libra.md",
     "resources/sternzeichen",
     "resources/elemente",
     "resources/theorie",
-    "resources/biologie",
-    "Untitled"
+    "resources/biologie"
   ]
 }

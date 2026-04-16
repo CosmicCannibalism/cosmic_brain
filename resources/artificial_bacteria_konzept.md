@@ -12,7 +12,7 @@ status: in-progress
 
 > Eine Maschine die sich nach biologischen Prinzipien verhält: Aufbau, Stabilität, Abbau, Tod, Wiedergeburt. Kein lebender Organismus — aber ein System das denselben Regeln folgt. Die Frage ist nicht ob es lebt, sondern was es bedeutet dass es so aussieht als ob.
 
-**Verwandte Themen:** [[__cosmicbrain__]] | [[anabolismus_katabolismus]] | [[quorum_sensing]] | [[biosemiotik]] | [[semipermeable_membran]] | [[zellulaere_automaten]] | [[reaktions_diffusion]] | [[bakterielle_vermehrung]] | [[zellteilung]] | [[bakterielle_adaptation]] | [[turing_land_duchamp_land]] | [[pataphysik]] | [[__sandbox__]] | [[artificial_bacteria_technik]]
+**Verwandte Themen:** [[__cosmicbrain__]] | [[anabolismus_katabolismus]] | [[quorum_sensing]] | [[biosemiotik]] | [[semipermeable_membran]] | [[zellulaere_automaten]] | [[reaktions_diffusion]] | [[bakterielle_vermehrung]] | [[zellteilung]] | [[bakterielle_adaptation]] | [[turing_land_duchamp_land]] | [[pataphysik]] | [[__sandbox__]] | [[artificial_bacteria_technik]] | [[konzept_moodboard]]
 
 ---
 

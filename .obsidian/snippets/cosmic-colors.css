@@ -3,13 +3,13 @@
    ================================ */
 :root {
   /* --- Basis --- */
-  --cosmic-bg:        #000000;   /* Hintergrund */
+  --cosmic-bg:        #000000;   /* Hintergrund (Note-Fläche) */
   --cosmic-surface:   #111111;   /* Panels, Sidebar */
   --cosmic-border:    #333333;   /* Linien, Trenner */
   --cosmic-text:      #e8e8e8;   /* Normaler Text */
   --cosmic-muted:     #777777;   /* Grauer Text */
   --cosmic-accent:    #c75192;   /* Akzentfarbe (Neongrün) */
-  --cosmic-highlight: #ff8989;   /* Bold, starke Betonung */
+  --cosmic-highlight: #95ff89;   /* Bold, starke Betonung */
 
   /* --- Überschriften (Reading View) --- */
   --cosmic-h1:        #a1a6d3;   /* # Titel */
@@ -18,9 +18,9 @@
   --cosmic-h4:        #888888;   /* #### und tiefer */
 
   /* --- Typografie --- */
-  --cosmic-bold:      #f6ff73;   /* **fett** */
-  --cosmic-italic:    #bbbbbb;   /* *kursiv* */
-  --cosmic-strikethrough: #555555; /* ~~durchgestrichen~~ */
+  --cosmic-bold:      rgba(14, 210, 247, 0.8);;   /* **fett** */
+  --cosmic-italic:    rgba(14, 210, 247, 0.8);;   /* *kursiv* */
+  --cosmic-strikethrough: rgba(14, 210, 247, 0.8);; /* ~~durchgestrichen~~ */
 
   /* --- Blockquote & Callout --- */
   --cosmic-quote-border: #8ccfff; /* linke Linie bei > Zitaten */
@@ -40,106 +40,70 @@
   /* --- Tags --- */
   --cosmic-tag-text:    #000000; /* #tag Text */
   --cosmic-tag-bg:      #39ff14; /* #tag Hintergrund */
+
+  /* --- Linien (hier anpassen) --- */
+  --cosmic-hr-color:       rgba(14, 210, 247, 0.8); /* Horizontale Trennlinie */
+  --cosmic-heading-underline: rgba(14, 210, 247, 0.8);            /* Unterstrich bei Überschriften */
 }
 
 /* ================================
-   Anwendung — nichts anfassen
-   ================================ */
-.theme-dark {
-  --background-primary:          var(--cosmic-bg);
-  --background-secondary:        var(--cosmic-surface);
-  --background-modifier-border:  var(--cosmic-border);
-  --text-normal:                 var(--cosmic-text);
-  --text-muted:                  var(--cosmic-muted);
-  --text-accent:                 var(--cosmic-accent);
-  --interactive-accent:          var(--cosmic-accent);
-  --text-on-accent:              var(--cosmic-bg);
-}
-
-/* Überschriften */
-.markdown-rendered h1, .cm-header-1 { color: var(--cosmic-h1); }
-.markdown-rendered h2, .cm-header-2 { color: var(--cosmic-h2); }
-.markdown-rendered h3, .cm-header-3 { color: var(--cosmic-h3); }
-.markdown-rendered h4, .cm-header-4,
-.markdown-rendered h5, .cm-header-5,
-.markdown-rendered h6, .cm-header-6 { color: var(--cosmic-h4); }
-
-/* Typografie */
-strong, .cm-strong { color: var(--cosmic-bold); }
-em, .cm-em         { color: var(--cosmic-italic); }
-s, .cm-strikethrough { color: var(--cosmic-strikethrough); }
-
-/* Blockquote */
-blockquote {
-  border-left: 3px solid var(--cosmic-quote-border);
-  color: var(--cosmic-quote-text);
-}
-
-/* Tabellen */
-thead tr th {
-  background: var(--cosmic-table-header-bg);
-  color: var(--cosmic-table-header-text);
-}
-tbody tr:nth-child(even) { background: var(--cosmic-table-row-alt); }
-table, th, td { border-color: var(--cosmic-table-border) !important; }
-
-/* Links */
-a, .cm-hmd-internal-link { color: var(--cosmic-accent) !important; }
-
-/* Code */
-code, .cm-inline-code {
-  color: var(--cosmic-code-text);
-  background: var(--cosmic-code-bg);
-}
-pre, pre code { background: var(--cosmic-codeblock-bg) !important; }
-
-/* Tags */
-.tag {
-  color: var(--cosmic-tag-text) !important;
-  background: var(--cosmic-tag-bg) !important;
-}
-
-/* ================================
-   Layout — Seitenränder
+   THEME OVERRIDES
    ================================ */
 
-/* Reading View: Rand links/rechts minimieren */
-.markdown-reading-view .markdown-preview-section {
-  max-width: 100% !important;
-  padding: 0 24px !important;
+/* Obsidian-Systemvariablen an cosmic-Variablen koppeln */
+.theme-dark,
+.theme-light {
+  --background-primary:    var(--cosmic-bg);
+  --background-secondary:  var(--cosmic-surface);
 }
 
-/* Live Preview / Editor: gleicher Abstand */
-.cm-editor .cm-content {
-  padding-left: 24px !important;
-  padding-right: 24px !important;
+/* Horizontal Rule — durchgängig, kein Fade, kein §-Symbol */
+.cm-line hr,
+.markdown-preview-view hr {
+  border-image-source: none !important;
+  border-bottom-color: var(--cosmic-hr-color) !important;
 }
 
-/* Readable line length komplett deaktivieren */
-.is-readable-line-width .markdown-preview-section,
-.is-readable-line-width .cm-contentContainer {
-  max-width: 100% !important;
+.cm-line hr::after,
+.markdown-preview-view hr::after {
+  display: none !important;
 }
 
-/* ================================
-   Grafiken — linksbündig + Abstände
-   ================================ */
-.markdown-rendered .mermaid,
-.markdown-preview-section .mermaid {
-  display: flex !important;
-  justify-content: flex-start !important;
-  margin-top: 0.4em !important;
-  margin-bottom: 2.5em !important;
+/* Headings — nur Text unterstreichen, border-bottom ausblenden */
+.HyperMD-header.HyperMD-header-2,
+.HyperMD-header.HyperMD-header-3,
+.HyperMD-header.HyperMD-header-4,
+.HyperMD-header.HyperMD-header-5,
+.HyperMD-header.HyperMD-header-6 {
+  border-bottom: none !important;
 }
 
-/* Überschrift/Label die DIREKT vor einer Grafik steht:
-   großer Abstand OBEN (trennt von vorheriger Gruppe),
-   kleiner Abstand UNTEN (klebt an der Grafik) */
-.markdown-rendered p:has(+ .mermaid),
-.markdown-rendered h1:has(+ .mermaid),
-.markdown-rendered h2:has(+ .mermaid),
-.markdown-rendered h3:has(+ .mermaid),
-.markdown-rendered h4:has(+ .mermaid) {
-  margin-top: 2.5em !important;
-  margin-bottom: 0.3em !important;
+.markdown-preview-view h2,
+.markdown-preview-view h3,
+.markdown-preview-view h4,
+.markdown-preview-view h5,
+.markdown-preview-view h6 {
+  border-bottom: none !important;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-color: var(--cosmic-heading-underline);
 }
+
+/* Bold — Gradient durch Farbe ersetzen */
+.cm-strong,
+strong {
+  background-image: none !important;
+  background-color: transparent !important;
+  -webkit-text-fill-color: var(--cosmic-bold) !important;
+  color: var(--cosmic-bold) !important;
+}
+
+/* Italic — Theme-Farbe überschreiben */
+.cm-em,
+em {
+  background-image: none !important;
+  -webkit-text-fill-color: var(--cosmic-italic) !important;
+  color: var(--cosmic-italic) !important;
+}
+
+

@@ -19,12 +19,13 @@
 
   /* --- Typografie --- */
   --cosmic-bold:      rgba(14, 210, 247, 0.8);;   /* **fett** */
-  --cosmic-italic:    rgba(14, 210, 247, 0.8);;   /* *kursiv* */
+  --cosmic-italic:    rgba(255, 255, 255, 0.8);;   /* *kursiv* */
   --cosmic-strikethrough: rgba(14, 210, 247, 0.8);; /* ~~durchgestrichen~~ */
 
   /* --- Blockquote & Callout --- */
   --cosmic-quote-border: #8ccfff; /* linke Linie bei > Zitaten */
   --cosmic-quote-text:   #aaaaaa; /* Text innerhalb > Zitat */
+  --cosmic-callout-title: #d6fc15; /* [!info]- Überschrift (ausklappbar) */
 
   /* --- Tabellen --- */
   --cosmic-table-header-bg:   #000000;  /* Kopfzeile Hintergrund */
@@ -33,9 +34,16 @@
   --cosmic-table-border:      #2a347d;  /* Tabellenrahmen */
 
   /* --- Code --- */
-  --cosmic-code-text:   #39ff14; /* Inline-Code Farbe */
-  --cosmic-code-bg:     #111111; /* Inline-Code Hintergrund */
+  --cosmic-code-text:   #24ff49; /* Inline-Code Farbe */
+  --cosmic-code-bg:     #0a0a0a; /* Inline-Code Hintergrund */
   --cosmic-codeblock-bg:#0a0a0a; /* ```-Block Hintergrund */
+
+  /* --- Aufzählung (geordnet 1. 2. 3.) --- */
+  --cosmic-ol-number:   #fc1515; /* Ziffernfarbe 1. 2. 3. */
+  --cosmic-ul-bullet:   #fc1515; /* Punkt-Farbe · - * */
+
+  /* --- Blockquote Hintergrund --- */
+  --cosmic-quote-bg:    #090813; /* Fläche hinter > Zitat */
 
   /* --- Tags --- */
   --cosmic-tag-text:    #000000; /* #tag Text */
@@ -55,6 +63,7 @@
 .theme-light {
   --background-primary:    var(--cosmic-bg);
   --background-secondary:  var(--cosmic-surface);
+  --list-marker-color:     var(--cosmic-ul-bullet);
 }
 
 /* Horizontal Rule — durchgängig, kein Fade, kein §-Symbol */
@@ -106,4 +115,103 @@ em {
   color: var(--cosmic-italic) !important;
 }
 
+/* ================================
+   GEORDNETE LISTEN — Ziffernfarbe
+   ================================ */
 
+/* Reading View */
+.markdown-preview-view ol > li::marker {
+  color: var(--cosmic-ol-number);
+}
+
+/* Live Preview / Editor */
+.cm-formatting-list.cm-formatting-list-ol {
+  color: var(--cosmic-ol-number) !important;
+}
+
+/* ================================
+   UNGEORDNETE LISTEN — Punktfarbe
+   ================================ */
+
+/* Reading View — alle Ebenen inkl. in Callouts/Blockquotes */
+.markdown-preview-view ul li::marker,
+.markdown-preview-view blockquote ul li::marker,
+.callout-content ul li::marker {
+  color: var(--cosmic-ul-bullet) !important;
+}
+
+/* Live Preview / Editor — exakter Theme-Selektor überschreiben */
+.cm-s-obsidian span.cm-formatting-list,
+.markdown-source-view.mod-cm6 span.cm-formatting-list {
+  color: var(--cosmic-ul-bullet) !important;
+}
+
+/* CM6 Editor */
+.cm-formatting-list.cm-formatting-list-ul {
+  color: var(--cosmic-ul-bullet) !important;
+}
+
+/* ================================
+   BLOCKQUOTE — Hintergrund
+   ================================ */
+
+/* Reading View */
+.markdown-preview-view blockquote {
+  background-color: var(--cosmic-quote-bg);
+  border-left-color: var(--cosmic-quote-border);
+  padding: 0.6em 1em;
+  border-radius: 4px;
+}
+
+/* Live Preview / Editor */
+.cm-blockquote-border + * {
+  background-color: var(--cosmic-quote-bg);
+}
+
+/* Callout-Rahmen (> [!info] etc.) */
+.callout {
+  background-color: var(--cosmic-quote-bg) !important;
+  border-color: var(--cosmic-quote-border) !important;
+}
+
+/* Callout Titel-Text (ausklappbare Headline) */
+.callout-title-inner {
+  color: var(--cosmic-callout-title) !important;
+}
+
+/* Callout Fold-Pfeil */
+.callout-fold {
+  color: var(--cosmic-callout-title) !important;
+}
+
+/* ================================
+   INLINE-CODE — Kommandos
+   ================================ */
+
+/* Reading View + Editor */
+.markdown-preview-view code,
+.cm-inline-code .cm-underline,
+.cm-s-obsidian .cm-inline-code {
+  color: var(--cosmic-code-text) !important;
+  background-color: var(--cosmic-code-bg) !important;
+  border: 1px solid #2a2a2a;
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+
+/* ================================
+   CODE BLOCK — Hintergrund
+   ================================ */
+
+/* Reading View */
+.markdown-preview-view pre,
+.markdown-preview-view pre code {
+  background-color: var(--cosmic-codeblock-bg) !important;
+}
+
+/* Live Preview / Editor */
+.cm-s-obsidian div.HyperMD-codeblock-bg,
+.cm-s-obsidian div.HyperMD-codeblock-begin-bg,
+.cm-s-obsidian div.HyperMD-codeblock-end-bg {
+  background-color: var(--cosmic-codeblock-bg) !important;
+}

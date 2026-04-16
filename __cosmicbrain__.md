@@ -6,6 +6,24 @@ typ: referenz
 bereich: system
 ---
 
+```
+ ██████   ███████   ██████  ███    ███ ██  ██████  
+██    ██ ██     ██ ██    ██ ████  ████ ██ ██    ██ 
+██       ██     ██ ██       ██ ████ ██ ██ ██       
+██       ██     ██  ██████  ██  ██  ██ ██ ██       
+██       ██     ██       ██ ██      ██ ██ ██       
+██    ██ ██     ██ ██    ██ ██      ██ ██ ██    ██ 
+ ██████   ███████   ██████  ██      ██ ██  ██████  
+
+████████  ████████     ███    ████ ██    ██ 
+██     ██ ██     ██   ██ ██    ██  ███   ██ 
+██     ██ ██     ██  ██   ██   ██  ████  ██ 
+████████  ████████  ██     ██  ██  ██ ██ ██ 
+██     ██ ██   ██   █████████  ██  ██  ████ 
+██     ██ ██    ██  ██     ██  ██  ██   ███ 
+████████  ██     ██ ██     ██ ████ ██    ██ 
+```
+
 # Glossar — Begriffe & Bedeutungen
 
 > Begriffe aus Recherche, Lektüre und Projekten — kurz definiert, medienkünstlerisch kontextualisiert, verlinkt.
@@ -316,13 +334,17 @@ Praxis ätherische Öle nach elementaren und astrologischen Resonanzen zu kompon
 Von Alfred Jarry (1873–1907) begründete "Wissenschaft der imaginären Lösungen" — untersucht Ausnahmen von Ausnahmen, das was über Metaphysik hinausgeht. Gegenmodell zur Logik. In der Medienkunst: Systeme die nicht funktionieren als ästhetische Aussage, das Absurde als Methode.
 → [[pataphysik]] | [[__sandbox__]]
 
-**Phytosemiotik**
-Zeichenprozesse in und zwischen Pflanzen — chemische Signale die Stress, Schädlingsbefall oder Wassermangel kommunizieren. Pflanzen *sprechen* mit flüchtigen organischen Verbindungen, Mykorrhiza-Netzwerken, elektrischen Signalen. Sprache ohne Nervensystem, Kommunikation ohne Bewusstsein. In der Medienkunst: Pflanzen als Sender und Empfänger, der Garten als Kommunikationsraum.
-→ [[biosemiotik]] | [[__sandbox__]]
-
 **Petrochemie**
 Chemische Industrie basierend auf Erdöl und Erdgas. Fossile Energie als geronnene biologische Zeit — Millionen Jahre verdichtet in Plastik, Benzin, Kunstharzen, Farben. In der Medienkunst: das Material trägt die Geschichte seiner Entstehung. Die Gegenwart der Vergangenheit. Gegenmodell: biologisch abbaubare, nachwachsende Materialien.
 → [[petrochemie]] | [[__sandbox__]]
+
+**Petroglyphen**
+In Stein geritzte oder gemeißelte Zeichen, Symbole und Bilder — von griechisch *petra* (Stein) und *glyphein* (einritzen/gravieren). Zählen zu den ältesten überlieferten Bildformen der Menschheit (ab ca. 40.000 v. Chr.) und finden sich weltweit auf Felsoberflächen, in Höhlen und an Felsformationen. Inhaltlich reichen sie von geometrischen Symbolen und Tierfiguren bis zu kosmologischen Diagrammen — Bild des Denkens, nicht des Gesehenen. In der Medienkunst: Der Holzschnitt als zeitgenössische Geste derselben Handlung — technische Diagramme (Schaltbilder, Automaten, Netzwerke) ins harte Material eingeritzt. Das Diagramm als Petroglyphe: *Ich war hier. Ich habe so gedacht.*
+→ [[zellulaere_automaten]] | [[reaktions_diffusion]] | [[biosemiotik]] | [[__sandbox__]]
+
+**Phytosemiotik**
+Zeichenprozesse in und zwischen Pflanzen — chemische Signale die Stress, Schädlingsbefall oder Wassermangel kommunizieren. Pflanzen *sprechen* mit flüchtigen organischen Verbindungen, Mykorrhiza-Netzwerken, elektrischen Signalen. Sprache ohne Nervensystem, Kommunikation ohne Bewusstsein. In der Medienkunst: Pflanzen als Sender und Empfänger, der Garten als Kommunikationsraum.
+→ [[biosemiotik]] | [[__sandbox__]]
 
 **Polysaccharide**
 Langkettige Kohlenhydratmoleküle bestehend aus Zuckerbausteinen. In biologischen Systemen als Strukturmaterial (Zellulose, Chitin), Energiespeicher (Stärke, Glykogen) oder als Schutzmatrix in Biofilmen. Bakterien produzieren polysaccharidbasierte Matrizen zur kollektiven Selbstorganisation. In der Medienkunst: Material das von Leben selbst produziert wird — Biofabrikation jenseits industrieller Fertigung.
@@ -437,6 +459,8 @@ Botenstoffe des Immunsystems mit bidirektionaler Verbindung zum Schlaf: Tiefschl
 → [[zytokine]] | [[immunsystem]] | [[schlaf]]
 
 ---
+
+# new entries and files
 
 ---
 

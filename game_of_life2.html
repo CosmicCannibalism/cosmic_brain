@@ -8,122 +8,390 @@
 body { background:#000; overflow:hidden; font-family:monospace; }
 canvas { display:block; }
 
-#hud {
-  position:fixed; bottom:0; left:0; right:0;
-  display:flex; align-items:center; justify-content:center;
-  gap:8px; padding:10px 16px;
-  background: linear-gradient(transparent, rgba(0,0,0,0.85));
-  flex-wrap:wrap;
-}
-button {
-  background:rgba(255,255,255,0.04);
-  border:1px solid rgba(255,255,255,0.12);
-  color:rgba(255,255,255,0.55);
-  font:0.72rem monospace;
-  padding:4px 11px; cursor:pointer; letter-spacing:.07em;
-  transition:all .12s;
-}
-button:hover { background:rgba(255,255,255,0.12); color:#fff; }
-button.on    { border-color:rgba(255,255,255,.45); color:#fff; }
-
+/* ── HUD ──────────────────────────────────────────── */
 #info {
   position:fixed; top:10px; right:14px;
-  font-size:.68rem; color:rgba(255,255,255,.22);
-  line-height:1.9; text-align:right; letter-spacing:.08em;
+  font-size:.68rem; color:rgba(255,255,255,.4);
+  line-height:2; text-align:right; letter-spacing:.08em;
+  pointer-events:none;
+  background:rgba(0,0,0,0.72);
+  padding:6px 10px 6px 14px;
 }
 #legend {
   position:fixed; top:10px; left:14px;
   font-size:.68rem; line-height:2; letter-spacing:.07em;
+  pointer-events:none;
 }
-.dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:5px; vertical-align:middle; }
+.dot {
+  display:inline-block; width:9px; height:9px;
+  border-radius:50%; margin-right:5px; vertical-align:middle;
+}
+
+/* ── Toggle button ────────────────────────────────── */
+#panelToggle {
+  position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+  background:rgba(0,0,0,0.8);
+  border:1px solid rgba(255,255,255,0.1); border-bottom:none;
+  color:rgba(255,255,255,0.35);
+  font:.68rem monospace; padding:5px 20px;
+  cursor:pointer; letter-spacing:.14em; z-index:100;
+  transition:color .15s, border-color .15s;
+}
+#panelToggle:hover { color:rgba(255,255,255,.7); }
+#panelToggle.open  { color:rgba(255,255,255,.6); border-color:rgba(255,255,255,.2); }
+
+/* ── Collapsible panel ────────────────────────────── */
+#panel {
+  position:fixed; bottom:26px; left:50%;
+  transform:translateX(-50%);
+  width:min(720px, 96vw);
+  background:rgba(3,3,3,0.95);
+  border:1px solid rgba(255,255,255,0.08); border-bottom:none;
+  overflow:hidden;
+  max-height:0;
+  transition:max-height .3s cubic-bezier(.4,0,.2,1);
+  z-index:99;
+  backdrop-filter:blur(8px);
+}
+#panel.open { max-height:520px; overflow-y:auto; }
+
+#panelInner {
+  padding:14px 20px 20px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px 28px;
+}
+
+.psec { display:flex; flex-direction:column; gap:6px; }
+.psec-label {
+  font-size:.52rem; color:rgba(255,255,255,.18);
+  letter-spacing:.18em; margin-bottom:1px;
+}
+.brow { display:flex; flex-wrap:wrap; gap:5px; }
+
+/* ── Buttons ──────────────────────────────────────── */
+button {
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.1);
+  color:rgba(255,255,255,0.5);
+  font:.68rem monospace; padding:4px 12px;
+  cursor:pointer; letter-spacing:.07em;
+  transition:all .12s;
+}
+button:hover { background:rgba(255,255,255,0.09); color:#fff; }
+button.on    { border-color:rgba(255,255,255,.38); color:#fff; background:rgba(255,255,255,0.07); }
+
+/* ── Sliders ──────────────────────────────────────── */
+.srow {
+  display:flex; align-items:center; gap:8px;
+}
+.srow label {
+  font-size:.58rem; color:rgba(255,255,255,.25);
+  width:68px; letter-spacing:.05em; flex-shrink:0;
+}
+.srow input[type=range] {
+  flex:1; height:2px; cursor:pointer;
+  -webkit-appearance:none; appearance:none;
+  background:rgba(255,255,255,.13); outline:none; border:none;
+}
+.srow input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance:none;
+  width:10px; height:10px; border-radius:50%;
+  background:rgba(255,255,255,0.55); cursor:pointer;
+}
+.srow .val {
+  font-size:.58rem; color:rgba(255,255,255,.3);
+  width:32px; text-align:right; letter-spacing:.04em; flex-shrink:0;
+}
+.srow select {
+  flex:1; background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.1);
+  color:rgba(255,255,255,0.45); font:.58rem monospace;
+  padding:2px 4px; cursor:pointer; outline:none;
+}
+.srow select option { background:#111; }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
+
 <div id="info">
   GEN <span id="gen">0</span><br>
-  POP <span id="pop">0</span><br>
-  FPS <span id="fps">0</span>
+  POP <span id="pop">0</span>
 </div>
 <div id="legend"></div>
-<div id="hud">
-  <button id="bPlay">▶</button>
-  <button id="bStep">›</button>
-  <button id="bMode">mode: classic</button>
-  <button id="bRnd">noise</button>
-  <button id="bGun">glider gun</button>
-  <button id="bPulsar">pulsar</button>
-  <button id="bAnt">langton ant</button>
-  <button id="bClear">clear</button>
-  <button id="bSpd">fps: 30</button>
-  <button id="bBW">b&w</button>
+
+<!-- always-visible toggle -->
+<button id="panelToggle">☰ controls</button>
+
+<!-- collapsible panel -->
+<div id="panel">
+  <div id="panelInner">
+
+    <!-- LEFT column: buttons -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+
+      <div class="psec">
+        <span class="psec-label">PLAYBACK</span>
+        <div class="brow">
+          <button id="bPlay">▶</button>
+          <button id="bStep">›</button>
+          <button id="bMode">mode: classic</button>
+          <button id="bBW">b&w</button>
+          <span style="font-size:.62rem;color:rgba(255,255,255,.25);letter-spacing:.08em;padding:4px 6px;align-self:center">FPS&thinsp;<span id="fps">0</span></span>
+        </div>
+      </div>
+
+      <div class="psec">
+        <span class="psec-label">PATTERNS</span>
+        <div class="brow">
+          <button id="bRnd">noise</button>
+          <button id="bGun">glider gun</button>
+          <button id="bPulsar">pulsar</button>
+          <button id="bAnt">langton ant</button>
+        </div>
+      </div>
+
+      <div class="psec">
+        <span class="psec-label">DISTURBANCES</span>
+        <div class="brow">
+          <button id="bChaos">chaos burst</button>
+          <button id="bVoid">void burst</button>
+          <button id="bMeteor">meteor</button>
+          <button id="bClear">clear</button>
+          <button id="bShot">screenshot</button>
+        </div>
+        <div style="font-size:.55rem;color:rgba(255,255,255,.13);letter-spacing:.06em;margin-top:2px">
+          right-click canvas · [space] play · [m] meteor · [c] void · [v] burst
+        </div>
+      </div>
+
+      <div class="psec">
+        <span class="psec-label">BRUSH MODE</span>
+        <div class="brow">
+          <button id="bHover">hover: off</button>
+          <button id="bHoverAction">draw</button>
+          <button id="bCamera">cam: off</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT column: sliders -->
+    <div class="psec">
+      <span class="psec-label">PARAMETERS</span>
+
+      <div class="srow">
+        <label>speed</label>
+        <input type="range" id="sSpeed" min="2" max="60" value="30">
+        <span class="val" id="vSpeed">30</span>
+      </div>
+      <div class="srow">
+        <label>cell size</label>
+        <input type="range" id="sCellSize" min="3" max="12" value="5">
+        <span class="val" id="vCellSize">5</span>
+      </div>
+      <div class="srow">
+        <label>mutation</label>
+        <input type="range" id="sMutation" min="0" max="100" value="0">
+        <span class="val" id="vMutation">0</span>
+      </div>
+      <div class="srow">
+        <label>trail</label>
+        <input type="range" id="sTrail" min="0" max="99" value="82">
+        <span class="val" id="vTrail">.82</span>
+      </div>
+      <div class="srow">
+        <label>density</label>
+        <input type="range" id="sDensity" min="5" max="65" value="28">
+        <span class="val" id="vDensity">28%</span>
+      </div>
+      <div class="srow">
+        <label>shape</label>
+        <select id="sShape">
+          <option value="circle">circle</option>
+          <option value="rect">rectangle</option>
+          <option value="tri">triangle ▽</option>
+        </select>
+        <button id="bRotate" style="flex-shrink:0;padding:3px 8px;font-size:.58rem">⟳ off</button>
+      </div>
+      <div class="srow">
+        <label>evt radius</label>
+        <input type="range" id="sRadius" min="4" max="80" value="25">
+        <span class="val" id="vRadius">25</span>
+      </div>
+      <div class="srow">
+        <label>brush lag</label>
+        <input type="range" id="sOffset" min="0" max="97" value="0">
+        <span class="val" id="vOffset">0</span>
+      </div>
+      <div class="srow">
+        <label>hue shift</label>
+        <input type="range" id="sHue" min="0" max="360" value="0">
+        <span class="val" id="vHue">0°</span>
+      </div>
+      <div class="srow">
+        <label>saturation</label>
+        <input type="range" id="sSat" min="0" max="200" value="100">
+        <span class="val" id="vSat">100%</span>
+      </div>
+      <div class="srow">
+        <label>hue drift</label>
+        <input type="range" id="sHueDrift" min="0" max="30" value="0">
+        <span class="val" id="vHueDrift">0</span>
+      </div>
+      <div class="srow">
+        <label>glow</label>
+        <input type="range" id="sGlow" min="0" max="100" value="0">
+        <span class="val" id="vGlow">0</span>
+      </div>
+      <div class="srow">
+        <label>age bright</label>
+        <input type="range" id="sAgeBright" min="0" max="100" value="0">
+        <span class="val" id="vAgeBright">0</span>
+      </div>
+      <div class="srow">
+        <label>cam blend</label>
+        <select id="sBlend">
+          <option value="screen">screen</option>
+          <option value="lighter">add</option>
+          <option value="multiply">multiply</option>
+          <option value="difference">difference</option>
+          <option value="overlay">overlay</option>
+          <option value="hard-light">hard-light</option>
+          <option value="color-dodge">color-dodge</option>
+        </select>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <script>
 // ═══════════════════════════════════════════════════════════════════════════════
-//  PRIMORDIAL SOUP  —  multi-mode life simulation
+//  PRIMORDIAL SOUP  — optimised multi-mode life simulation
+//  Rendering: ImageData pixel buffer — no per-cell canvas ops or gradients
 // ═══════════════════════════════════════════════════════════════════════════════
 
 const canvas = document.getElementById('c');
-const ctx    = canvas.getContext('2d');
-const CELL   = 7;
+const ctx    = canvas.getContext('2d', { alpha: false });
 
+let CELL = 5;
 let W, H, COLS, ROWS;
+let imgData, pixels;
+let offCanvas = null, offCtx = null;
 
 function resize() {
-  W = window.innerWidth; H = window.innerHeight;
-  canvas.width = W; canvas.height = H;
+  W = window.innerWidth;
+  H = window.innerHeight;
+  canvas.width  = W;
+  canvas.height = H;
   COLS = Math.floor(W / CELL);
   ROWS = Math.floor(H / CELL);
+  imgData = ctx.createImageData(W, H);
+  pixels  = imgData.data;
+  // set alpha channel once — never touched again
+  for (let i = 3; i < pixels.length; i += 4) pixels[i] = 255;
+  if (offCanvas) { offCanvas.width = W; offCanvas.height = H; }
 }
 resize();
 window.addEventListener('resize', () => { resize(); initGrids(); randomFill(); });
 
-// ── Typen ─────────────────────────────────────────────────────────────────────
-// Jede Zelle hat einen TYP (0–5) und ein ALTER.
-// Typ 0 = tot
-// Typ 1–5 = verschiedene Spezies mit eigenen Regeln
+// ── Species ───────────────────────────────────────────────────────────────────
+// Typ 0 = tot, Typ 1–5 = Spezies mit eigenen Regeln
 
 const TYPES = [
   null,
-  { name:'Pioneer',   birth:[3],        survive:[2,3],      color:[80,200,255]  },  // Conway-klassisch
-  { name:'Spreader',  birth:[3,6],      survive:[2,3,4],    color:[255,120,60]  },  // breitet sich aggressiv aus
-  { name:'Clusterer', birth:[3,4,5],    survive:[4,5,6,7],  color:[60,220,120]  },  // bildet dichte Klumpen
-  { name:'Nomad',     birth:[3],        survive:[1,2,3,4],  color:[220,80,220]  },  // wandernde Strukturen
-  { name:'Ghost',     birth:[2,5],      survive:[1,2,3,5,6],color:[180,240,200] },  // instabil, geisterhaft
+  { name:'Pioneer',   birth:[3],        survive:[2,3],       color:[80,200,255]  },
+  { name:'Spreader',  birth:[3,6],      survive:[2,3,4],     color:[255,120,60]  },
+  { name:'Clusterer', birth:[3,4,5],    survive:[4,5,6,7],   color:[60,220,120]  },
+  { name:'Nomad',     birth:[3],        survive:[1,2,3,4],   color:[220,80,220]  },
+  { name:'Ghost',     birth:[2,5],      survive:[1,2,3,5,6], color:[180,240,200] },
 ];
+
+// Pre-keyed color arrays (avoid property lookup in hot render loop)
+const CR = new Uint8Array(6), CG = new Uint8Array(6), CB = new Uint8Array(6);
+for (let t = 1; t <= 5; t++) {
+  CR[t] = TYPES[t].color[0];
+  CG[t] = TYPES[t].color[1];
+  CB[t] = TYPES[t].color[2];
+}
 
 // ── Grids ─────────────────────────────────────────────────────────────────────
 let type_grid; // Uint8Array: Typ der Zelle
 let age_grid;  // Uint16Array: Alter
-let trail;     // Float32Array: Nachleuchten (0–1)
 
 function initGrids() {
   type_grid = new Uint8Array(ROWS * COLS);
   age_grid  = new Uint16Array(ROWS * COLS);
-  trail     = new Float32Array(ROWS * COLS);
 }
 initGrids();
 
-const i = (r,c) => r * COLS + c;
+const i   = (r, c) => r * COLS + c;
+const gi  = i; // alias used below
 
-function alive(r,c) {
+function alive(r, c) {
   return type_grid[i((r+ROWS)%ROWS, (c+COLS)%COLS)] > 0;
 }
-function typeAt(r,c) {
-  return type_grid[i((r+ROWS)%ROWS, (c+COLS)%COLS)];
+function typeAt(r, c) {
+  return type_grid[((r+ROWS)%ROWS) * COLS + ((c+COLS)%COLS)];
 }
 
 // ── Simulation Modes ──────────────────────────────────────────────────────────
-// classic   = alle Zellen Typ 1, reine Conway-Regeln
-// multispec = 5 Spezies, eigene Regeln + Konkurrenz
-// predator  = Räuber-Beute (Typ 1 frisst Typ 2, Typ 2 frisst Typ 3 …)
-// lenia     = kontinuierliche Variante (weiche Übergänge)
-
-const MODES = ['classic','multispec','predator'];
+const MODES = ['classic','multispec','predator','brian','cyclic'];
 let modeIdx = 0;
 
-// ── Classic (Conway) ──────────────────────────────────────────────────────────
+// ── Runtime parameters ────────────────────────────────────────────────────────
+let mutationRate = 0;      // probability per dead cell per step
+let trailDecay   = 0.82;   // pixel RGB decay factor per frame
+let fillDensity  = 0.28;
+let targetFps    = 30;
+let bwMode       = false;
+let eventRadius  = 25;     // radius used by chaos/void bursts
+let hueShift     = 0;      // 0–360 degrees
+let satScale     = 1.0;    // 0–2.0
+let hueDrift     = 0;      // degrees per tick
+let glowAmount   = 0;      // 0–1, brightness of 1-px glow border
+let ageBright    = 0;      // 0–1, extra brightness scaling by age
+// Brush hover + camera
+let drawOnHover  = false;
+let hoverErase   = false;
+let cameraOn     = false;
+let videoEl      = null;
+let blendMode    = 'screen';
+
+// Derived display colors — rebuilt when hue/sat changes
+const DR = new Uint8Array(6), DG = new Uint8Array(6), DB = new Uint8Array(6);
+function rebuildColors() {
+  for (let t = 1; t <= 5; t++) {
+    const [r, g, b] = TYPES[t].color;
+    const rn=r/255, gn=g/255, bn=b/255;
+    const max=Math.max(rn,gn,bn), min=Math.min(rn,gn,bn), d=max-min;
+    let h=0, s=0, l=(max+min)/2;
+    if (d > 0) {
+      s = d / (1 - Math.abs(2*l - 1));
+      if      (max===rn) h = ((gn-bn)/d + 6) % 6;
+      else if (max===gn) h = (bn-rn)/d + 2;
+      else               h = (rn-gn)/d + 4;
+      h *= 60;
+    }
+    h = (h + hueShift) % 360;
+    s = Math.min(s * satScale, 1);
+    const c=s*(1-Math.abs(2*l-1)), x=c*(1-Math.abs((h/60)%2-1)), m=l-c/2;
+    let ro=0, go=0, bo=0;
+    const sec = Math.floor(h/60) % 6;
+    if      (sec===0){ro=c;go=x;bo=0;}
+    else if (sec===1){ro=x;go=c;bo=0;}
+    else if (sec===2){ro=0;go=c;bo=x;}
+    else if (sec===3){ro=0;go=x;bo=c;}
+    else if (sec===4){ro=x;go=0;bo=c;}
+    else             {ro=c;go=0;bo=x;}
+    DR[t]=Math.round((ro+m)*255); DG[t]=Math.round((go+m)*255); DB[t]=Math.round((bo+m)*255);
+  }
+}
+rebuildColors();
+
+// ── Classic (Conway B3/S23) ───────────────────────────────────────────────────
 function stepClassic() {
   const nt = new Uint8Array(ROWS * COLS);
   const na = new Uint16Array(ROWS * COLS);
@@ -137,8 +405,10 @@ function stepClassic() {
       const t = typeAt(r,c);
       const idx = i(r,c);
       if (t>0 && (n===2||n===3)) { nt[idx]=t; na[idx]=age_grid[idx]+1; }
-      else if (t===0 && n===3)   { nt[idx]=1; na[idx]=1; }
-      else if (t>0)              { trail[idx]=1.0; }
+      else if (t===0) {
+        if (n===3) { nt[idx]=1; na[idx]=1; }
+        else if (mutationRate>0 && Math.random()<mutationRate) { nt[idx]=1; na[idx]=1; }
+      }
     }
   }
   type_grid=nt; age_grid=na;
@@ -149,10 +419,10 @@ function stepMultiSpec() {
   const nt = new Uint8Array(ROWS * COLS);
   const na = new Uint16Array(ROWS * COLS);
 
+  const nc = new Uint8Array(6);
   for (let r=0; r<ROWS; r++) {
     for (let c=0; c<COLS; c++) {
-      // Nachbarzählung pro Typ
-      const nc = new Uint8Array(6); // nc[t] = Anzahl Nachbarn vom Typ t
+      nc[0]=nc[1]=nc[2]=nc[3]=nc[4]=nc[5]=0;
       for (let dr=-1;dr<=1;dr++) for (let dc=-1;dc<=1;dc++) {
         if (dr===0&&dc===0) continue;
         nc[typeAt(r+dr,c+dc)]++;
@@ -162,23 +432,19 @@ function stepMultiSpec() {
       const idx   = i(r,c);
 
       if (self > 0) {
-        const spec = TYPES[self];
-        if (spec.survive.includes(total)) {
+        if (TYPES[self].survive.includes(total)) {
           nt[idx] = self;
           na[idx] = age_grid[idx]+1;
-        } else {
-          trail[idx] = 0.8;
         }
       } else {
-        // Leere Zelle: wird von der häufigsten Spezies in der Nachbarschaft besiedelt
-        // wenn Geburts-Bedingung erfüllt
         let winner = 0, maxN = 0;
         for (let t=1; t<=5; t++) {
           if (nc[t] > maxN) { maxN=nc[t]; winner=t; }
         }
         if (winner > 0 && TYPES[winner].birth.includes(total)) {
-          nt[idx] = winner;
-          na[idx] = 1;
+          nt[idx] = winner; na[idx] = 1;
+        } else if (mutationRate>0 && Math.random()<mutationRate) {
+          nt[idx] = Math.ceil(Math.random()*5); na[idx] = 1;
         }
       }
     }
@@ -186,20 +452,21 @@ function stepMultiSpec() {
   type_grid=nt; age_grid=na;
 }
 
-// ── Predator-Beute (Rock-Paper-Scissors Variante) ─────────────────────────────
+// ── Predator-Beute (Rock-Paper-Scissors) ─────────────────────────────────────
 // 1 frisst 5, 2 frisst 1, 3 frisst 2, 4 frisst 3, 5 frisst 4
 function eats(a,b) {
   if (a===0||b===0) return false;
-  return b === (a % 5) + 1; // a frisst (a%5)+1
+  return b === (a % 5) + 1;
 }
 
 function stepPredator() {
   const nt = new Uint8Array(ROWS * COLS);
   const na = new Uint16Array(ROWS * COLS);
 
+  const nc = new Uint8Array(6);
   for (let r=0; r<ROWS; r++) {
     for (let c=0; c<COLS; c++) {
-      const nc = new Uint8Array(6);
+      nc[0]=nc[1]=nc[2]=nc[3]=nc[4]=nc[5]=0;
       for (let dr=-1;dr<=1;dr++) for (let dc=-1;dc<=1;dc++) {
         if (dr===0&&dc===0) continue;
         nc[typeAt(r+dr,c+dc)]++;
@@ -208,134 +475,184 @@ function stepPredator() {
       const idx  = i(r,c);
 
       if (self > 0) {
-        // Finde Predator unter Nachbarn
         let eaten = false;
         for (let t=1; t<=5; t++) {
           if (nc[t] >= 3 && eats(t, self)) { eaten=true; break; }
         }
-        if (eaten) {
-          trail[idx] = 1.0;
-        } else {
-          nt[idx] = self;
-          na[idx] = age_grid[idx]+1;
-        }
+        if (!eaten) { nt[idx] = self; na[idx] = age_grid[idx]+1; }
       } else {
-        // Leere Zelle: wird von Spezies mit 3 gleichartigen Nachbarn besiedelt
         let spawned = false;
         for (let t=1; t<=5; t++) {
           if (nc[t] === 3) { nt[idx]=t; na[idx]=1; spawned=true; break; }
         }
-        if (!spawned && nc[0] === 0) {
-          // Wenn alle Nachbarn besetzt, probabilistische Mutation
-          // (kleine Chance für spontane Entstehung)
+        if (!spawned && mutationRate>0 && Math.random()<mutationRate) {
+          nt[idx] = Math.ceil(Math.random()*5); na[idx] = 1;
         }
       }
     }
   }
   type_grid=nt; age_grid=na;
 }
+// ── Brian's Brain (3-state excitable medium) ──────────────────────────────────────
+// dead(0) → firing(1) if exactly 2 firing neighbors
+// firing(1) → refractory(2) → dead(0)
+function stepBrian() {
+  const nt = new Uint8Array(ROWS * COLS);
+  const na = new Uint16Array(ROWS * COLS);
+  for (let r=0; r<ROWS; r++) {
+    for (let c=0; c<COLS; c++) {
+      const self = type_grid[i(r,c)];
+      const idx  = i(r,c);
+      if (self === 2) {
+        // refractory → dead (nt stays 0)
+      } else if (self === 1) {
+        nt[idx] = 2; na[idx] = age_grid[idx]+1;
+      } else {
+        let nFire = 0;
+        for (let dr=-1;dr<=1;dr++) for (let dc=-1;dc<=1;dc++) {
+          if (dr===0&&dc===0) continue;
+          if (typeAt(r+dr,c+dc) === 1) nFire++;
+        }
+        if (nFire === 2) { nt[idx]=1; na[idx]=1; }
+        else if (mutationRate>0 && Math.random()<mutationRate) { nt[idx]=1; na[idx]=1; }
+      }
+    }
+  }
+  type_grid=nt; age_grid=na;
+}
 
+// ── Cyclic CA (rotating spirals) ────────────────────────────────────────────
+// A cell advances 1→2→3→4→5→1 when it has ≥1 neighbor in the next state.
+// Dead cells (0) are outside the cycle; mutation seeds them.
+function stepCyclic() {
+  const nt = new Uint8Array(ROWS * COLS);
+  const na = new Uint16Array(ROWS * COLS);
+  for (let r=0; r<ROWS; r++) {
+    for (let c=0; c<COLS; c++) {
+      const self = type_grid[i(r,c)];
+      const idx  = i(r,c);
+      if (self === 0) {
+        if (mutationRate>0 && Math.random()<mutationRate) { nt[idx]=Math.ceil(Math.random()*5); na[idx]=1; }
+        continue;
+      }
+      const next = (self % 5) + 1;
+      let hasNext = false;
+      outer: for (let dr=-1;dr<=1;dr++) {
+        for (let dc=-1;dc<=1;dc++) {
+          if (dr===0&&dc===0) continue;
+          if (typeAt(r+dr,c+dc) === next) { hasNext=true; break outer; }
+        }
+      }
+      if (hasNext) { nt[idx]=next; na[idx]=1; }
+      else         { nt[idx]=self; na[idx]=age_grid[idx]+1; }
+    }
+  }
+  type_grid=nt; age_grid=na;
+}
 // ── Master Step ───────────────────────────────────────────────────────────────
 let generation = 0;
+let staleCount = 0;
 
 function step() {
   if      (MODES[modeIdx]==='classic')   stepClassic();
   else if (MODES[modeIdx]==='multispec') stepMultiSpec();
   else if (MODES[modeIdx]==='predator')  stepPredator();
+  else if (MODES[modeIdx]==='brian')     stepBrian();
+  else if (MODES[modeIdx]==='cyclic')    stepCyclic();
   generation++;
 
-  // trail abklingen
-  for (let k=0; k<trail.length; k++) if (trail[k]>0) trail[k]*=0.5;
+  // Auto-perturbation: drop meteors when population stays critically low
+  if (generation % 80 === 0) {
+    let pop = 0;
+    for (let k=0; k<type_grid.length; k++) if (type_grid[k]>0) pop++;
+    if (pop < ROWS * COLS * 0.04) {
+      staleCount++;
+      if (staleCount >= 2) { dropMeteor(3); staleCount = 0; }
+    } else {
+      staleCount = 0;
+    }
+  }
 }
 
-// ── Rendering ─────────────────────────────────────────────────────────────────
-const offscreen = document.createElement('canvas');
-const offCtx    = offscreen.getContext('2d');
-
+// ── Pixel-buffer renderer ─────────────────────────────────────────────────────
+// No canvas paths, no gradients — pure ImageData pixel writes.
+// Trail = per-frame RGB multiply toward black (no separate trail array needed).
 function draw() {
-  if (offscreen.width !== W || offscreen.height !== H) {
-    offscreen.width=W; offscreen.height=H;
+  // 1. Fade all pixels toward black
+  const d = trailDecay;
+  for (let p = 0; p < pixels.length; p += 4) {
+    pixels[p]   = (pixels[p]   * d) | 0;
+    pixels[p+1] = (pixels[p+1] * d) | 0;
+    pixels[p+2] = (pixels[p+2] * d) | 0;
+    // [p+3] is always 255, never touched
   }
 
-  // Schwarzer Hintergrund mit leichtem Fade für Ghosting-Effekt
-  offCtx.fillStyle = 'rgba(0,0,0,0.3)';
-  offCtx.fillRect(0,0,W,H);
-
+  // 2. Paint alive cells as solid CELL×CELL blocks
   let pop = 0;
+  for (let r = 0; r < ROWS; r++) {
+    const py0 = r * CELL;
+    for (let c = 0; c < COLS; c++) {
+      const t = type_grid[r * COLS + c];
+      if (t === 0) continue;
+      pop++;
+      let R = bwMode ? 230 : DR[t];
+      let G = bwMode ? 230 : DG[t];
+      let B = bwMode ? 230 : DB[t];
 
-  for (let r=0; r<ROWS; r++) {
-    for (let c=0; c<COLS; c++) {
-      const idx = i(r,c);
-      const t   = type_grid[idx];
-      const a   = age_grid[idx];
-      const g   = trail[idx];
-      const x   = c*CELL, y = r*CELL;
+      // age brightness: scales up from 0 at birth, peaks ~age 60
+      if (ageBright > 0 && !bwMode) {
+        const a = age_grid[r * COLS + c];
+        const bf = Math.min(a / 60, 1.0) * ageBright;
+        R = Math.min(255, R + (255 - R) * bf) | 0;
+        G = Math.min(255, G + (255 - G) * bf) | 0;
+        B = Math.min(255, B + (255 - B) * bf) | 0;
+      }
 
-      if (t > 0) {
-        const spec = TYPES[t];
-        // B&W mode: Alter bestimmt Helligkeit (jung=hellgrau, alt=weiß)
-        const brightness = a < 30 ? a/30 : 1 - (a-30)/200;
-        const bv = Math.round(120 + 135 * Math.min(brightness, 1));
-        const rgb  = bwMode ? [bv,bv,bv] : spec.color;
-        const alpha = 0.4 + 0.6 * Math.min(brightness, 1);
+      const px0 = c * CELL;
 
-        // Glow
-        const glow = offCtx.createRadialGradient(
-          x+CELL/2, y+CELL/2, 0,
-          x+CELL/2, y+CELL/2, CELL*1.1
-        );
-        glow.addColorStop(0,   `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha})`);
-        glow.addColorStop(0.4, `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha*0.4})`);
-        glow.addColorStop(1,   `rgba(${rgb[0]},${rgb[1]},${rgb[2]},0)`);
-        offCtx.fillStyle = glow;
-        offCtx.fillRect(x-3, y-3, CELL+6, CELL+6);
-
-        // Kern — Größe leicht variiert nach Spezies + Alter
-        const sz = Math.max(2, CELL - 2 - (t % 2));
-        offCtx.fillStyle = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},1)`;
-        offCtx.beginPath();
-        // Formen pro Spezies: Kreis, Raute, Quadrat, Dreieck, Stern
-        switch(t) {
-          case 1: // Kreis
-            offCtx.arc(x+CELL/2, y+CELL/2, sz/2, 0, Math.PI*2);
-            offCtx.fill();
-            break;
-          case 2: // Raute
-            offCtx.moveTo(x+CELL/2, y+1);
-            offCtx.lineTo(x+CELL-1, y+CELL/2);
-            offCtx.lineTo(x+CELL/2, y+CELL-1);
-            offCtx.lineTo(x+1,      y+CELL/2);
-            offCtx.closePath();
-            offCtx.fill();
-            break;
-          case 3: // Quadrat
-            offCtx.fillRect(x+1, y+1, CELL-2, CELL-2);
-            break;
-          case 4: // kleines Kreuz
-            offCtx.fillRect(x+CELL/2-1, y+1, 3, CELL-2);
-            offCtx.fillRect(x+1, y+CELL/2-1, CELL-2, 3);
-            break;
-          case 5: // Dreieck
-            offCtx.moveTo(x+CELL/2, y+1);
-            offCtx.lineTo(x+CELL-1, y+CELL-1);
-            offCtx.lineTo(x+1,      y+CELL-1);
-            offCtx.closePath();
-            offCtx.fill();
-            break;
+      // glow: write dimmed ring of 1px around the cell block
+      if (glowAmount > 0) {
+        const gR = (R * glowAmount) | 0;
+        const gG = (G * glowAmount) | 0;
+        const gB = (B * glowAmount) | 0;
+        const y1 = py0 - 1, y2 = py0 + CELL;
+        const x1 = px0 - 1, x2 = px0 + CELL;
+        // top & bottom rows
+        for (let x = x1; x <= x2; x++) {
+          if (x >= 0 && x < W) {
+            if (y1 >= 0) { let p=(y1*W+x)*4; pixels[p]=Math.min(255,pixels[p]+gR); pixels[p+1]=Math.min(255,pixels[p+1]+gG); pixels[p+2]=Math.min(255,pixels[p+2]+gB); }
+            if (y2 < H)  { let p=(y2*W+x)*4; pixels[p]=Math.min(255,pixels[p]+gR); pixels[p+1]=Math.min(255,pixels[p+1]+gG); pixels[p+2]=Math.min(255,pixels[p+2]+gB); }
+          }
         }
-        pop++;
-      } else if (g > 0.04) {
-        // Nachleuchten
-        const tc = bwMode ? `rgba(180,180,180,${g*0.35})` : `rgba(80,130,200,${g*0.4})`;
-        offCtx.fillStyle = tc;
-        offCtx.fillRect(x, y, CELL, CELL);
+        // left & right cols
+        for (let y = py0; y < py0+CELL; y++) {
+          if (y >= 0 && y < H) {
+            if (x1 >= 0) { let p=(y*W+x1)*4; pixels[p]=Math.min(255,pixels[p]+gR); pixels[p+1]=Math.min(255,pixels[p+1]+gG); pixels[p+2]=Math.min(255,pixels[p+2]+gB); }
+            if (x2 < W)  { let p=(y*W+x2)*4; pixels[p]=Math.min(255,pixels[p]+gR); pixels[p+1]=Math.min(255,pixels[p+1]+gG); pixels[p+2]=Math.min(255,pixels[p+2]+gB); }
+          }
+        }
+      }
+
+      for (let pr = py0, end = py0 + CELL; pr < end; pr++) {
+        let p = (pr * W + px0) * 4;
+        for (let pc = 0; pc < CELL; pc++, p += 4) {
+          pixels[p]   = R;
+          pixels[p+1] = G;
+          pixels[p+2] = B;
+        }
       }
     }
   }
 
-  ctx.clearRect(0,0,W,H);
-  ctx.drawImage(offscreen,0,0);
-
+  if (cameraOn && offCtx && videoEl && videoEl.readyState >= 1) {
+    offCtx.putImageData(imgData, 0, 0);
+    ctx.drawImage(videoEl, 0, 0, W, H);
+    ctx.globalCompositeOperation = blendMode;
+    ctx.drawImage(offCanvas, 0, 0);
+    ctx.globalCompositeOperation = 'source-over';
+  } else {
+    ctx.putImageData(imgData, 0, 0);
+  }
   document.getElementById('gen').textContent = generation;
   document.getElementById('pop').textContent = pop;
 }
@@ -348,14 +665,13 @@ function spawnAnts(n=6) {
     ants.push({
       r: Math.floor(ROWS/2) + Math.floor(Math.random()*20-10),
       c: Math.floor(COLS/2) + Math.floor(Math.random()*20-10),
-      dir: Math.floor(Math.random()*4), // 0=up 1=right 2=down 3=left
+      dir: Math.floor(Math.random()*4),
       type: (k%5)+1
     });
   }
 }
 
 let antMode = false;
-let antTimer = 0;
 
 function stepAnts() {
   const dr = [-1,0,1,0];
@@ -363,14 +679,11 @@ function stepAnts() {
   for (const ant of ants) {
     const idx = i(ant.r, ant.c);
     if (type_grid[idx] === 0) {
-      // weißes Feld: drehe rechts, setze Farbe, geh vor
       ant.dir = (ant.dir+1)%4;
       type_grid[idx] = ant.type;
       age_grid[idx]  = 1;
     } else {
-      // farbiges Feld: drehe links, lösche, geh vor
       ant.dir = (ant.dir+3)%4;
-      trail[idx] = 0.6;
       type_grid[idx] = 0;
       age_grid[idx]  = 0;
     }
@@ -379,14 +692,15 @@ function stepAnts() {
   }
 }
 
-// ── Muster ────────────────────────────────────────────────────────────────────
+// ── Patterns ──────────────────────────────────────────────────────────────────
 function randomFill() {
   initGrids();
-  generation = 0;
-  antMode = false;
-  const numTypes = MODES[modeIdx] === 'classic' ? 1 : 5;
+  generation = 0; staleCount = 0; antMode = false;
+  const m = MODES[modeIdx];
+  const numTypes = (m === 'classic' || m === 'brian') ? 1 : 5;
+  const density  = m === 'brian' ? Math.min(fillDensity, 0.15) : fillDensity;
   for (let k=0; k<ROWS*COLS; k++) {
-    if (Math.random() < 0.28) {
+    if (Math.random() < density) {
       type_grid[k] = Math.floor(Math.random()*numTypes)+1;
       age_grid[k]  = 1;
     }
@@ -413,58 +727,201 @@ const PULSAR = [
   [9,0],[9,5],[9,7],[9,12],[10,0],[10,5],[10,7],[10,12],[12,2],[12,3],[12,4],[12,8],[12,9],[12,10],
 ];
 
+// ── Variation tools ───────────────────────────────────────────────────────────
+function dropMeteor(count=1) {
+  const numTypes = MODES[modeIdx] === 'classic' ? 1 : 5;
+  for (let m=0; m<count; m++) {
+    const size = 8 + Math.floor(Math.random()*14);
+    const r0 = 2 + Math.floor(Math.random()*(ROWS-size-4));
+    const c0 = 2 + Math.floor(Math.random()*(COLS-size-4));
+    for (let dr=0; dr<size; dr++) {
+      for (let dc=0; dc<size; dc++) {
+        if (Math.random() < 0.45) {
+          const idx = i(r0+dr, c0+dc);
+          type_grid[idx] = Math.floor(Math.random()*numTypes)+1;
+          age_grid[idx]  = 1;
+        }
+      }
+    }
+  }
+}
+
+function chaosBurst() {
+  const numTypes = MODES[modeIdx] === 'classic' ? 1 : 5;
+  const cr = Math.floor(ROWS*(0.15 + Math.random()*0.7));
+  const cc = Math.floor(COLS*(0.15 + Math.random()*0.7));
+  const radius = eventRadius;
+  for (let dr=-radius; dr<=radius; dr++) {
+    for (let dc=-radius; dc<=radius; dc++) {
+      if (dr*dr + dc*dc > radius*radius) continue;
+      if (Math.random() < 0.48) {
+        const r = (cr+dr+ROWS)%ROWS, c = (cc+dc+COLS)%COLS;
+        type_grid[i(r,c)] = Math.floor(Math.random()*numTypes)+1;
+        age_grid[i(r,c)]  = 1;
+      }
+    }
+  }
+}
+
+function voidBurst() {
+  const cr = Math.floor(ROWS*(0.15 + Math.random()*0.7));
+  const cc = Math.floor(COLS*(0.15 + Math.random()*0.7));
+  const radius = eventRadius;
+  for (let dr=-radius; dr<=radius; dr++) {
+    for (let dc=-radius; dc<=radius; dc++) {
+      if (dr*dr + dc*dc > radius*radius) continue;
+      if (Math.random() < 0.75) {
+        const r = (cr+dr+ROWS)%ROWS, c = (cc+dc+COLS)%COLS;
+        type_grid[i(r,c)] = 0;
+        age_grid[i(r,c)]  = 0;
+      }
+    }
+  }
+}
+
 // ── Legende ───────────────────────────────────────────────────────────────────
 function updateLegend() {
   const leg = document.getElementById('legend');
-  if (MODES[modeIdx] === 'classic' || bwMode) { leg.innerHTML=''; return; }
+  const m = MODES[modeIdx];
+  if (m === 'classic' || m === 'brian' || bwMode) { leg.innerHTML=''; return; }
   leg.innerHTML = TYPES.slice(1).map(t =>
-    `<div><span class="dot" style="background:rgb(${t.color.join(',')})"></span><span style="color:rgba(255,255,255,.35);font-size:.67rem">${t.name}</span></div>`
+    `<div><span class="dot" style="background:rgb(${t.color.join(',')})"></span><span style="color:rgba(255,255,255,.3);font-size:.65rem">${t.name}</span></div>`
   ).join('');
 }
 updateLegend();
 
-// ── Malen ─────────────────────────────────────────────────────────────────────
-let painting=false, paintType=1;
+// ── Malen / Brush ────────────────────────────────────────────────────────────
+// Left-drag  = paint cells
+// Right-drag = void brush
+// brushLag 0 = instant, >0 = brush lerps toward mouse each frame
+let mouseDown   = false;
+let mouseBtn    = 0;
+let paintType   = 1;
+let brushLag    = 0;
+let brushShape  = 'circle'; // 'circle' | 'rect' | 'tri'
+let brushRotate = false;
+let brushAngle  = 0; // radians, incremented each loop tick      // 0–0.97 — lerp lag factor
+let _mouseX = 0, _mouseY = 0;    // actual mouse position (pixels)
+let _brushX = 0, _brushY = 0;   // lagged brush position (pixels)
+
+function inShape(dr, dc, radius) {
+  // rotate coordinates if brush rotation is active
+  if (brushRotate && brushAngle !== 0) {
+    const cos = Math.cos(-brushAngle), sin = Math.sin(-brushAngle);
+    const rdr = dr * cos - dc * sin;
+    const rdc = dr * sin + dc * cos;
+    dr = rdr; dc = rdc;
+  }
+  const thick = Math.max(1, radius * 0.28); // hollow ring thickness
+  if (brushShape === 'circle') {
+    const d2 = dr*dr + dc*dc, r2 = radius*radius;
+    const inner = radius - thick;
+    return d2 <= r2 && d2 >= inner*inner;
+  } else if (brushShape === 'rect') {
+    return Math.abs(dr) <= radius && Math.abs(dc) <= radius;
+  } else { // tri ▽ — hollow outline only
+    const halfW = radius * (radius - dr) / (2 * radius);
+    const halfWinner = Math.max(0, halfW - thick);
+    const inOuter = dr >= -radius && dr <= radius && Math.abs(dc) <= halfW;
+    const inInner = dr >= -radius + thick && dr <= radius - thick && Math.abs(dc) <= halfWinner;
+    return inOuter && !inInner;
+  }
+}
+
+function applyBrushAt(px, py, btn) {
+  if (btn === undefined) btn = mouseBtn;
+  const cr = Math.floor(py / CELL);
+  const cc = Math.floor(px / CELL);
+  const radius = eventRadius;
+  if (radius <= 1) {
+    if (cr<0||cr>=ROWS||cc<0||cc>=COLS) return;
+    const idx = i(cr, cc);
+    if (btn === 2) { type_grid[idx]=0; age_grid[idx]=0; }
+    else           { type_grid[idx]=paintType; age_grid[idx]=1; }
+  } else {
+    for (let dr = -radius; dr <= radius; dr++) {
+      for (let dc = -radius; dc <= radius; dc++) {
+        if (!inShape(dr, dc, radius)) continue;
+        const r = (cr+dr+ROWS) % ROWS, c = (cc+dc+COLS) % COLS;
+        if (btn === 2) {
+          type_grid[i(r,c)] = 0; age_grid[i(r,c)] = 0;
+        } else {
+          if (Math.random() < 0.65) { type_grid[i(r,c)] = paintType; age_grid[i(r,c)] = 1; }
+        }
+      }
+    }
+  }
+}
 
 canvas.addEventListener('mousedown', e => {
-  painting=true;
-  const r=Math.floor(e.clientY/CELL), c=Math.floor(e.clientX/CELL);
-  const idx=i(r,c);
-  paintType = type_grid[idx]>0 ? 0 : (modeIdx===0?1:(Math.floor(Math.random()*5)+1));
-  type_grid[idx]=paintType; age_grid[idx]=paintType?1:0;
-  draw();
+  e.preventDefault();
+  mouseDown = true;
+  mouseBtn  = e.button;
+  _mouseX = e.clientX; _mouseY = e.clientY;
+  // snap brush to mouse on first click regardless of lag
+  _brushX = _mouseX; _brushY = _mouseY;
+  const numTypes = modeIdx===0 ? 1 : 5;
+  paintType = Math.floor(Math.random()*numTypes)+1;
+  applyBrushAt(_brushX, _brushY);
+  if (!running) draw();
 });
 canvas.addEventListener('mousemove', e => {
-  if (!painting) return;
-  const r=Math.floor(e.clientY/CELL), c=Math.floor(e.clientX/CELL);
-  const idx=i(r,c);
-  type_grid[idx]=paintType; age_grid[idx]=paintType?1:0;
-  draw();
+  _mouseX = e.clientX; _mouseY = e.clientY;
+  if (drawOnHover && !mouseDown) {
+    _brushX = _mouseX; _brushY = _mouseY;
+    const numTypes = modeIdx===0 ? 1 : 5;
+    paintType = Math.floor(Math.random()*numTypes)+1;
+    applyBrushAt(_brushX, _brushY, hoverErase ? 2 : 0);
+    if (!running) draw();
+    return;
+  }
+  if (!mouseDown) return;
+  if (brushLag === 0) {
+    // no lag: apply immediately
+    _brushX = _mouseX; _brushY = _mouseY;
+    applyBrushAt(_brushX, _brushY);
+    if (!running) draw();
+  }
+  // with lag: brush updates happen in the loop tick
 });
-canvas.addEventListener('mouseup',    ()=>painting=false);
-canvas.addEventListener('mouseleave', ()=>painting=false);
+canvas.addEventListener('mouseup',    () => mouseDown = false);
+canvas.addEventListener('mouseleave', () => mouseDown = false);
+canvas.addEventListener('contextmenu', e => e.preventDefault());
 
 // ── Haupt-Loop ────────────────────────────────────────────────────────────────
-let bwMode = false;
-
 let running=false, lastTs=0, lastFps=performance.now(), fpsCount=0;
-const SPEEDS=[66,33,16];
-const SPNAMES=['15','30','60'];
-let spdIdx=1;
 
 function loop(ts) {
   if (!running) return;
   requestAnimationFrame(loop);
-  if (ts-lastTs < SPEEDS[spdIdx]) return;
-  lastTs=ts;
+  const interval = 1000 / targetFps;
+  if (ts - lastTs < interval - 1) return;
+  lastTs = ts;
 
   if (antMode) stepAnts();
   else         step();
+
+  // rotate brush angle
+  if (brushRotate) brushAngle += 0.08;
+
+  // hue drift: auto-animate hueShift
+  if (hueDrift > 0) {
+    hueShift = (hueShift + hueDrift * 0.1) % 360;
+    rebuildColors();
+  }
+
+  // lagged brush: lerp brush position toward mouse, paint each tick
+  if (mouseDown && brushLag > 0) {
+    _brushX += (_mouseX - _brushX) * (1 - brushLag);
+    _brushY += (_mouseY - _brushY) * (1 - brushLag);
+    applyBrushAt(_brushX, _brushY);
+  }
+
   draw();
 
   fpsCount++;
-  if (ts-lastFps > 1000) {
-    document.getElementById('fps').textContent=fpsCount;
+  if (ts - lastFps >= 1000) {
+    document.getElementById('fps').textContent = fpsCount;
     fpsCount=0; lastFps=ts;
   }
 }
@@ -480,16 +937,16 @@ function startStop() {
 document.getElementById('bPlay').onclick   = startStop;
 document.getElementById('bStep').onclick   = ()=>{ if(!running){ if(antMode)stepAnts();else step(); draw(); } };
 document.getElementById('bRnd').onclick    = ()=>{ randomFill(); draw(); };
-document.getElementById('bClear').onclick  = ()=>{ if(running)startStop(); initGrids(); generation=0; antMode=false; draw(); };
-document.getElementById('bSpd').onclick    = ()=>{
-  spdIdx=(spdIdx+1)%SPEEDS.length;
-  document.getElementById('bSpd').textContent=`fps: ${SPNAMES[spdIdx]}`;
+document.getElementById('bClear').onclick  = ()=>{
+  if(running) startStop();
+  initGrids(); generation=0; antMode=false;
+  for (let p=0; p<pixels.length; p+=4) pixels[p]=pixels[p+1]=pixels[p+2]=0;
+  draw();
 };
 document.getElementById('bBW').onclick     = ()=>{
   bwMode=!bwMode;
   document.getElementById('bBW').classList.toggle('on',bwMode);
-  updateLegend();
-  draw();
+  updateLegend(); draw();
 };
 document.getElementById('bMode').onclick   = ()=>{
   modeIdx=(modeIdx+1)%MODES.length;
@@ -506,7 +963,6 @@ document.getElementById('bGun').onclick    = ()=>{
 document.getElementById('bPulsar').onclick = ()=>{
   antMode=false;
   initGrids(); generation=0;
-  // mehrere Pulsare versetzt platzieren
   for(let k=0;k<4;k++)
     placePattern(PULSAR,
       Math.floor(ROWS/4)*(k%2+1)-6,
@@ -520,7 +976,139 @@ document.getElementById('bAnt').onclick    = ()=>{
   spawnAnts(8);
   draw();
 };
-document.addEventListener('keydown', e=>{ if(e.code==='Space'){e.preventDefault();startStop();} });
+document.getElementById('bChaos').onclick  = ()=>{ chaosBurst(); draw(); };
+document.getElementById('bVoid').onclick   = ()=>{ voidBurst();  draw(); };
+document.getElementById('bMeteor').onclick = ()=>{ dropMeteor(2); draw(); };
+document.getElementById('bShot').onclick   = ()=>{
+  const a = document.createElement('a');
+  a.download = `primordial_${generation}.png`;
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+};
+
+document.getElementById('bHover').onclick = () => {
+  drawOnHover = !drawOnHover;
+  const btn = document.getElementById('bHover');
+  btn.textContent = drawOnHover ? 'hover: on' : 'hover: off';
+  btn.classList.toggle('on', drawOnHover);
+};
+document.getElementById('bHoverAction').onclick = () => {
+  hoverErase = !hoverErase;
+  const btn = document.getElementById('bHoverAction');
+  btn.textContent = hoverErase ? 'erase' : 'draw';
+  btn.classList.toggle('on', hoverErase);
+};
+document.getElementById('bCamera').onclick = () => {
+  if (cameraOn) {
+    if (videoEl && videoEl.srcObject)
+      videoEl.srcObject.getTracks().forEach(t => t.stop());
+    videoEl = null; cameraOn = false; offCanvas = null; offCtx = null;
+    const btn = document.getElementById('bCamera');
+    btn.textContent = 'cam: off'; btn.classList.remove('on');
+  } else {
+    navigator.mediaDevices.getUserMedia({video: true, audio: false})
+      .then(stream => {
+        videoEl = document.createElement('video');
+        videoEl.srcObject = stream;
+        videoEl.muted = true;
+        videoEl.autoplay = true;
+        videoEl.playsInline = true;
+        videoEl.onloadedmetadata = () => { videoEl.play(); if (!running) draw(); };
+        videoEl.play();
+        cameraOn = true;
+        offCanvas = document.createElement('canvas');
+        offCanvas.width = W; offCanvas.height = H;
+        offCtx = offCanvas.getContext('2d', {alpha: false});
+        const btn = document.getElementById('bCamera');
+        btn.textContent = 'cam: on'; btn.classList.add('on');
+      })
+      .catch(() => { alert('camera access denied'); });
+  }
+};
+document.getElementById('sBlend').addEventListener('change', e => {
+  blendMode = e.target.value;
+});
+
+// ── Sliders ───────────────────────────────────────────────────────────────────
+document.getElementById('sSpeed').addEventListener('input', e=>{
+  targetFps = +e.target.value;
+  document.getElementById('vSpeed').textContent = targetFps;
+});
+document.getElementById('sCellSize').addEventListener('input', e=>{
+  CELL = +e.target.value;
+  document.getElementById('vCellSize').textContent = CELL;
+  resize(); initGrids(); randomFill(); draw();
+});
+document.getElementById('sMutation').addEventListener('input', e=>{
+  // slider 0–100 → probability 0–0.004 per dead cell per step
+  mutationRate = (+e.target.value / 100) * 0.004;
+  document.getElementById('vMutation').textContent = e.target.value;
+});
+document.getElementById('sTrail').addEventListener('input', e=>{
+  trailDecay = +e.target.value / 100;
+  document.getElementById('vTrail').textContent = trailDecay.toFixed(2);
+});
+document.getElementById('sDensity').addEventListener('input', e=>{
+  fillDensity = +e.target.value / 100;
+  document.getElementById('vDensity').textContent = e.target.value + '%';
+});
+document.getElementById('sShape').addEventListener('change', e=>{
+  brushShape = e.target.value;
+});
+document.getElementById('bRotate').addEventListener('click', ()=>{
+  brushRotate = !brushRotate;
+  const btn = document.getElementById('bRotate');
+  btn.textContent = brushRotate ? '⟳ on' : '⟳ off';
+  btn.classList.toggle('on', brushRotate);
+  if (!brushRotate) brushAngle = 0;
+});
+document.getElementById('sRadius').addEventListener('input', e=>{
+  eventRadius = +e.target.value;
+  document.getElementById('vRadius').textContent = eventRadius;
+});
+document.getElementById('sOffset').addEventListener('input', e=>{
+  brushLag = +e.target.value / 100;
+  document.getElementById('vOffset').textContent = e.target.value;
+});
+document.getElementById('sHue').addEventListener('input', e=>{
+  hueShift = +e.target.value;
+  document.getElementById('vHue').textContent = hueShift + '°';
+  rebuildColors(); draw();
+});
+document.getElementById('sSat').addEventListener('input', e=>{
+  satScale = +e.target.value / 100;
+  document.getElementById('vSat').textContent = e.target.value + '%';
+  rebuildColors(); draw();
+});
+document.getElementById('sHueDrift').addEventListener('input', e=>{
+  hueDrift = +e.target.value;
+  document.getElementById('vHueDrift').textContent = e.target.value;
+});
+document.getElementById('sGlow').addEventListener('input', e=>{
+  glowAmount = +e.target.value / 100;
+  document.getElementById('vGlow').textContent = e.target.value;
+});
+document.getElementById('sAgeBright').addEventListener('input', e=>{
+  ageBright = +e.target.value / 100;
+  document.getElementById('vAgeBright').textContent = e.target.value;
+});
+
+// ── Panel toggle ──────────────────────────────────────────────────────────────
+document.getElementById('panelToggle').addEventListener('click', ()=>{
+  const panel = document.getElementById('panel');
+  const btn   = document.getElementById('panelToggle');
+  const open  = panel.classList.toggle('open');
+  btn.classList.toggle('open', open);
+  btn.textContent = open ? '✕ close' : '☰ controls';
+});
+
+document.addEventListener('keydown', e=>{
+  if (e.code==='Space')  { e.preventDefault(); startStop(); }
+  if (e.code==='KeyM')   { dropMeteor(1); draw(); }
+  if (e.code==='KeyC')   { voidBurst();   draw(); }
+  if (e.code==='KeyV')   { chaosBurst();  draw(); }
+  if (e.code==='KeyS')   { const a=document.createElement('a'); a.download=`primordial_${generation}.png`; a.href=canvas.toDataURL('image/png'); a.click(); }
+});
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 randomFill();

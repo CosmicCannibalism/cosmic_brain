@@ -8,14 +8,101 @@
 body { background:#000; overflow:hidden; font-family:monospace; }
 canvas { display:block; }
 
-/* ── HUD ──────────────────────────────────────────── */
-#info {
-  position:fixed; top:10px; right:14px;
-  font-size:.68rem; color:rgba(255,255,255,.4);
-  line-height:2; text-align:right; letter-spacing:.08em;
-  pointer-events:none;
-  background:rgba(0,0,0,0.72);
-  padding:6px 10px 6px 14px;
+/* ── Info Panel (Figma) ──────────────────────────── */
+#infopanel {
+  position: fixed;
+  bottom: 26px;
+  left: 26px;
+  width: fit-content;
+  border-radius: 19px;
+  background: rgba(0,0,0,0.30);
+  box-shadow: 0 0 0 1.5px #2E2E2E;
+  z-index: 999999;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 8px 36px;
+  gap: 5px;
+  font-family: 'Supply', 'Courier New', monospace;
+  overflow: visible;
+}
+#svg-eye {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 44px;
+  height: 44px;
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: 999999;
+}
+#svg-logo {
+  position: fixed;
+  bottom: 26px;
+  right: 26px;
+  width: 60px;
+  height: 60px;
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: 999999;
+}
+.ip-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ip-slash {
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #FFFFFF;
+  letter-spacing: 0.04em;
+  -webkit-text-stroke: 7px black;
+  paint-order: stroke fill;
+}
+.ip-label {
+  font-weight: 300;
+  font-size: 1.3rem;
+  color: #FFFFFF;
+  letter-spacing: 0.06em;
+  -webkit-text-stroke: 7px black;
+  paint-order: stroke fill;
+}
+.ip-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 14px;
+  border-radius: 8px;
+  margin-left: 6px;
+}
+.ip-bracket {
+  font-weight: 300;
+  font-size: 1.3rem;
+  color: #FFFFFF;
+  letter-spacing: 0.04em;
+  -webkit-text-stroke: 7px black;
+  paint-order: stroke fill;
+}
+.ip-gen-val {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #FFB700;
+  letter-spacing: 0.1em;
+  min-width: 64px;
+  text-align: center;
+  -webkit-text-stroke: 7px black;
+  paint-order: stroke fill;
+}
+.ip-pop-val {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #6F00FF;
+  letter-spacing: 0.1em;
+  min-width: 64px;
+  text-align: center;
+  -webkit-text-stroke: 7px black;
+  paint-order: stroke fill;
 }
 #legend {
   position:fixed; top:10px; left:14px;
@@ -27,33 +114,83 @@ canvas { display:block; }
   border-radius:50%; margin-right:5px; vertical-align:middle;
 }
 
-/* ── Toggle button ────────────────────────────────── */
-#panelToggle {
-  position:fixed; bottom:0; left:50%; transform:translateX(-50%);
-  background:rgba(0,0,0,0.8);
-  border:1px solid rgba(255,255,255,0.1); border-bottom:none;
-  color:rgba(255,255,255,0.35);
-  font:.68rem monospace; padding:5px 20px;
-  cursor:pointer; letter-spacing:.14em; z-index:100;
-  transition:color .15s, border-color .15s;
+/* ── Science panels row container ──────────────────── */
+#sci-row {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 8px;
+  z-index: 999999;
+  pointer-events: none;
 }
-#panelToggle:hover { color:rgba(255,255,255,.7); }
-#panelToggle.open  { color:rgba(255,255,255,.6); border-color:rgba(255,255,255,.2); }
+.sci-panel {
+  border-radius: 14px;
+  background: rgba(0,0,0,0.30);
+  box-shadow: 0 0 0 1.5px #2E2E2E;
+  font-family: 'Supply', 'Courier New', monospace;
+  overflow: hidden;
+  padding: 8px 12px 6px;
+  display: flex;
+  flex-direction: column;
+  width: 170px;
+  height: 112px;
+}
+.sci-title {
+  font-size: .52rem;
+  letter-spacing: .12em;
+  color: #FFFFFF;
+  font-weight: 700;
+  -webkit-text-stroke: 1px black;
+  paint-order: stroke fill;
+  white-space: nowrap;
+  height: 16px;
+  display: flex;
+  align-items: center;
+}
+.sci-canvas {
+  display: block;
+  border-radius: 4px;
+  background: transparent;
+  flex: 1;
+  width: 100%;
+  height: 70px;
+  margin: 4px 0;
+}
+.sci-val {
+  font-size: .52rem;
+  letter-spacing: .08em;
+  color: #FFFFFF;
+  -webkit-text-stroke: 1px black;
+  paint-order: stroke fill;
+  white-space: nowrap;
+  height: 16px;
+  display: flex;
+  align-items: center;
+}
+#panelToggle { display:none; }
 
 /* ── Collapsible panel ────────────────────────────── */
 #panel {
   position:fixed; bottom:26px; left:50%;
   transform:translateX(-50%);
   width:min(720px, 96vw);
-  background:rgba(3,3,3,0.95);
-  border:1px solid rgba(255,255,255,0.08); border-bottom:none;
+  background:transparent;
+  border:1px solid transparent; border-bottom:none;
   overflow:hidden;
   max-height:0;
-  transition:max-height .3s cubic-bezier(.4,0,.2,1);
-  z-index:99;
-  backdrop-filter:blur(8px);
+  transition:max-height .3s cubic-bezier(.4,0,.2,1), border-color 0s .3s, background 0s .3s;
+  z-index:9999999;
 }
-#panel.open { max-height:520px; overflow-y:auto; }
+#panel.open {
+  max-height:520px; overflow-y:auto;
+  background:rgba(3,3,3,0.95);
+  backdrop-filter:blur(8px);
+  border-color:rgba(255,255,255,0.08);
+  transition:max-height .3s cubic-bezier(.4,0,.2,1), border-color 0s 0s, background 0s 0s;
+}
 
 #panelInner {
   padding:14px 20px 20px;
@@ -103,6 +240,26 @@ button.on    { border-color:rgba(255,255,255,.38); color:#fff; background:rgba(2
   font-size:.58rem; color:rgba(255,255,255,.3);
   width:32px; text-align:right; letter-spacing:.04em; flex-shrink:0;
 }
+.srow .modval {
+  font-size:.55rem; color:rgba(140,255,180,0.9);
+  min-width:28px; text-align:right; flex-shrink:0;
+  display:none;
+}
+.srow .modval.active { display:block; }
+.pmute {
+  width:13px; height:13px; padding:0; font-size:.6rem; line-height:1;
+  border:none; background:transparent; cursor:pointer; flex-shrink:0;
+  color:rgba(255,255,255,0.12); border-radius:50%;
+}
+.pmute.patched { color:rgba(140,255,180,0.65); }
+.pmute.muted   { color:rgba(255,80,80,0.85); }
+.spdbtn {
+  flex:1; padding:1px 0; font-size:.48rem; letter-spacing:.06em;
+  border:1px solid rgba(255,255,255,0.08);
+  background:transparent; color:rgba(255,255,255,0.25); cursor:pointer;
+  border-radius:2px;
+}
+.spdbtn.on { border-color:rgba(255,255,255,.3); color:rgba(255,255,255,.7); background:rgba(255,255,255,0.06); }
 .srow select {
   flex:1; background:rgba(255,255,255,0.04);
   border:1px solid rgba(255,255,255,0.1);
@@ -110,14 +267,97 @@ button.on    { border-color:rgba(255,255,255,.38); color:#fff; background:rgba(2
   padding:2px 4px; cursor:pointer; outline:none;
 }
 .srow select option { background:#111; }
+/* ── LFO panel ────────────────────────────────────── */
+#lfoToggle { display:none; }
+#lfoToggle:hover { color:rgba(255,255,255,.7); }
+#lfoToggle.open  { color:rgba(255,255,255,.6); border-color:rgba(255,255,255,.2); }
+#lfoPanel {
+  position:fixed; top:0; right:0;
+  width:0;
+  height:100vh;
+  background:transparent;
+  border:none;
+  overflow:hidden;
+  transition:width .3s cubic-bezier(.4,0,.2,1);
+  z-index:9999999;
+}
+#lfoPanel.open { width:252px; overflow-y:auto; }
+#lfoPanelInner {
+  padding:44px 8px 16px 14px;
+  display:flex; flex-direction:column;
+  gap:8px; min-width:214px;
+}
+.lfocol {
+  display:flex; flex-direction:column; gap:5px;
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:4px;
+  background:rgba(4,4,4,1);
+  padding:8px 9px 10px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.7);
+}
+.lfocol-title {
+  font-size:.52rem; color:rgba(255,255,255,.28);
+  letter-spacing:.2em; margin-bottom:2px;
+}
+.lfocol canvas {
+  display:block; width:100%; height:36px;
+  background:rgba(0,0,0,0.6); margin-bottom:2px;
+}
+.psel {
+  flex-shrink:0; width:28px;
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.07);
+  color:rgba(255,255,255,0.25); font:.5rem monospace;
+  padding:0; cursor:pointer; outline:none;
+}
+.psel.patched { border-color:rgba(255,180,60,.6); color:rgba(255,180,60,.9); }
+.psel option { background:#111; }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 
-<div id="info">
-  GEN <span id="gen">0</span><br>
-  POP <span id="pop">0</span>
+<img src="resources/assets/3rd_eye.svg" id="svg-eye" alt="">
+<img src="resources/assets/logo_cc.svg" id="svg-logo" alt="">
+
+<!-- Science panels -->
+<div id="sci-row">
+  <div id="panel-lorenz" class="sci-panel">
+    <div class="sci-title">// LORENZ ATTRACTOR</div>
+    <canvas id="lorenz-c" class="sci-canvas" width="146" height="70"></canvas>
+    <div class="sci-val">σ=10 ρ=28 β=8/3</div>
+  </div>
+  <div id="panel-entropy" class="sci-panel">
+    <div class="sci-title">// SEMIOSE SIGNAL</div>
+    <canvas id="entropy-c" class="sci-canvas" width="146" height="70"></canvas>
+    <div class="sci-val" id="entropy-val">H = 0.000</div>
+  </div>
+  <div id="panel-quorum" class="sci-panel">
+    <div class="sci-title">// QUORUM STATE</div>
+    <canvas id="quorum-c" class="sci-canvas" width="146" height="70"></canvas>
+    <div class="sci-val" id="quorum-val">— —</div>
+  </div>
+</div>
+
+<div id="infopanel">
+  <div class="ip-row">
+    <span class="ip-slash">//</span>
+    <span class="ip-label">Generation</span>
+    <span class="ip-field">
+      <span class="ip-bracket">&lt;</span>
+      <span class="ip-gen-val" id="gen">0</span>
+      <span class="ip-bracket">&gt;</span>
+    </span>
+  </div>
+  <div class="ip-row">
+    <span class="ip-slash">//</span>
+    <span class="ip-label">Population</span>
+    <span class="ip-field">
+      <span class="ip-bracket">&lt;</span>
+      <span class="ip-pop-val" id="pop">0</span>
+      <span class="ip-bracket">&gt;</span>
+    </span>
+  </div>
 </div>
 <div id="legend"></div>
 
@@ -173,6 +413,25 @@ button.on    { border-color:rgba(255,255,255,.38); color:#fff; background:rgba(2
           <button id="bHoverAction">draw</button>
           <button id="bCamera">cam: off</button>
         </div>
+        <div class="brow" id="camModeRow" style="display:none;flex-wrap:wrap;gap:3px">
+          <button class="cammode-btn on" data-mode="0">burst/void</button>
+          <button class="cammode-btn" data-mode="1">meteors</button>
+          <button class="cammode-btn" data-mode="2">zones</button>
+          <button class="cammode-btn" data-mode="3">stille=tod</button>
+          <button class="cammode-btn" data-mode="4">brightness</button>
+          <button class="cammode-btn" data-mode="5">silhouette</button>
+          <button class="cammode-btn" data-mode="6">kanten</button>
+          <button class="cammode-btn" data-mode="7">verfolgung</button>
+          <button id="bCaptureBg" style="opacity:0.4" title="Hintergrund einfrieren (B)">⊙ bg</button>
+        </div>
+      </div>
+
+      <div class="psec">
+        <span class="psec-label">PRESETS</span>
+        <div class="brow">
+          <button id="bSave">⇩ save</button>
+          <button id="bLoad">⇧ load</button>
+        </div>
       </div>
 
     </div>
@@ -183,8 +442,8 @@ button.on    { border-color:rgba(255,255,255,.38); color:#fff; background:rgba(2
 
       <div class="srow">
         <label>speed</label>
-        <input type="range" id="sSpeed" min="2" max="60" value="30">
-        <span class="val" id="vSpeed">30</span>
+        <select class="psel" id="pFps"><option value="-1">—</option><option value="0">L1</option><option value="1">L2</option><option value="2">L3</option></select><input type="range" id="sSpeed" min="2" max="60" value="30">
+        <span class="val" id="vSpeed">30</span><span class="modval" id="mSpeed"></span><button class="pmute" id="mutFps" title="mute mod">◎</button>
       </div>
       <div class="srow">
         <label>cell size</label>
@@ -193,13 +452,13 @@ button.on    { border-color:rgba(255,255,255,.38); color:#fff; background:rgba(2
       </div>
       <div class="srow">
         <label>mutation</label>
-        <input type="range" id="sMutation" min="0" max="100" value="0">
-        <span class="val" id="vMutation">0</span>
+        <select class="psel" id="pMut"><option value="-1">—</option><option value="0">L1</option><option value="1">L2</option><option value="2">L3</option></select><input type="range" id="sMutation" min="0" max="100" value="0">
+        <span class="val" id="vMutation">0</span><span class="modval" id="mMutation"></span><button class="pmute" id="mutMut" title="mute mod">◎</button>
       </div>
       <div class="srow">
         <label>trail</label>
-        <input type="range" id="sTrail" min="0" max="99" value="82">
-        <span class="val" id="vTrail">.82</span>
+        <select class="psel" id="pTrail"><option value="-1">—</option><option value="0">L1</option><option value="1">L2</option><option value="2">L3</option></select><input type="range" id="sTrail" min="0" max="99" value="82">
+        <span class="val" id="vTrail">.82</span><span class="modval" id="mTrail"></span><button class="pmute" id="mutTrail" title="mute mod">◎</button>
       </div>
       <div class="srow">
         <label>density</label>
@@ -216,39 +475,51 @@ button.on    { border-color:rgba(255,255,255,.38); color:#fff; background:rgba(2
         <button id="bRotate" style="flex-shrink:0;padding:3px 8px;font-size:.58rem">⟳ off</button>
       </div>
       <div class="srow">
+        <label>hollow</label>
+        <button id="bHollow" style="flex-shrink:0;padding:3px 8px;font-size:.58rem" class="on">on</button>
+        <select class="psel" id="pHollow"><option value="-1">—</option><option value="0">L1</option><option value="1">L2</option><option value="2">L3</option></select>
+        <input type="range" id="sHollow" min="1" max="95" value="28" style="flex:1">
+        <span class="val" id="vHollow">28</span><span class="modval" id="mHollow"></span><button class="pmute" id="mutHollow" title="mute mod">◎</button>
+      </div>
+      <div class="srow">
         <label>evt radius</label>
-        <input type="range" id="sRadius" min="4" max="80" value="25">
-        <span class="val" id="vRadius">25</span>
+        <select class="psel" id="pRadius"><option value="-1">—</option><option value="0">L1</option><option value="1">L2</option><option value="2">L3</option></select><input type="range" id="sRadius" min="4" max="80" value="25">
+        <span class="val" id="vRadius">25</span><span class="modval" id="mRadius"></span><button class="pmute" id="mutRadius" title="mute mod">◎</button>
+      </div>
+      <div class="srow">
+        <label>meteor cnt</label>
+        <input type="range" id="sMeteorCnt" min="1" max="12" value="2">
+        <span class="val" id="vMeteorCnt">2</span>
       </div>
       <div class="srow">
         <label>brush lag</label>
-        <input type="range" id="sOffset" min="0" max="97" value="0">
-        <span class="val" id="vOffset">0</span>
+        <select class="psel" id="pLag"><option value="-1">—</option><option value="0">L1</option><option value="1">L2</option><option value="2">L3</option></select><input type="range" id="sOffset" min="0" max="97" value="0">
+        <span class="val" id="vOffset">0</span><span class="modval" id="mOffset"></span><button class="pmute" id="mutLag" title="mute mod">◎</button>
       </div>
       <div class="srow">
         <label>hue shift</label>
-        <input type="range" id="sHue" min="0" max="360" value="0">
-        <span class="val" id="vHue">0°</span>
+        <select class="psel" id="pHue"><option value="-1">—</option><option value="0">L1</option><option value="1">L2</option><option value="2">L3</option></select><input type="range" id="sHue" min="0" max="360" value="0">
+        <span class="val" id="vHue">0°</span><span class="modval" id="mHue"></span><button class="pmute" id="mutHue" title="mute mod">◎</button>
       </div>
       <div class="srow">
         <label>saturation</label>
-        <input type="range" id="sSat" min="0" max="200" value="100">
-        <span class="val" id="vSat">100%</span>
+        <select class="psel" id="pSat"><option value="-1">—</option><option value="0">L1</option><option value="1">L2</option><option value="2">L3</option></select><input type="range" id="sSat" min="0" max="200" value="100">
+        <span class="val" id="vSat">100%</span><span class="modval" id="mSat"></span><button class="pmute" id="mutSat" title="mute mod">◎</button>
       </div>
       <div class="srow">
         <label>hue drift</label>
-        <input type="range" id="sHueDrift" min="0" max="30" value="0">
-        <span class="val" id="vHueDrift">0</span>
+        <select class="psel" id="pDrift"><option value="-1">—</option><option value="0">L1</option><option value="1">L2</option><option value="2">L3</option></select><input type="range" id="sHueDrift" min="0" max="30" value="0">
+        <span class="val" id="vHueDrift">0</span><span class="modval" id="mHueDrift"></span><button class="pmute" id="mutDrift" title="mute mod">◎</button>
       </div>
       <div class="srow">
         <label>glow</label>
-        <input type="range" id="sGlow" min="0" max="100" value="0">
-        <span class="val" id="vGlow">0</span>
+        <select class="psel" id="pGlow"><option value="-1">—</option><option value="0">L1</option><option value="1">L2</option><option value="2">L3</option></select><input type="range" id="sGlow" min="0" max="100" value="0">
+        <span class="val" id="vGlow">0</span><span class="modval" id="mGlow"></span><button class="pmute" id="mutGlow" title="mute mod">◎</button>
       </div>
       <div class="srow">
         <label>age bright</label>
-        <input type="range" id="sAgeBright" min="0" max="100" value="0">
-        <span class="val" id="vAgeBright">0</span>
+        <select class="psel" id="pAgeBright"><option value="-1">—</option><option value="0">L1</option><option value="1">L2</option><option value="2">L3</option></select><input type="range" id="sAgeBright" min="0" max="100" value="0">
+        <span class="val" id="vAgeBright">0</span><span class="modval" id="mAgeBright"></span><button class="pmute" id="mutAgeBright" title="mute mod">◎</button>
       </div>
       <div class="srow">
         <label>cam blend</label>
@@ -264,6 +535,70 @@ button.on    { border-color:rgba(255,255,255,.38); color:#fff; background:rgba(2
       </div>
     </div>
 
+  </div>
+</div>
+
+<input type="file" id="presetFile" accept=".json" style="display:none">
+<button id="lfoToggle">∿ lfos</button>
+<div id="lfoPanel">
+  <div id="lfoPanelInner">
+    <div class="lfocol">
+      <div class="lfocol-title" style="display:flex;justify-content:space-between;align-items:center">LFO 1 <button id="lfoPause0" style="padding:1px 7px;font-size:.52rem">⏸</button></div>
+      <canvas id="lfoC0" width="160" height="36"></canvas>
+      <div class="srow"><label>wave</label><select id="lfoW0"><option value="sin">sin</option><option value="tri">tri</option><option value="rect">rect</option><option value="rnd">rnd</option></select></div>
+      <div class="srow"><label>speed</label>
+        <div style="display:flex;flex-direction:column;gap:3px;flex:1">
+          <div style="display:flex;gap:3px">
+            <button class="spdbtn on" data-lfo="0" data-rng="lo">lo</button>
+            <button class="spdbtn" data-lfo="0" data-rng="mid">mid</button>
+            <button class="spdbtn" data-lfo="0" data-rng="hi">hi</button>
+          </div>
+          <input type="range" id="lfoSpd0" min="0.1" max="10" step="0.1" value="10">
+        </div>
+        <span class="val" id="lfoSpdV0">10</span></div>
+      <div class="srow"><label>offset</label><input type="range" id="lfoOff0" min="-100" max="100" value="0"><span class="val" id="lfoOffV0">0</span></div>
+      <div class="srow"><label>attn</label><input type="range" id="lfoAtn0" min="0" max="100" value="100"><span class="val" id="lfoAtnV0">1.0</span></div>
+      <div class="srow"><label>fm src</label><select id="lfoMod0"><option value="-1">none</option><option value="1">L2</option><option value="2">L3</option></select></div>
+      <div class="srow"><label>fm depth</label><input type="range" id="lfoMdp0" min="0" max="100" value="0"><span class="val" id="lfoMdpV0">0.00</span></div>
+    </div>
+    <div class="lfocol">
+      <div class="lfocol-title" style="display:flex;justify-content:space-between;align-items:center">LFO 2 <button id="lfoPause1" style="padding:1px 7px;font-size:.52rem">⏸</button></div>
+      <canvas id="lfoC1" width="160" height="36"></canvas>
+      <div class="srow"><label>wave</label><select id="lfoW1"><option value="sin">sin</option><option value="tri">tri</option><option value="rect">rect</option><option value="rnd">rnd</option></select></div>
+      <div class="srow"><label>speed</label>
+        <div style="display:flex;flex-direction:column;gap:3px;flex:1">
+          <div style="display:flex;gap:3px">
+            <button class="spdbtn on" data-lfo="1" data-rng="lo">lo</button>
+            <button class="spdbtn" data-lfo="1" data-rng="mid">mid</button>
+            <button class="spdbtn" data-lfo="1" data-rng="hi">hi</button>
+          </div>
+          <input type="range" id="lfoSpd1" min="0.1" max="10" step="0.1" value="10">
+        </div>
+        <span class="val" id="lfoSpdV1">10</span></div>
+      <div class="srow"><label>offset</label><input type="range" id="lfoOff1" min="-100" max="100" value="0"><span class="val" id="lfoOffV1">0</span></div>
+      <div class="srow"><label>attn</label><input type="range" id="lfoAtn1" min="0" max="100" value="100"><span class="val" id="lfoAtnV1">1.0</span></div>
+      <div class="srow"><label>fm src</label><select id="lfoMod1"><option value="-1">none</option><option value="0">L1</option><option value="2">L3</option></select></div>
+      <div class="srow"><label>fm depth</label><input type="range" id="lfoMdp1" min="0" max="100" value="0"><span class="val" id="lfoMdpV1">0.00</span></div>
+    </div>
+    <div class="lfocol">
+      <div class="lfocol-title" style="display:flex;justify-content:space-between;align-items:center">LFO 3 <button id="lfoPause2" style="padding:1px 7px;font-size:.52rem">⏸</button></div>
+      <canvas id="lfoC2" width="160" height="36"></canvas>
+      <div class="srow"><label>wave</label><select id="lfoW2"><option value="sin">sin</option><option value="tri">tri</option><option value="rect">rect</option><option value="rnd">rnd</option></select></div>
+      <div class="srow"><label>speed</label>
+        <div style="display:flex;flex-direction:column;gap:3px;flex:1">
+          <div style="display:flex;gap:3px">
+            <button class="spdbtn on" data-lfo="2" data-rng="lo">lo</button>
+            <button class="spdbtn" data-lfo="2" data-rng="mid">mid</button>
+            <button class="spdbtn" data-lfo="2" data-rng="hi">hi</button>
+          </div>
+          <input type="range" id="lfoSpd2" min="0.1" max="10" step="0.1" value="10">
+        </div>
+        <span class="val" id="lfoSpdV2">10</span></div>
+      <div class="srow"><label>offset</label><input type="range" id="lfoOff2" min="-100" max="100" value="0"><span class="val" id="lfoOffV2">0</span></div>
+      <div class="srow"><label>attn</label><input type="range" id="lfoAtn2" min="0" max="100" value="100"><span class="val" id="lfoAtnV2">1.0</span></div>
+      <div class="srow"><label>fm src</label><select id="lfoMod2"><option value="-1">none</option><option value="0">L1</option><option value="1">L2</option></select></div>
+      <div class="srow"><label>fm depth</label><input type="range" id="lfoMdp2" min="0" max="100" value="0"><span class="val" id="lfoMdpV2">0.00</span></div>
+    </div>
   </div>
 </div>
 
@@ -302,11 +637,11 @@ window.addEventListener('resize', () => { resize(); initGrids(); randomFill(); }
 
 const TYPES = [
   null,
-  { name:'Pioneer',   birth:[3],        survive:[2,3],       color:[80,200,255]  },
-  { name:'Spreader',  birth:[3,6],      survive:[2,3,4],     color:[255,120,60]  },
-  { name:'Clusterer', birth:[3,4,5],    survive:[4,5,6,7],   color:[60,220,120]  },
-  { name:'Nomad',     birth:[3],        survive:[1,2,3,4],   color:[220,80,220]  },
-  { name:'Ghost',     birth:[2,5],      survive:[1,2,3,5,6], color:[180,240,200] },
+  { name:'Pioneer',   birth:[3],        survive:[2,3],       color:[0,180,255]   },  // H=200 cyan-blue
+  { name:'Spreader',  birth:[3,6],      survive:[2,3,4],     color:[110,30,255]  },  // H=272 violet
+  { name:'Clusterer', birth:[3,4,5],    survive:[4,5,6,7],   color:[255,30,90]   },  // H=344 red-pink
+  { name:'Nomad',     birth:[3],        survive:[1,2,3,4],   color:[255,210,0]   },  // H=56  yellow
+  { name:'Ghost',     birth:[2,5],      survive:[1,2,3,5,6], color:[30,255,110]  },  // H=128 green
 ];
 
 // Pre-keyed color arrays (avoid property lookup in hot render loop)
@@ -347,7 +682,8 @@ let trailDecay   = 0.82;   // pixel RGB decay factor per frame
 let fillDensity  = 0.28;
 let targetFps    = 30;
 let bwMode       = false;
-let eventRadius  = 25;     // radius used by chaos/void bursts
+let eventRadius  = 25;     // radius used by chaos/void bursts + meteor size
+let meteorCount  = 2;      // how many meteors per trigger
 let hueShift     = 0;      // 0–360 degrees
 let satScale     = 1.0;    // 0–2.0
 let hueDrift     = 0;      // degrees per tick
@@ -358,7 +694,35 @@ let drawOnHover  = false;
 let hoverErase   = false;
 let cameraOn     = false;
 let videoEl      = null;
+let camMode      = 0;           // active camera interaction mode (single)
 let blendMode    = 'screen';
+// Shape hollow
+let shapeHollow = true;
+let hollowThick = 0.28;
+// LFO state
+const lfos = [0,1,2].map(() => ({ wave:'sin', speed:10, offset:0, attn:1, phase:0, modSrc:-1, modDepth:0, rndVal:0, paused:false }));
+// Patch routing: base values (slider raw) + which LFO is assigned
+const baseVals = { fps:30, mutation:0, trail:82, radius:25, lag:0, hue:0, sat:100, drift:0, glow:0, ageBright:0, hollow:28 };
+const patchMap  = { fps:-1, mutation:-1, trail:-1, radius:-1, lag:-1, hue:-1, sat:-1, drift:-1, glow:-1, ageBright:-1, hollow:-1 };
+const pRanges   = { fps:[2,60], mutation:[0,100], trail:[0,99], radius:[4,80], lag:[0,97], hue:[0,360], sat:[0,200], drift:[0,30], glow:[0,100], ageBright:[0,100], hollow:[1,95] };
+const sliderIds  = { fps:'sSpeed', mutation:'sMutation', trail:'sTrail', radius:'sRadius', lag:'sOffset', hue:'sHue', sat:'sSat', drift:'sHueDrift', glow:'sGlow', ageBright:'sAgeBright', hollow:'sHollow' };
+const modValIds  = { fps:'mSpeed', mutation:'mMutation', trail:'mTrail', radius:'mRadius', lag:'mOffset', hue:'mHue', sat:'mSat', drift:'mHueDrift', glow:'mGlow', ageBright:'mAgeBright', hollow:'mHollow' };
+const muteIds    = { fps:'mutFps', mutation:'mutMut', trail:'mutTrail', radius:'mutRadius', lag:'mutLag', hue:'mutHue', sat:'mutSat', drift:'mutDrift', glow:'mutGlow', ageBright:'mutAgeBright', hollow:'mutHollow' };
+const muteMap    = { fps:false, mutation:false, trail:false, radius:false, lag:false, hue:false, sat:false, drift:false, glow:false, ageBright:false, hollow:false };
+const pselIds    = { fps:'pFps', mutation:'pMut', trail:'pTrail', radius:'pRadius', lag:'pLag', hue:'pHue', sat:'pSat', drift:'pDrift', glow:'pGlow', ageBright:'pAgeBright', hollow:'pHollow' };
+const modValFmt  = {
+  fps:       v => (v|0)+'',
+  mutation:  v => (v|0)+'',
+  trail:     v => (v/100).toFixed(2),
+  radius:    v => (v|0)+'',
+  lag:       v => (v|0)+'',
+  hue:       v => (v|0)+'°',
+  sat:       v => (v|0)+'%',
+  drift:     v => (v|0)+'',
+  glow:      v => (v|0)+'',
+  ageBright: v => (v|0)+'',
+  hollow:    v => (v|0)+'',
+};
 
 // Derived display colors — rebuilt when hue/sat changes
 const DR = new Uint8Array(6), DG = new Uint8Array(6), DB = new Uint8Array(6);
@@ -404,10 +768,14 @@ function stepClassic() {
       }
       const t = typeAt(r,c);
       const idx = i(r,c);
-      if (t>0 && (n===2||n===3)) { nt[idx]=t; na[idx]=age_grid[idx]+1; }
-      else if (t===0) {
-        if (n===3) { nt[idx]=1; na[idx]=1; }
-        else if (mutationRate>0 && Math.random()<mutationRate) { nt[idx]=1; na[idx]=1; }
+      if (t>0 && (n===2||n===3)) {
+        // Reclassify by survival pressure each step:
+        // n=2 sparse/edge → type 2 (Spreader/violet), n=3 dense/core → type 3 (Clusterer/red)
+        nt[idx] = (n===2) ? 2 : 3;
+        na[idx] = age_grid[idx]+1;
+      } else if (t===0) {
+        if (n===3) { nt[idx]=1; na[idx]=1; }  // born → type 1 (Pioneer/cyan)
+        else if (mutationRate>0 && Math.random()<mutationRate) { nt[idx]=4; na[idx]=1; } // mutation → type 4 (Nomad/yellow)
       }
     }
   }
@@ -728,10 +1096,11 @@ const PULSAR = [
 ];
 
 // ── Variation tools ───────────────────────────────────────────────────────────
-function dropMeteor(count=1) {
+function dropMeteor(count=meteorCount) {
   const numTypes = MODES[modeIdx] === 'classic' ? 1 : 5;
   for (let m=0; m<count; m++) {
-    const size = 8 + Math.floor(Math.random()*14);
+    const base = Math.max(4, eventRadius * 0.6 | 0);
+    const size = base + Math.floor(Math.random() * Math.max(1, base * 0.5));
     const r0 = 2 + Math.floor(Math.random()*(ROWS-size-4));
     const c0 = 2 + Math.floor(Math.random()*(COLS-size-4));
     for (let dr=0; dr<size; dr++) {
@@ -779,6 +1148,118 @@ function voidBurst() {
   }
 }
 
+// ── LFO engine ────────────────────────────────────────────────────────────────
+function lfoOut(idx) {
+  const lfo = lfos[idx];
+  let ph = lfo.phase;
+  if (lfo.modSrc >= 0 && lfo.modSrc !== idx) {
+    const ms = lfos[lfo.modSrc];
+    const mt = ((ms.phase % 1) + 1) % 1;
+    const mv = ms.wave==='sin'  ? Math.sin(mt*Math.PI*2) :
+               ms.wave==='tri'  ? (mt<0.5?4*mt-1:3-4*mt) :
+               ms.wave==='rect' ? (mt<0.5?1:-1) : ms.rndVal;
+    ph += mv * lfo.modDepth;
+  }
+  const t = ((ph % 1) + 1) % 1;
+  const v = lfo.wave==='sin'  ? Math.sin(t*Math.PI*2) :
+            lfo.wave==='tri'  ? (t<0.5?4*t-1:3-4*t) :
+            lfo.wave==='rect' ? (t<0.5?1:-1) : lfo.rndVal;
+  return Math.max(-1, Math.min(1, (v + lfo.offset) * lfo.attn));
+}
+
+function advanceLFOs() {
+  for (let k=0; k<3; k++) {
+    const lfo = lfos[k];
+    if (lfo.paused) continue;
+    const prev = lfo.phase;
+    lfo.phase += lfo.speed * 0.001;
+    if (lfo.wave === 'rnd' && Math.floor(lfo.phase) !== Math.floor(prev))
+      lfo.rndVal = Math.random() * 2 - 1;
+  }
+}
+
+function applyPatches() {
+  let needColors = false;
+  for (const key in patchMap) {
+    const li = patchMap[key];
+    if (li < 0 || muteMap[key]) continue;
+    const [mn, mx] = pRanges[key];
+    const slEl = document.getElementById(sliderIds[key]);
+    const atten = slEl ? (+slEl.value / +slEl.max) : 0.5;
+    const v = Math.max(mn, Math.min(mx, baseVals[key] + lfoOut(li) * (mx - mn) * atten));
+    switch(key) {
+      case 'fps':       targetFps    = v|0; break;
+      case 'mutation':  mutationRate = v/100*0.004; break;
+      case 'trail':     trailDecay   = v/100; break;
+      case 'radius':    eventRadius  = v|0; break;
+      case 'lag':       brushLag     = v/100; break;
+      case 'hue':       hueShift     = v; needColors=true; break;
+      case 'sat':       satScale     = v/100; needColors=true; break;
+      case 'drift':     hueDrift     = v; break;
+      case 'glow':      glowAmount   = v/100; break;
+      case 'ageBright': ageBright    = v/100; break;
+      case 'hollow':    hollowThick  = v/100; break;
+    }
+    const mEl = document.getElementById(modValIds[key]);
+    if (mEl) mEl.textContent = modValFmt[key](v);
+  }
+  if (needColors) rebuildColors();
+}
+
+function drawLFOCanvases() {
+  for (let k=0; k<3; k++) {
+    const cv = document.getElementById('lfoC'+k);
+    if (!cv) continue;
+    const lc = cv.getContext('2d');
+    const cw = cv.width, ch = cv.height;
+    lc.fillStyle = '#050505';
+    lc.fillRect(0, 0, cw, ch);
+    const lfo = lfos[k];
+    const cycles = Math.max(1, Math.round(lfo.speed / 10));
+    // midline + cycle dividers
+    lc.strokeStyle = 'rgba(255,255,255,0.07)';
+    lc.lineWidth = 1;
+    lc.beginPath(); lc.moveTo(0, ch/2); lc.lineTo(cw, ch/2); lc.stroke();
+    if (cycles > 1) {
+      lc.setLineDash([2,3]);
+      for (let c=1; c<cycles; c++) {
+        const cx = (c/cycles)*cw;
+        lc.beginPath(); lc.moveTo(cx, 0); lc.lineTo(cx, ch); lc.stroke();
+      }
+      lc.setLineDash([]);
+    }
+    // wave — x=cw is "now" (lfo.phase), x=0 is (cycles) cycles ago
+    lc.strokeStyle = 'rgba(140,255,160,0.8)';
+    lc.lineWidth = 1.5;
+    lc.beginPath();
+    for (let x=0; x<cw; x++) {
+      const t0 = lfo.phase + (x/cw - 1) * cycles;
+      let ph = t0;
+      if (lfo.modSrc >= 0 && lfo.modSrc !== k) {
+        const ms = lfos[lfo.modSrc];
+        const speedRatio = ms.paused ? 0 : (ms.speed / Math.max(lfo.speed, 0.001));
+        const mt = ((t0 * speedRatio) % 1 + 1) % 1;
+        const mv = ms.wave==='sin'  ? Math.sin(mt*Math.PI*2) :
+                   ms.wave==='tri'  ? (mt<0.5?4*mt-1:3-4*mt) :
+                   ms.wave==='rect' ? (mt<0.5?1:-1) : ms.rndVal;
+        ph += mv * lfo.modDepth;
+      }
+      const nt = ((ph % 1) + 1) % 1;
+      const v  = lfo.wave==='sin'  ? Math.sin(nt*Math.PI*2) :
+                 lfo.wave==='tri'  ? (nt<0.5?4*nt-1:3-4*nt) :
+                 lfo.wave==='rect' ? (nt<0.5?1:-1) : lfo.rndVal;
+      const vy = Math.max(-1, Math.min(1, (v + lfo.offset) * lfo.attn));
+      const y  = (1 - (vy+1)/2) * (ch-2) + 1;
+      x===0 ? lc.moveTo(x, y) : lc.lineTo(x, y);
+    }
+    lc.stroke();
+    // playhead at right edge = current moment
+    lc.strokeStyle = 'rgba(255,80,80,0.9)';
+    lc.lineWidth = 1;
+    lc.beginPath(); lc.moveTo(cw-1, 0); lc.lineTo(cw-1, ch); lc.stroke();
+  }
+}
+
 // ── Legende ───────────────────────────────────────────────────────────────────
 function updateLegend() {
   const leg = document.getElementById('legend');
@@ -812,19 +1293,26 @@ function inShape(dr, dc, radius) {
     const rdc = dr * sin + dc * cos;
     dr = rdr; dc = rdc;
   }
-  const thick = Math.max(1, radius * 0.28); // hollow ring thickness
+  if (!shapeHollow) {
+    if (brushShape === 'circle') return dr*dr + dc*dc <= radius*radius;
+    if (brushShape === 'rect')   return Math.abs(dr) <= radius && Math.abs(dc) <= radius;
+    const hw = radius * (radius - dr) / (2 * radius); // tri ▽
+    return dr >= -radius && dr <= radius && Math.abs(dc) <= hw;
+  }
+  const thick = Math.max(1, radius * hollowThick);
   if (brushShape === 'circle') {
     const d2 = dr*dr + dc*dc, r2 = radius*radius;
     const inner = radius - thick;
     return d2 <= r2 && d2 >= inner*inner;
   } else if (brushShape === 'rect') {
-    return Math.abs(dr) <= radius && Math.abs(dc) <= radius;
-  } else { // tri ▽ — hollow outline only
-    const halfW = radius * (radius - dr) / (2 * radius);
-    const halfWinner = Math.max(0, halfW - thick);
-    const inOuter = dr >= -radius && dr <= radius && Math.abs(dc) <= halfW;
-    const inInner = dr >= -radius + thick && dr <= radius - thick && Math.abs(dc) <= halfWinner;
-    return inOuter && !inInner;
+    return Math.abs(dr) <= radius && Math.abs(dc) <= radius &&
+           !(Math.abs(dr) < radius - thick && Math.abs(dc) < radius - thick);
+  } else { // tri ▽
+    const halfW  = radius * (radius - dr) / (2 * radius);
+    const halfWi = Math.max(0, halfW - thick);
+    const inOut  = dr >= -radius && dr <= radius && Math.abs(dc) <= halfW;
+    const inIn   = dr >= -radius + thick && dr <= radius - thick && Math.abs(dc) <= halfWi;
+    return inOut && !inIn;
   }
 }
 
@@ -933,6 +1421,16 @@ function startStop() {
   if (running) requestAnimationFrame(loop);
 }
 
+// ── LFO tick (always running, independent of sim) ───────────────────────────────
+function lfoTick() {
+  requestAnimationFrame(lfoTick);
+  advanceLFOs();
+  applyPatches();
+  _camTick();
+  if (document.getElementById('lfoPanel').classList.contains('open')) drawLFOCanvases();
+}
+requestAnimationFrame(lfoTick);
+
 // ── Buttons ───────────────────────────────────────────────────────────────────
 document.getElementById('bPlay').onclick   = startStop;
 document.getElementById('bStep').onclick   = ()=>{ if(!running){ if(antMode)stepAnts();else step(); draw(); } };
@@ -978,7 +1476,7 @@ document.getElementById('bAnt').onclick    = ()=>{
 };
 document.getElementById('bChaos').onclick  = ()=>{ chaosBurst(); draw(); };
 document.getElementById('bVoid').onclick   = ()=>{ voidBurst();  draw(); };
-document.getElementById('bMeteor').onclick = ()=>{ dropMeteor(2); draw(); };
+document.getElementById('bMeteor').onclick = ()=>{ dropMeteor(); draw(); };
 document.getElementById('bShot').onclick   = ()=>{
   const a = document.createElement('a');
   a.download = `primordial_${generation}.png`;
@@ -1003,36 +1501,281 @@ document.getElementById('bCamera').onclick = () => {
     if (videoEl && videoEl.srcObject)
       videoEl.srcObject.getTracks().forEach(t => t.stop());
     videoEl = null; cameraOn = false; offCanvas = null; offCtx = null;
+    document.getElementById('camModeRow').style.display = 'none';
     const btn = document.getElementById('bCamera');
     btn.textContent = 'cam: off'; btn.classList.remove('on');
-  } else {
-    navigator.mediaDevices.getUserMedia({video: true, audio: false})
-      .then(stream => {
-        videoEl = document.createElement('video');
-        videoEl.srcObject = stream;
-        videoEl.muted = true;
-        videoEl.autoplay = true;
-        videoEl.playsInline = true;
-        videoEl.onloadedmetadata = () => { videoEl.play(); if (!running) draw(); };
-        videoEl.play();
+    return;
+  }
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    alert('getUserMedia not available.\nOpen via http://localhost:8080 in Chrome, not file://');
+    return;
+  }
+  navigator.mediaDevices.getUserMedia({video: {width:320, height:240, facingMode:'user'}, audio: false})
+    .then(stream => {
+      videoEl = document.createElement('video');
+      videoEl.srcObject = stream;
+      videoEl.muted = true;
+      videoEl.autoplay = true;
+      videoEl.playsInline = true;
+      videoEl.oncanplay = () => {
         cameraOn = true;
         offCanvas = document.createElement('canvas');
         offCanvas.width = W; offCanvas.height = H;
         offCtx = offCanvas.getContext('2d', {alpha: false});
+        document.getElementById('camModeRow').style.display = '';
         const btn = document.getElementById('bCamera');
         btn.textContent = 'cam: on'; btn.classList.add('on');
-      })
-      .catch(() => { alert('camera access denied'); });
-  }
+        if (!running) draw();
+      };
+      videoEl.play().catch(e => alert('video.play() failed: ' + e));
+    })
+    .catch(err => { alert('camera error: ' + err.name + ' — ' + err.message); });
 };
+
+document.querySelectorAll('.cammode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    camMode = +btn.dataset.mode;
+    document.querySelectorAll('.cammode-btn').forEach(b => b.classList.toggle('on', b === btn));
+    const bgBtn = document.getElementById('bCaptureBg');
+    if (bgBtn) bgBtn.style.opacity = (camMode === 5 || camMode === 6 || camMode === 7) ? '1' : '0.4';
+  });
+});
+document.getElementById('bCaptureBg').addEventListener('click', _captureBg);
+
+// ── Camera Motion Analysis ────────────────────────────────────────────────────
+// Uses a tiny 80×45 scratch canvas — very cheap on CPU
+const _motW = 80, _motH = 45;
+const _motCanvas = document.createElement('canvas');
+_motCanvas.width = _motW; _motCanvas.height = _motH;
+const _motCtx = _motCanvas.getContext('2d', {alpha:false, willReadFrequently:true});
+let _prevMotData = null;
+let _bgData       = null;  // frozen background for silhouette mode
+let _motFrameCount = 0;
+let _silenceTimer = 0;   // frames without motion (mode 3)
+
+function _captureBg() {
+  if (!cameraOn || !videoEl || videoEl.readyState < 2) return;
+  _motCtx.save();
+  _motCtx.scale(-1,1);
+  _motCtx.drawImage(videoEl, -_motW, 0, _motW, _motH);
+  _motCtx.restore();
+  _bgData = new Uint8ClampedArray(_motCtx.getImageData(0,0,_motW,_motH).data);
+}
+
+function _camTick() {
+  if (!cameraOn || !videoEl || videoEl.readyState < 2) return;
+  _motFrameCount++;
+  if (_motFrameCount % 3 !== 0) return; // only every 3rd frame
+
+  // draw mirrored tiny frame
+  _motCtx.save();
+  _motCtx.scale(-1, 1);
+  _motCtx.drawImage(videoEl, -_motW, 0, _motW, _motH);
+  _motCtx.restore();
+  const cur = _motCtx.getImageData(0, 0, _motW, _motH).data;
+
+  if (!_prevMotData) { _prevMotData = new Uint8ClampedArray(cur); return; }
+
+  const prev = _prevMotData;
+  let totalDelta = 0;
+  // zone sums (3×3 grid)
+  const zoneSum = new Float32Array(9);
+  // flow vectors (for mode 1)
+  let flowX = 0, flowY = 0;
+  let brightDiff = new Float32Array(5); // per-species-zone (mode 4)
+
+  for (let y = 0; y < _motH; y++) {
+    for (let x = 0; x < _motW; x++) {
+      const idx = (y * _motW + x) * 4;
+      const lum = (cur[idx] + cur[idx+1] + cur[idx+2]) / 3;
+      const lumP = (prev[idx] + prev[idx+1] + prev[idx+2]) / 3;
+      const d = Math.abs(lum - lumP);
+      totalDelta += d;
+
+      // zone (3×3)
+      const zx = Math.floor(x / (_motW/3));
+      const zy = Math.floor(y / (_motH/3));
+      zoneSum[zy*3+zx] += d;
+
+      // crude optical flow: left vs right, top vs bottom half
+      if (d > 15) {
+        flowX += (x < _motW/2) ? -d : d;
+        flowY += (y < _motH/2) ? -d : d;
+      }
+
+      // brightness zones for mode 4
+      const bz = Math.floor(lum / 52); // 0-4
+      brightDiff[Math.min(bz,4)] += d;
+    }
+  }
+
+  const normDelta = totalDelta / (_motW * _motH); // avg delta per pixel (0-255)
+
+  // ── Dispatch by mode ─────────────────────────────────────────────────────
+  if (camMode === 0) { // motion → burst/void
+    if (normDelta > 18) {
+      const cx = Math.floor(COLS/2 + (flowX / (totalDelta+1)) * COLS * 0.3);
+      const cy = Math.floor(ROWS/2 + (flowY / (totalDelta+1)) * ROWS * 0.3);
+      _burstAt(cx, cy, normDelta > 40 ? 'chaos' : 'void');
+      _silenceTimer = 0;
+    }
+  }
+
+  if (camMode === 1) { // optical flow → meteors
+    if (normDelta > 12) {
+      const fx = flowX / (totalDelta+1);
+      const fy = flowY / (totalDelta+1);
+      const mag = Math.sqrt(fx*fx + fy*fy);
+      if (mag > 0.05) dropMeteor(Math.max(1, Math.round(mag * meteorCount)));
+      _silenceTimer = 0;
+    }
+  }
+
+  if (camMode === 2) { // 3×3 zones → local bursts
+    for (let z = 0; z < 9; z++) {
+      if (zoneSum[z] / (_motW*_motH/9) > 20) {
+        const zx = (z % 3) / 3 + 1/6;
+        const zy = Math.floor(z / 3) / 3 + 1/6;
+        const cr = Math.floor(zy * ROWS);
+        const cc = Math.floor(zx * COLS);
+        _burstAt(cc, cr, 'chaos');
+      }
+    }
+  }
+
+  if (camMode === 3) { // stille = tod
+    if (normDelta > 10) {
+      _silenceTimer = 0;
+      if (normDelta > 30) chaosBurst();
+    } else {
+      _silenceTimer++;
+      if (_silenceTimer > 100) {
+        voidBurst();
+        _silenceTimer = 80;
+      }
+    }
+  }
+
+  if (camMode === 4) { // brightness → species spawn
+    if (normDelta > 8) {
+      const total = brightDiff.reduce((a,b)=>a+b, 0) + 1;
+      let dom = 0;
+      for (let b=1;b<5;b++) if(brightDiff[b]>brightDiff[dom]) dom=b;
+      const sp = dom + 1;
+      const cx = Math.floor(COLS/2 + (flowX/(total+1))*COLS*0.3);
+      const cy = Math.floor(ROWS/2 + (flowY/(total+1))*ROWS*0.3);
+      _spawnSpecies(cx, cy, sp, eventRadius);
+    }
+  }
+
+  if (camMode === 5) { // silhouette — background subtraction
+    if (!_bgData) return; // no background captured yet
+    for (let y = 0; y < _motH; y++) {
+      for (let x = 0; x < _motW; x++) {
+        const idx = (y * _motW + x) * 4;
+        const lum  = (cur[idx]   + cur[idx+1]   + cur[idx+2])   / 3;
+        const lumBg = (_bgData[idx] + _bgData[idx+1] + _bgData[idx+2]) / 3;
+        if (Math.abs(lum - lumBg) > 28 && Math.random() < 0.25) {
+          const gc = Math.floor(x / _motW * COLS);
+          const gr = Math.floor(y / _motH * ROWS);
+          type_grid[i(gr, gc)] = Math.ceil(Math.random() * 5);
+          age_grid[i(gr, gc)] = 1;
+        }
+      }
+    }
+  }
+
+  if (camMode === 6) { // kanten — Sobel edge detection
+    const lum = new Float32Array(_motW * _motH);
+    for (let p = 0; p < _motW * _motH; p++) {
+      lum[p] = (cur[p*4] + cur[p*4+1] + cur[p*4+2]) / 3;
+    }
+    for (let y = 1; y < _motH-1; y++) {
+      for (let x = 1; x < _motW-1; x++) {
+        const g = (dx, dy) => lum[(y+dy)*_motW + (x+dx)];
+        const gx = -g(-1,-1) - 2*g(-1,0) - g(-1,1) + g(1,-1) + 2*g(1,0) + g(1,1);
+        const gy = -g(-1,-1) - 2*g(0,-1) - g(1,-1) + g(-1,1) + 2*g(0,1) + g(1,1);
+        if (Math.sqrt(gx*gx + gy*gy) > 55 && Math.random() < 0.35) {
+          const gc = Math.floor(x / _motW * COLS);
+          const gr = Math.floor(y / _motH * ROWS);
+          type_grid[i(gr, gc)] = Math.ceil(Math.random() * 5);
+          age_grid[i(gr, gc)] = 1;
+        }
+      }
+    }
+  }
+
+  if (camMode === 7) { // verfolgung — colony follows silhouette
+    if (!_bgData) return;
+    for (let y = 0; y < _motH; y++) {
+      for (let x = 0; x < _motW; x++) {
+        const idx = (y * _motW + x) * 4;
+        const lum   = (cur[idx]     + cur[idx+1]     + cur[idx+2])     / 3;
+        const lumBg = (_bgData[idx] + _bgData[idx+1] + _bgData[idx+2]) / 3;
+        const gc = Math.floor(x / _motW * COLS);
+        const gr = Math.floor(y / _motH * ROWS);
+        if (Math.abs(lum - lumBg) > 28) {
+          // inside silhouette: spawn cells densely
+          if (Math.random() < 0.4) {
+            type_grid[i(gr, gc)] = Math.ceil(Math.random() * 5);
+            age_grid[i(gr, gc)] = 1;
+          }
+        } else {
+          // outside silhouette: slowly kill — cells decay behind as you move
+          if (Math.random() < 0.015) {
+            type_grid[i(gr, gc)] = 0;
+            age_grid[i(gr, gc)] = 0;
+          }
+        }
+      }
+    }
+  }
+
+  // copy cur → prev (reuse buffer)
+  prev.set(cur);
+}
+
+function _burstAt(cc, cr, type) {
+  const r = eventRadius;
+  const cr2 = Math.max(0, Math.min(ROWS-1, cr));
+  const cc2 = Math.max(0, Math.min(COLS-1, cc));
+  if (type === 'chaos') {
+    for (let dr=-r;dr<=r;dr++) for (let dc=-r;dc<=r;dc++) {
+      if (dr*dr+dc*dc > r*r) continue;
+      const rr=(cr2+dr+ROWS)%ROWS, rc=(cc2+dc+COLS)%COLS;
+      type_grid[i(rr,rc)] = Math.random()<0.55 ? (Math.ceil(Math.random()*5)) : 0;
+      age_grid[i(rr,rc)] = 1;
+    }
+  } else {
+    for (let dr=-r;dr<=r;dr++) for (let dc=-r;dc<=r;dc++) {
+      if (dr*dr+dc*dc > r*r) continue;
+      const rr=(cr2+dr+ROWS)%ROWS, rc=(cc2+dc+COLS)%COLS;
+      type_grid[i(rr,rc)] = 0; age_grid[i(rr,rc)] = 0;
+    }
+  }
+  if (!running) draw();
+}
+
+function _spawnSpecies(cc, cr, sp, r) {
+  const cr2 = Math.max(0, Math.min(ROWS-1, cr));
+  const cc2 = Math.max(0, Math.min(COLS-1, cc));
+  for (let dr=-r;dr<=r;dr++) for (let dc=-r;dc<=r;dc++) {
+    if (dr*dr+dc*dc > r*r) continue;
+    if (Math.random() > 0.5) continue;
+    const rr=(cr2+dr+ROWS)%ROWS, rc=(cc2+dc+COLS)%COLS;
+    type_grid[i(rr,rc)] = sp; age_grid[i(rr,rc)] = 1;
+  }
+  if (!running) draw();
+}
 document.getElementById('sBlend').addEventListener('change', e => {
   blendMode = e.target.value;
 });
 
 // ── Sliders ───────────────────────────────────────────────────────────────────
 document.getElementById('sSpeed').addEventListener('input', e=>{
-  targetFps = +e.target.value;
-  document.getElementById('vSpeed').textContent = targetFps;
+  const v = +e.target.value;
+  document.getElementById('vSpeed').textContent = v;
+  if (patchMap.fps < 0) { targetFps = v; baseVals.fps = v; }
 });
 document.getElementById('sCellSize').addEventListener('input', e=>{
   CELL = +e.target.value;
@@ -1040,13 +1783,14 @@ document.getElementById('sCellSize').addEventListener('input', e=>{
   resize(); initGrids(); randomFill(); draw();
 });
 document.getElementById('sMutation').addEventListener('input', e=>{
-  // slider 0–100 → probability 0–0.004 per dead cell per step
-  mutationRate = (+e.target.value / 100) * 0.004;
-  document.getElementById('vMutation').textContent = e.target.value;
+  const v = +e.target.value;
+  document.getElementById('vMutation').textContent = v;
+  if (patchMap.mutation < 0) { mutationRate = v/100*0.004; baseVals.mutation = v; }
 });
 document.getElementById('sTrail').addEventListener('input', e=>{
-  trailDecay = +e.target.value / 100;
-  document.getElementById('vTrail').textContent = trailDecay.toFixed(2);
+  const v = +e.target.value;
+  document.getElementById('vTrail').textContent = (v/100).toFixed(2);
+  if (patchMap.trail < 0) { trailDecay = v/100; baseVals.trail = v; }
 });
 document.getElementById('sDensity').addEventListener('input', e=>{
   fillDensity = +e.target.value / 100;
@@ -1063,54 +1807,435 @@ document.getElementById('bRotate').addEventListener('click', ()=>{
   if (!brushRotate) brushAngle = 0;
 });
 document.getElementById('sRadius').addEventListener('input', e=>{
-  eventRadius = +e.target.value;
-  document.getElementById('vRadius').textContent = eventRadius;
+  const v = +e.target.value;
+  document.getElementById('vRadius').textContent = v;
+  if (patchMap.radius < 0) { eventRadius = v; baseVals.radius = v; }
+});
+document.getElementById('sMeteorCnt').addEventListener('input', e=>{
+  meteorCount = +e.target.value;
+  document.getElementById('vMeteorCnt').textContent = meteorCount;
 });
 document.getElementById('sOffset').addEventListener('input', e=>{
-  brushLag = +e.target.value / 100;
-  document.getElementById('vOffset').textContent = e.target.value;
+  const v = +e.target.value;
+  document.getElementById('vOffset').textContent = v;
+  if (patchMap.lag < 0) { brushLag = v/100; baseVals.lag = v; }
 });
 document.getElementById('sHue').addEventListener('input', e=>{
-  hueShift = +e.target.value;
-  document.getElementById('vHue').textContent = hueShift + '°';
-  rebuildColors(); draw();
+  const v = +e.target.value;
+  document.getElementById('vHue').textContent = v + '°';
+  if (patchMap.hue < 0) { hueShift = v; baseVals.hue = v; rebuildColors(); draw(); }
 });
 document.getElementById('sSat').addEventListener('input', e=>{
-  satScale = +e.target.value / 100;
-  document.getElementById('vSat').textContent = e.target.value + '%';
-  rebuildColors(); draw();
+  const v = +e.target.value;
+  document.getElementById('vSat').textContent = v + '%';
+  if (patchMap.sat < 0) { satScale = v/100; baseVals.sat = v; rebuildColors(); draw(); }
 });
 document.getElementById('sHueDrift').addEventListener('input', e=>{
-  hueDrift = +e.target.value;
-  document.getElementById('vHueDrift').textContent = e.target.value;
+  const v = +e.target.value;
+  document.getElementById('vHueDrift').textContent = v;
+  if (patchMap.drift < 0) { hueDrift = v; baseVals.drift = v; }
 });
 document.getElementById('sGlow').addEventListener('input', e=>{
-  glowAmount = +e.target.value / 100;
-  document.getElementById('vGlow').textContent = e.target.value;
+  const v = +e.target.value;
+  document.getElementById('vGlow').textContent = v;
+  if (patchMap.glow < 0) { glowAmount = v/100; baseVals.glow = v; }
 });
 document.getElementById('sAgeBright').addEventListener('input', e=>{
-  ageBright = +e.target.value / 100;
-  document.getElementById('vAgeBright').textContent = e.target.value;
+  const v = +e.target.value;
+  document.getElementById('vAgeBright').textContent = v;
+  if (patchMap.ageBright < 0) { ageBright = v/100; baseVals.ageBright = v; }
 });
 
 // ── Panel toggle ──────────────────────────────────────────────────────────────
-document.getElementById('panelToggle').addEventListener('click', ()=>{
-  const panel = document.getElementById('panel');
-  const btn   = document.getElementById('panelToggle');
-  const open  = panel.classList.toggle('open');
-  btn.classList.toggle('open', open);
-  btn.textContent = open ? '✕ close' : '☰ controls';
+// (panels are toggled via Shift+C keyboard shortcut — no buttons)
+
+// ── Hollow toggle + slider ────────────────────────────────────────────────────
+document.getElementById('bHollow').addEventListener('click', ()=>{
+  shapeHollow = !shapeHollow;
+  const btn = document.getElementById('bHollow');
+  btn.textContent = shapeHollow ? 'on' : 'off';
+  btn.classList.toggle('on', shapeHollow);
+});
+document.getElementById('sHollow').addEventListener('input', e=>{
+  const v = +e.target.value;
+  document.getElementById('vHollow').textContent = v;
+  if (patchMap.hollow < 0) { hollowThick = v/100; baseVals.hollow = v; }
+});
+
+// ── LFO controls (3 × 6 handlers) ────────────────────────────────────────────
+for (let k=0; k<3; k++) {
+  const lfo = lfos[k];
+  document.getElementById('lfoW'+k).addEventListener('change', e=>{ lfo.wave = e.target.value; });
+  document.getElementById('lfoSpd'+k).addEventListener('input', e=>{
+    lfo.speed = +e.target.value;
+    document.getElementById('lfoSpdV'+k).textContent = e.target.value;
+  });
+  document.getElementById('lfoOff'+k).addEventListener('input', e=>{
+    lfo.offset = +e.target.value / 100;
+    document.getElementById('lfoOffV'+k).textContent = e.target.value;
+  });
+  document.getElementById('lfoAtn'+k).addEventListener('input', e=>{
+    lfo.attn = +e.target.value / 100;
+    document.getElementById('lfoAtnV'+k).textContent = (+e.target.value/100).toFixed(2);
+  });
+  document.getElementById('lfoMod'+k).addEventListener('change', e=>{ lfo.modSrc = +e.target.value; });
+  document.getElementById('lfoMdp'+k).addEventListener('input', e=>{
+    lfo.modDepth = +e.target.value / 100;
+    document.getElementById('lfoMdpV'+k).textContent = lfo.modDepth.toFixed(2);
+  });
+  document.getElementById('lfoPause'+k).addEventListener('click', ()=>{
+    lfo.paused = !lfo.paused;
+    const btn = document.getElementById('lfoPause'+k);
+    btn.textContent = lfo.paused ? '▶' : '⏸';
+    btn.classList.toggle('on', lfo.paused);
+  });
+}
+
+// ── Patch select bindings ─────────────────────────────────────────────────────
+function bindPatch(selId, key) {
+  document.getElementById(selId).addEventListener('change', e=>{
+    const li = +e.target.value;
+    patchMap[key] = li;
+    e.target.classList.toggle('patched', li >= 0);
+    const mEl = document.getElementById(modValIds[key]);
+    const muteBtn = document.getElementById(muteIds[key]);
+    if (li >= 0) {
+      if (mEl) mEl.classList.add('active');
+      if (muteBtn) muteBtn.classList.add('patched');
+    }
+    if (li < 0) {
+      if (mEl) { mEl.textContent = ''; mEl.classList.remove('active'); }
+      if (muteBtn) muteBtn.classList.remove('patched');
+      // restore base value when un-patching
+      const bv = baseVals[key];
+      switch(key) {
+        case 'fps':       targetFps   = bv|0; break;
+        case 'mutation':  mutationRate= bv/100*0.004; break;
+        case 'trail':     trailDecay  = bv/100; break;
+        case 'radius':    eventRadius = bv|0; break;
+        case 'lag':       brushLag    = bv/100; break;
+        case 'hue':       hueShift    = bv; rebuildColors(); break;
+        case 'sat':       satScale    = bv/100; rebuildColors(); break;
+        case 'drift':     hueDrift    = bv; break;
+        case 'glow':      glowAmount  = bv/100; break;
+        case 'ageBright': ageBright   = bv/100; break;
+        case 'hollow':    hollowThick = bv/100; break;
+      }
+    }
+  });
+}
+bindPatch('pFps',      'fps');
+bindPatch('pMut',      'mutation');
+bindPatch('pTrail',    'trail');
+bindPatch('pRadius',   'radius');
+bindPatch('pLag',      'lag');
+bindPatch('pHue',      'hue');
+bindPatch('pSat',      'sat');
+bindPatch('pDrift',    'drift');
+bindPatch('pGlow',     'glow');
+bindPatch('pAgeBright','ageBright');
+bindPatch('pHollow',   'hollow');
+
+// ── Mute buttons ──────────────────────────────────────────────────────────────
+for (const key in muteMap) {
+  const btn = document.getElementById(muteIds[key]);
+  if (!btn) continue;
+  btn.addEventListener('click', () => {
+    muteMap[key] = !muteMap[key];
+    btn.textContent = muteMap[key] ? '⊘' : '◎';
+    btn.classList.toggle('muted', muteMap[key]);
+  });
+}
+
+// ── LFO speed range buttons ───────────────────────────────────────────────────
+const SPD_RANGES = { lo:[0.1,10], mid:[5,150], hi:[20,500] };
+document.querySelectorAll('.spdbtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (!btn.dataset.rng) return; // skip non-LFO buttons
+    const k = +btn.dataset.lfo;
+    const rng = btn.dataset.rng;
+    const [mn, mx] = SPD_RANGES[rng];
+    const sl = document.getElementById('lfoSpd'+k);
+    sl.min = mn; sl.max = mx;
+    sl.step = (rng === 'lo') ? 0.1 : 1;
+    const clamped = Math.max(mn, Math.min(mx, lfos[k].speed));
+    sl.value = clamped;
+    lfos[k].speed = clamped;
+    document.getElementById('lfoSpdV'+k).textContent = clamped;
+    document.querySelectorAll(`.spdbtn[data-lfo="${k}"]`).forEach(b => b.classList.toggle('on', b === btn));
+  });
+});
+
+// ── Preset helpers ────────────────────────────────────────────────────────────
+function _setSlider(slId, vlId, val, txt) {
+  const sl = document.getElementById(slId); if (sl) sl.value = val;
+  const vl = document.getElementById(vlId); if (vl) vl.textContent = txt;
+}
+
+function savePreset() {
+  const lfoData = lfos.map((l, k) => {
+    const sl = document.getElementById('lfoSpd'+k);
+    const mx = sl ? +sl.max : 30;
+    const rng = mx <= 30 ? 'lo' : mx <= 150 ? 'mid' : 'hi';
+    return { wave:l.wave, speed:l.speed, speedRng:rng,
+             offsetRaw:Math.round(l.offset*100), attnRaw:Math.round(l.attn*100),
+             modSrc:l.modSrc, modDepthRaw:Math.round(l.modDepth*100), paused:l.paused };
+  });
+  const p = {
+    v:2, mode:modeIdx, bw:bwMode,
+    cellSize:CELL, density:Math.round(fillDensity*100),
+    brushShape, shapeHollow, blendMode,
+    baseVals:{...baseVals}, patchMap:{...patchMap},
+    muteMap:{...muteMap}, lfos:lfoData
+  };
+  const blob = new Blob([JSON.stringify(p,null,2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `preset_${Date.now()}.json`;
+  a.click(); URL.revokeObjectURL(a.href);
+}
+
+function applyPreset(p) {
+  if (!p || p.v !== 2) { alert('incompatible preset version'); return; }
+
+  // mode / bw
+  modeIdx = p.mode ?? 0;
+  document.getElementById('bMode').textContent = 'mode: ' + MODES[modeIdx];
+  bwMode = !!p.bw;
+  document.getElementById('bBW').classList.toggle('on', bwMode);
+
+  // cell / density
+  if (p.cellSize && p.cellSize !== CELL) {
+    CELL = p.cellSize; _setSlider('sCellSize','vCellSize', CELL, CELL+'');
+    resize(); initGrids(); randomFill();
+  } else if (p.cellSize) {
+    _setSlider('sCellSize','vCellSize', p.cellSize, p.cellSize+'');
+  }
+  if (p.density != null) { fillDensity = p.density/100; _setSlider('sDensity','vDensity', p.density, p.density+'%'); }
+
+  // shape / blend / hollow-toggle
+  brushShape = p.brushShape || 'circle';
+  document.getElementById('sShape').value = brushShape;
+  shapeHollow = !!p.shapeHollow;
+  document.getElementById('bHollow').textContent = shapeHollow ? 'on' : 'off';
+  document.getElementById('bHollow').classList.toggle('on', shapeHollow);
+  if (p.blendMode) { blendMode = p.blendMode; document.getElementById('sBlend').value = blendMode; }
+
+  // baseVals + sliders
+  const applySlider = {
+    fps:       v => { targetFps    = v|0;           _setSlider('sSpeed',    'vSpeed',    v, v+''); },
+    mutation:  v => { mutationRate = v/100*0.004;   _setSlider('sMutation', 'vMutation', v, v+''); },
+    trail:     v => { trailDecay   = v/100;         _setSlider('sTrail',    'vTrail',    v, (v/100).toFixed(2)); },
+    radius:    v => { eventRadius  = v|0;           _setSlider('sRadius',   'vRadius',   v, v+''); },
+    lag:       v => { brushLag     = v/100;         _setSlider('sOffset',   'vOffset',   v, v+''); },
+    hue:       v => { hueShift     = v;             _setSlider('sHue',      'vHue',      v, v+'°'); },
+    sat:       v => { satScale     = v/100;         _setSlider('sSat',      'vSat',      v, v+'%'); },
+    drift:     v => { hueDrift     = v;             _setSlider('sHueDrift', 'vHueDrift', v, v+''); },
+    glow:      v => { glowAmount   = v/100;         _setSlider('sGlow',     'vGlow',     v, v+''); },
+    ageBright: v => { ageBright    = v/100;         _setSlider('sAgeBright','vAgeBright',v, v+''); },
+    hollow:    v => { hollowThick  = v/100;         _setSlider('sHollow',   'vHollow',   v, v+''); },
+  };
+  if (p.baseVals) {
+    for (const key in applySlider) {
+      const v = p.baseVals[key];
+      if (v != null) { baseVals[key] = v; applySlider[key](v); }
+    }
+    rebuildColors();
+  }
+
+  // patchMap
+  if (p.patchMap) {
+    for (const key in patchMap) {
+      const li = p.patchMap[key] ?? -1;
+      patchMap[key] = li;
+      const sel = document.getElementById(pselIds[key]);
+      if (sel) { sel.value = li; sel.classList.toggle('patched', li >= 0); }
+      const mEl = document.getElementById(modValIds[key]);
+      if (mEl) { mEl.classList.toggle('active', li >= 0); if (li < 0) mEl.textContent = ''; }
+      const mb = document.getElementById(muteIds[key]);
+      if (mb) mb.classList.toggle('patched', li >= 0);
+    }
+  }
+
+  // muteMap
+  if (p.muteMap) {
+    for (const key in muteMap) {
+      muteMap[key] = !!p.muteMap[key];
+      const mb = document.getElementById(muteIds[key]);
+      if (mb) { mb.textContent = muteMap[key] ? '⊘' : '◎'; mb.classList.toggle('muted', muteMap[key]); }
+    }
+  }
+
+  // LFOs
+  if (p.lfos) {
+    p.lfos.forEach((pl, k) => {
+      const lfo = lfos[k];
+      lfo.wave     = pl.wave || 'sin';
+      lfo.speed    = pl.speed ?? 10;
+      lfo.offset   = (pl.offsetRaw ?? 0) / 100;
+      lfo.attn     = (pl.attnRaw  ?? 100) / 100;
+      lfo.modSrc   = pl.modSrc ?? -1;
+      lfo.modDepth = (pl.modDepthRaw ?? 0) / 100;
+      lfo.paused   = !!pl.paused;
+      const rng    = pl.speedRng || 'lo';
+      const [mn,mx] = SPD_RANGES[rng];
+      const sl = document.getElementById('lfoSpd'+k);
+      sl.min = mn; sl.max = mx; sl.value = Math.max(mn, Math.min(mx, lfo.speed));
+      document.getElementById('lfoSpdV'+k).textContent = lfo.speed;
+      document.querySelectorAll(`.spdbtn[data-lfo="${k}"]`).forEach(b => b.classList.toggle('on', b.dataset.rng === rng));
+      document.getElementById('lfoW'+k).value = lfo.wave;
+      document.getElementById('lfoOff'+k).value = pl.offsetRaw ?? 0;
+      document.getElementById('lfoOffV'+k).textContent = pl.offsetRaw ?? 0;
+      document.getElementById('lfoAtn'+k).value = pl.attnRaw ?? 100;
+      document.getElementById('lfoAtnV'+k).textContent = lfo.attn.toFixed(2);
+      document.getElementById('lfoMod'+k).value = lfo.modSrc;
+      document.getElementById('lfoMdp'+k).value = pl.modDepthRaw ?? 0;
+      document.getElementById('lfoMdpV'+k).textContent = lfo.modDepth.toFixed(2);
+      const pb = document.getElementById('lfoPause'+k);
+      pb.textContent = lfo.paused ? '▶' : '⏸'; pb.classList.toggle('on', lfo.paused);
+    });
+  }
+  updateLegend();
+  draw();
+}
+
+// ── Preset save / load handlers ───────────────────────────────────────────────
+document.getElementById('bSave').addEventListener('click', savePreset);
+document.getElementById('bLoad').addEventListener('click', () => document.getElementById('presetFile').click());
+document.getElementById('presetFile').addEventListener('change', e => {
+  const f = e.target.files[0]; if (!f) return;
+  const fr = new FileReader();
+  fr.onload = ev => { try { applyPreset(JSON.parse(ev.target.result)); } catch(err) { console.error('preset load error', err); } };
+  fr.readAsText(f);
+  e.target.value = '';
 });
 
 document.addEventListener('keydown', e=>{
   if (e.code==='Space')  { e.preventDefault(); startStop(); }
-  if (e.code==='KeyM')   { dropMeteor(1); draw(); }
-  if (e.code==='KeyC')   { voidBurst();   draw(); }
+  if (e.code==='KeyB')   { _captureBg(); }
+  if (e.code==='KeyM')   { dropMeteor(); draw(); }
+  if (e.code==='KeyC' && e.shiftKey) {
+    e.preventDefault();
+    const open = document.getElementById('panel').classList.toggle('open');
+    document.getElementById('lfoPanel').classList.toggle('open', open);
+    if (open) drawLFOCanvases();
+  } else if (e.code==='KeyC') { voidBurst();   draw(); }
   if (e.code==='KeyV')   { chaosBurst();  draw(); }
   if (e.code==='KeyS')   { const a=document.createElement('a'); a.download=`primordial_${generation}.png`; a.href=canvas.toDataURL('image/png'); a.click(); }
 });
 
-// ── Init ─────────────────────────────────────────────────────────────────────
+// ── Science Mini Panel Animations ──────────────────────────────────────────
+// 1. LORENZ ATTRACTOR
+(function() {
+  const cv = document.getElementById('lorenz-c');
+  const lc = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  let lx = 0.1, ly = 0, lz = 20;
+  const sig = 10, rho = 28, bet = 8/3, dt = 0.007;
+  const trail = [];
+  const maxT = 260;
+  let minX=-22,maxX=22,minZ=2,maxZ=48;
+  function lorenzTick() {
+    for (let i=0; i<3; i++) {
+      const dx = sig*(ly-lx)*dt;
+      const dy = (lx*(rho-lz)-ly)*dt;
+      const dz = (lx*ly-bet*lz)*dt;
+      lx+=dx; ly+=dy; lz+=dz;
+    }
+    trail.push([lx, lz]);
+    if (trail.length > maxT) trail.shift();
+    lc.fillStyle = 'rgba(0,0,0,0.18)';
+    lc.fillRect(0,0,W,H);
+    lc.beginPath();
+    for (let i=0; i<trail.length; i++) {
+      const sx = (trail[i][0]-minX)/(maxX-minX)*W;
+      const sy = (1-(trail[i][1]-minZ)/(maxZ-minZ))*H;
+      const alpha = i/trail.length;
+      if (i===0) lc.moveTo(sx,sy);
+      else lc.lineTo(sx,sy);
+    }
+    lc.strokeStyle = `rgba(255,183,0,0.8)`;
+    lc.lineWidth = 1;
+    lc.stroke();
+    // dot
+    const cx=(lx-minX)/(maxX-minX)*W, cy=(1-(lz-minZ)/(maxZ-minZ))*H;
+    lc.beginPath(); lc.arc(cx,cy,2,0,Math.PI*2);
+    lc.fillStyle='#FFB700'; lc.fill();
+    requestAnimationFrame(lorenzTick);
+  }
+  lorenzTick();
+})();
+
+// 2. SEMIOSE SIGNAL (Shannon entropy of species distribution)
+(function() {
+  const cv = document.getElementById('entropy-c');
+  const ec = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const hist = new Float32Array(W).fill(0.5);
+  function entropyTick() {
+    // compute entropy from type_grid distribution
+    const counts = new Float32Array(6);
+    for (let k=0; k<type_grid.length; k++) counts[type_grid[k]]++;
+    const total = type_grid.length;
+    let H_val = 0;
+    for (let t=1; t<=5; t++) {
+      const p = counts[t]/total;
+      if (p > 0) H_val -= p*Math.log2(p);
+    }
+    const norm = H_val / Math.log2(5); // 0..1
+    hist.copyWithin(0,1); hist[W-1] = norm;
+    ec.fillStyle='rgba(0,0,0,0.20)';
+    ec.fillRect(0,0,W,H);
+    // midline
+    ec.strokeStyle='rgba(255,255,255,0.07)'; ec.lineWidth=1;
+    ec.beginPath(); ec.moveTo(0,H/2); ec.lineTo(W,H/2); ec.stroke();
+    // waveform
+    ec.beginPath();
+    for (let x=0; x<W; x++) {
+      const y = (1-hist[x])*(H-4)+2;
+      x===0 ? ec.moveTo(x,y) : ec.lineTo(x,y);
+    }
+    ec.strokeStyle='rgba(111,0,255,0.9)'; ec.lineWidth=1.5; ec.stroke();
+    document.getElementById('entropy-val').textContent = `H = ${H_val.toFixed(3)}`;
+    setTimeout(entropyTick, 80);
+  }
+  entropyTick();
+})();
+
+// 3. QUORUM SENSING threshold bar
+(function() {
+  const cv = document.getElementById('quorum-c');
+  const qc = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const THRESHOLD = 0.12;
+  function quorumTick() {
+    const total = type_grid.length;
+    let alive = 0;
+    for (let k=0; k<total; k++) if (type_grid[k]>0) alive++;
+    const density = alive/total;
+    const norm = Math.min(density/0.5, 1);
+    const thresh_x = (THRESHOLD/0.5)*W;
+    qc.clearRect(0,0,W,H);
+    // track bg
+    qc.fillStyle='rgba(255,255,255,0.05)';
+    qc.fillRect(0, H/2-3, W, 6);
+    // fill
+    const active = density >= THRESHOLD;
+    qc.fillStyle = active ? 'rgba(111,0,255,0.85)' : 'rgba(255,183,0,0.6)';
+    qc.fillRect(0, H/2-3, norm*W, 6);
+    // threshold line
+    qc.fillStyle='rgba(255,255,255,0.5)';
+    qc.fillRect(thresh_x-0.5, H*0.2, 1.5, H*0.6);
+    // dot
+    qc.beginPath(); qc.arc(norm*W, H/2, 4, 0, Math.PI*2);
+    qc.fillStyle = active ? '#6F00FF' : '#FFB700'; qc.fill();
+    document.getElementById('quorum-val').textContent =
+      (active ? 'ACTIVE' : 'SILENT') + `  ${(density*100).toFixed(1)}%`;
+    setTimeout(quorumTick, 120);
+  }
+  quorumTick();
+})();
+
 randomFill();
 draw();
 </script>

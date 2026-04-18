@@ -5,7 +5,7 @@ tags:
 typ: referenz
 bereich: system
 ---
-
+![[3rd_eye_200.svg]] ![[3rd_eye_200.svg|194]]![[3rd_eye_200.svg]]
 ```
  ██████   ███████   ██████  ███    ███ ██  ██████  
 ██    ██ ██     ██ ██    ██ ████  ████ ██ ██    ██ 
@@ -23,6 +23,8 @@ bereich: system
 ██     ██ ██    ██  ██     ██  ██  ██   ███ 
 ████████  ██     ██ ██     ██ ████ ██    ██ 
 ```
+
+![[logo_cc_200.svg]] ![[logo_cc_200.svg]] ![[logo_cc_200.svg]]
 
 # Glossar — Begriffe & Bedeutungen
 

@@ -172,3 +172,68 @@ Das ist keine Game-Mechanik, das ist ein Verhältnis: Der Körper kann zerstöre
 ---
 
 *Letzte Aktualisierung: 18. April 2026 — Kamera-Modi erweitert (Silhouette, Kanten, Verfolgung), Hintergrund-Capture dokumentiert*
+
+---
+
+## Generatives MIDI-Soundmapping & Künstlerisches Soundkonzept
+
+> Siehe auch: [[artificial_bacteria_konzept]], [[emergenz]], [[quorum_sensing]], [[biosemiotik]], [[pataphysik]]
+
+### Künstlerische Aussage
+
+Das MIDI-System von *Primordial Soup* ist mehr als eine technische Erweiterung: Es ist ein künstlerisches Experiment, das die Prinzipien von Emergenz, Selbstorganisation und künstlichem Leben in den Klangraum übersetzt. Die Musik entsteht nicht durch Komposition im klassischen Sinn, sondern als hörbares Protokoll eines lebenden, generativen Systems. Der Mensch gibt nur den Rahmen vor (Instrumente, Effekte, Soundästhetik in Ableton), die eigentliche Komposition ist das Resultat der Interaktion zahlloser Zellen, Spezies und Ereignisse im Automaten. 
+
+**Künstlerische Leitidee:**
+Das System macht die Schönheit und Unvorhersehbarkeit von [[emergenz|emergenten Prozessen]] erfahrbar. Klang wird zum Medium für künstliches Leben, für kollektive Intelligenz, für das Wechselspiel von Ordnung und Chaos. Die Musik ist nie gleich, sie ist ein auditives Abbild des „Zustandsraums“ – ein klingendes, kosmisches Gehirn, das sich selbst beobachtet und verändert. Die Zuhörenden werden Zeug:innen eines Prozesses, nicht eines Werks. Das Soundmapping ist so gestaltet, dass es die Dynamik, Dichte und Ereignisse des Systems direkt in musikalische Parameter übersetzt. 
+
+**Vault-Bezüge:**
+- [[biosemiotik]]: Klänge als Zeichen und Signale eines künstlichen Ökosystems
+- [[quorum_sensing]]: Cluster und Populationen steuern globale Soundparameter
+- [[pataphysik]]: Musik als spekulatives Experiment, als Labor für Möglichkeiten
+- [[artificial_bacteria_konzept]]: Zellen als Klangquellen, Bakterien als Komponisten
+
+### Soundmapping & MIDI-Parameter
+
+**Grundprinzip:**
+Jede relevante Zellaktion (Geburt, Tod, Clusterbildung, Mutation, Events) erzeugt ein MIDI-Event. Die vier MIDI-Kanäle in Ableton werden mit unterschiedlichen Instrumenten/Sounds belegt. Die Musik ist generativ, der Mensch stellt nur die Instrumente ein, alles andere kommt aus dem System.
+
+**Mapping-Tabelle:**
+
+| Game of Life-Element         | MIDI-Event/Parameter         | Künstlerische Bedeutung / Soundidee                |
+|-----------------------------|------------------------------|----------------------------------------------------|
+| Zellgeburt (Birth)          | Note On (Pitch = X/Y-Pos)    | Neue Klangzelle, frischer Impuls, perkussiv/hell   |
+| Zelltod (Death)             | Note Off / Release           | Klang verklingt, Dämpfung, Echo, Reverb            |
+| Zell-Cluster (Nachbarschaft)| Velocity/CC (Anzahl Nachbarn)| Dichte, Lautstärke, Filter, Textur                 |
+| Zellmutation (Regeländerung)| Modulation Wheel/CC          | Sound morphing, Glitch, Pitchbend                  |
+| Lebensdauer einer Zelle     | Aftertouch/CC                | Entwicklung von Klangfarbe, z.B. langsam wachsend  |
+| Gesamtaktivität im Grid     | Globaler CC (z.B. Filter)    | Dynamik, Dichte, Mastereffekte                     |
+| **Burst-Event**             | CC#12, mehrere Noten         | Plötzliche Sound-Explosion, FX, rhythmische Welle  |
+| **Meteor-Event**            | CC#13, tiefer Note-On        | Einschlag, Noise, globaler Effekt, Reverb/Glitch   |
+
+**Empfohlene MIDI-CC-Parameter:**
+- CC#1: Modulation (Grid-Aktivität, Dichte)
+- CC#10: Pan (X-Position im Grid)
+- CC#74: Brightness (Clustergröße)
+- CC#12: Burst-Intensity (Event)
+- CC#13: Meteor-Impact (Event)
+
+**Kanalbelegung (Beispiel):**
+- Channel 1: Percussion/Noise (Geburten, schnelle Impulse)
+- Channel 2: Bass/Drone (Cluster, Dichte)
+- Channel 3: Melodische Elemente (isolierte Zellen, Bewegung)
+- Channel 4: FX/Glitch (Mutationen, Events)
+
+### Chaos-Management & Event-Strategien
+
+- **Event-Filterung:** Pro Zeiteinheit werden nur begrenzt viele MIDI-Events gesendet (z.B. max. 8–16 Noten pro 100ms), um Überflutung zu vermeiden.
+- **Gruppierung:** Nahe beieinander liegende Zell-Events werden zu Akkorden oder rhythmischen Patterns zusammengefasst.
+- **Dichtekontrolle:** Ein globaler CC (z.B. CC#1) steuert Lautstärke, Filter oder Effektintensität in Abhängigkeit von der Gesamtaktivität.
+- **Randomisierung:** Velocity, Timing und CC-Werte werden leicht variiert, um organische, weniger maschinelle Klänge zu erzeugen.
+
+**Spezielle Events:**
+- **Burst:** Löst eine Welle von Noten und CC#12 aus, limitiert auf wenige gleichzeitige Noten, kann Delay/Distortion erhöhen.
+- **Meteor:** Triggert einen tiefen, kurzen Sound (Note-On mit hoher Velocity + CC#13), globaler Effekt wie Reverb-Boost oder Filter-Sweep.
+
+### Künstlerische Wirkung
+
+Das System bleibt generativ und unvorhersehbar, aber durch Filterung, Gruppierung und gezielte CC-Steuerung entsteht eine kontrollierte, organisch-chaotische Klanglandschaft. Spezielle Events wie Meteor und Burst sorgen für dramaturgische Akzente und machen das System performativ spannend. Die Musik evoziert mikroskopische Prozesse, kollektive Intelligenz und die fragile Balance zwischen Ordnung und Chaos. Sie ist ein auditives Protokoll künstlichen Lebens – ein „klingendes Gehirn“ im Sinne des cosmic_brain Vaults.

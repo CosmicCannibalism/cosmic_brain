@@ -469,7 +469,25 @@ Botenstoffe des Immunsystems mit bidirektionaler Verbindung zum Schlaf: Tiefschl
 *Neue Begriffe für das Glossar hier notieren — werden beim nächsten `sortier das Glossar` alphabetisch einsortiert.*
 
 ```
+Digitales Herbarium
 
+Degenerationseffekt
+
+Populationsdenken
+
+Muster Klassifikation
+
+Neuronales gedankenlesen
+
+Metaanalyse
+
+Erfahrungsblindheit - Halluzinationen hervorrufen
+
+Simulationen unseres Gehirns
+
+Attributionsfehler
+
+Autoinduktor
 ```
 
 ---

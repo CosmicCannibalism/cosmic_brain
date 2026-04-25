@@ -14,12 +14,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "__cosmicbrain__.md",
+                "file": "projects/primordial_soup/primordial_soup_dokumentation.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "__cosmicbrain__"
+              "title": "primordial_soup_dokumentation"
             }
           },
           {
@@ -121,7 +121,7 @@
             }
           }
         ],
-        "currentTab": 7,
+        "currentTab": 1,
         "stacked": true
       },
       {
@@ -318,11 +318,14 @@
       "periodic-notes:Open today": false
     }
   },
-  "active": "defd8fc50f6e2c47",
+  "active": "31452a0d67216893",
   "lastOpenFiles": [
-    "projects/dna_sequencer/konzept_objekt.md",
-    "__cosmicbrain__.md",
+    "game_of_life3.html",
     "projects/petroglyphen_einer_denkmaschine/konzept_moodboard.md",
+    "__cosmicbrain__.md",
+    "projects/dna_sequencer/konzept_objekt.md",
+    "projects/dna_sequencer/dna_sequencer",
+    "resources/biologie/quorum_sensing.md",
     "resources/artificial_bacteria_konzept.md",
     "projects/primordial_soup/primordial_soup_dokumentation.md",
     "projects/primordial_soup",
@@ -338,7 +341,6 @@
     "resources/ascii_art.md",
     "readme.md",
     "resources/biologie/bakterielle_vermehrung.md",
-    "resources/biologie/quorum_sensing.md",
     "resources/theorie/interoception_affective_labeling.md",
     "projects/petroglyphen_einer_denkmaschine",
     "resources/theorie/emergenz.md",
@@ -353,13 +355,11 @@
     "resources/theorie/marcel_duchamp.md",
     "resources/social_media_emotionale_granularitaet.md",
     "__glossar__.md",
-    "projects/esp_ai_art/README.md",
     "projects/esp_ai_art/doc/md/karmi_kat.pdf",
     "__base__.base",
     "__base__.base",
     "game_of_life2.html",
     "game_of_life.html",
-    "resources/sternzeichen",
-    "resources/elemente"
+    "resources/sternzeichen"
   ]
 }

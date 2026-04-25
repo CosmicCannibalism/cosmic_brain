@@ -488,6 +488,8 @@ Simulationen unseres Gehirns
 Attributionsfehler
 
 Autoinduktor
+
+Gamma-Korrektur
 ```
 
 ---
@@ -495,5 +497,5 @@ Autoinduktor
 *Neue Begriffe für neue Files hier notieren — werden beim nächsten `erstell die neuen files` als vollständige Dokumente angelegt.*
 
 ```
-
+Gamma-Korrektur (leds - menschliche wahrnehmung)
 ```

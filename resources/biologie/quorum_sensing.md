@@ -43,7 +43,7 @@ graph LR
 
 ## Medienkünstlerische Perspektive
 
-Quorum Sensing ist das biologische Gegenmodell zu top-down-Kontrolle. Verteilte Intelligenz, kollektive Entscheidungsfindung, Emergenz als ästhetisches und politisches Prinzip.
+Quorum Sensing ist das biologische Gegenmodell zu top-down-Kontrolle. Verteilte Intelligenz, kollektive Entscheidungsfindung, [[emergenz|Emergenz]] als ästhetisches und politisches Prinzip.
 
 Mögliche Übersetzungen ins Werk:
 - Installationen die erst bei kritischer Besucherdichte aktiviert werden

@@ -63,7 +63,7 @@ Chaos ist **deterministische Unvorhersagbarkeit**. Das System folgt Regeln — a
 
 ## Schmetterlings-Effekt in Life Simulations
 
-Conway's Game of Life ist Turing-vollständig und deterministisch. Aber:
+Conway's [[zellulaere_automaten|Game of Life]] ist Turing-vollständig und deterministisch. Aber:
 
 **Experiment:** Starte zwei identische Konfigurationen und ändere eine einzige Zelle. Nach wenigen Generationen: vollständig verschiedene Muster.
 

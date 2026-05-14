@@ -24,9 +24,9 @@ status: in-progress
 
 Technische Diagramme haben eine eigene Schriftgestalt. Ein Schaltbild ist keine Illustration — es ist eine formalisierte Sprache, ein Alphabet aus Knoten, Pfeilen, Schwellenwerten und Schleifen. Wenn ich diese Zeichen mit dem Schneidemesser ins Holz grabe und mit dem Körper auf eine Fläche presse, passiert etwas Erstaunliches: Das Diagramm verliert seinen funktionalen Kontext und gewinnt einen archaischen. Ein Zustandsautomat, ins Holz geritzt und in eine Betonwand im Stadtpark gedruckt, ist plötzlich nah an dem, was ein Steinzeitmensch an eine Höhlenwand gemalt hat — ein Bild des Denkens, nicht des Gesehenen. Die Geste ist dieselbe: *Ich war hier. Ich habe so gedacht.*
 
-Das Projekt übersetzt konkrete Inhalte aus einem lebenden, wachsenden Wissenskorpus — bioinformatische Konzepte, emergente Systeme, maschinelles Lernen auf Mikrocontrollern, Biosemiotik — in das körperlichste aller Druckmedien. Holz-/Linolschnitt ist Widerstand: Das Material drängt zurück, der Schnitt verlangt Entscheidung, das Ergebnis trägt die Hand sichtbar. Diese Körperlichkeit steht in produktiver Spannung zu dem, was dargestellt wird: Logiken die sich selbst erzeugen, Netzwerke ohne Zentrum, Lebenszyklen als Code. Das Diagramm ist das Konzept. Der Schnitt ist die Interpretation.
+Das Projekt übersetzt konkrete Inhalte aus einem lebenden, wachsenden Wissenskorpus — bioinformatische Konzepte, emergente Systeme, maschinelles Lernen auf Mikrocontrollern, [[biosemiotik|Biosemiotik]] — in das körperlichste aller Druckmedien. Holz-/Linolschnitt ist Widerstand: Das Material drängt zurück, der Schnitt verlangt Entscheidung, das Ergebnis trägt die Hand sichtbar. Diese Körperlichkeit steht in produktiver Spannung zu dem, was dargestellt wird: Logiken die sich selbst erzeugen, Netzwerke ohne Zentrum, Lebenszyklen als Code. Das Diagramm ist das Konzept. Der Schnitt ist die Interpretation.
 
-Der urbane oder naturräumliche Ort der Prints vollendet das Werk. Ein Quorum-Sensing-Schaltbild auf einem Gehwegstein aktiviert sich anders als dasselbe Motiv auf einem Baumstamm. Die Spannung zwischen *Logik/Abstraktion* und *Körperlichkeit/Material* und *Ort/Öffentlichkeit* ist nicht gestalterisches Mittel — sie ist der eigentliche Inhalt. Die Prints sind nicht Erklärung, sie sind Behauptung: *Diese Diagramme gehören in die Welt, nicht ins Labor.*
+Der urbane oder naturräumliche Ort der Prints vollendet das Werk. Ein [[quorum_sensing|Quorum-Sensing]]-Schaltbild auf einem Gehwegstein aktiviert sich anders als dasselbe Motiv auf einem Baumstamm. Die Spannung zwischen *Logik/Abstraktion* und *Körperlichkeit/Material* und *Ort/Öffentlichkeit* ist nicht gestalterisches Mittel — sie ist der eigentliche Inhalt. Die Prints sind nicht Erklärung, sie sind Behauptung: *Diese Diagramme gehören in die Welt, nicht ins Labor.*
 
 ---
 
@@ -36,7 +36,7 @@ Der urbane oder naturräumliche Ort der Prints vollendet das Werk. Ein Quorum-Se
 
 **Kurzbeschreibung:** Das Game of Life (B3/S23) erzeugt aus zwei Zuständen und vier lokalen Regeln unbegrenzte Komplexität — Still Lifes, Oszillatoren, Gleiter, Kanonen. Das Repo kategorisiert die vier Strukturklassen (stabil/rhythmisch/mobil/chaotisch) und stellt GoL als biologisch-metabolische Analogie heraus: jede Zelle kennt nur ihre Nachbarn, das Globale entsteht ohne globale Steuerung.
 
-**Warum visuell interessant:** Die Gitter-Binärsprache des GoL — schwarze Zellen, weiße Zellen, präzise Symmetrien — ist für Holzschnitt geboren. Gosper's Glider Gun mit ihren geometrischen Ausbuchtungen hat die Qualität eines arkaischen Symbols; die Wolfram-Regeldarstellungen sind Buchstaben eines neuen Alphabets.
+**Warum visuell interessant:** Die Gitter-Binärsprache des GoL — schwarze Zellen, weiße Zellen, präzise Symmetrien — ist für Holzschnitt geboren. Gosper's Glider Gun mit ihren geometrischen Ausbuchtungen hat die Qualität eines arkaischen Symbols; die [[stephen_wolfram|Wolfram]]-Regeldarstellungen sind Buchstaben eines neuen Alphabets.
 
 **Repo:** [[zellulaere_automaten]]
 
@@ -94,7 +94,7 @@ Der urbane oder naturräumliche Ort der Prints vollendet das Werk. Ein Quorum-Se
 
 ### 2.4 Metabolismus — Anabolismus ↔ Katabolismus
 
-**Kurzbeschreibung:** Der Metabolismus ist kein linearer Prozess, sondern ein geschlossener Kreislauf: Anabolismus (Aufbau, Energie verbrauchen) und Katabolismus (Abbau, Energie freisetzen) laufen gleichzeitig. Das Repo kritisiert digitale Systeme, die nur akkumulieren — Wachstum ohne Vergessen, Software ohne Autophagie. Der Kreislauf ist das normative Modell.
+**Kurzbeschreibung:** Der Metabolismus ist kein linearer Prozess, sondern ein geschlossener Kreislauf: Anabolismus (Aufbau, Energie verbrauchen) und Katabolismus (Abbau, Energie freisetzen) laufen gleichzeitig. Das Repo kritisiert digitale Systeme, die nur akkumulieren — Wachstum ohne Vergessen, Software ohne [[autophagie|Autophagie]]. Der Kreislauf ist das normative Modell.
 
 **Warum visuell interessant:** Zwei gegenläufige Pfeile, ein Mittelpunkt (ATP/Energie), zwei Flussrichtungen — das ist das klassische Yin-Yang-Diagramm als Ingenieursgrafik. In Holzschnitt: majestätisch, archaisch, sofort lesbar. Kann als Zyklus mit sechs bis acht Stationen (Autophagie, DNA-Replikation, Zellatmung, Apoptose) zur vollständigen Lebensrad-Grafik werden.
 

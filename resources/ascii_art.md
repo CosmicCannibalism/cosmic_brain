@@ -12,7 +12,7 @@ bereich: werkzeug
 
 > Text der zum Bild wird. **ASCII Art** nutzt Zeichen aus dem druckbaren Zeichensatz um Bilder, Logos und Muster zu formen — ohne Pixel, ohne Farbe, nur durch Anordnung von Symbolen im Zeichenraster. Die älteste Form digitaler Bildgebung.
 
-**Verwandte Themen:** [[zellulaere_automaten]] | [[biosemiotik]] | [[pataphysik]] | [[petroglyphen]] | [[__cosmicbrain__]]
+**Verwandte Themen:** [[zellulaere_automaten]] | [[biosemiotik]] | [[pataphysik]] | [[konzept_moodboard|Petroglyphen]] | [[__cosmicbrain__]]
 
 ---
 
@@ -116,7 +116,7 @@ figlet -f banner3 "TEXT" | sed 's/#/█/g' | while IFS= read -r line; do echo "*
 
 ASCII Art ist das älteste digitale Bildmedium — und gleichzeitig das primitivste. Es arbeitet mit der Grundeinheit aller digitalen Kommunikation: dem Zeichen. Kein Pixel, kein Rasterformat, nur der Buchstabe als Baustein.
 
-Die Verwandtschaft zu [[petroglyphen]] liegt auf der Hand: beide formen Bedeutung durch Einritzen in ein Raster — dort Stein, hier Terminal-Grid. Beide sind körperlos in ihrer Herstellung, reduziert auf Kontur und Kontrast.
+Die Verwandtschaft zu [[konzept_moodboard|Petroglyphen]] liegt auf der Hand: beide formen Bedeutung durch Einritzen in ein Raster — dort Stein, hier Terminal-Grid. Beide sind körperlos in ihrer Herstellung, reduziert auf Kontur und Kontrast.
 
 In der Medienkunst: ASCII Art als Kommentar auf Bildgebung selbst. Wenn ein `█` ein Pixel ist, was ist dann ein Pixel? Die Auflösung des Unterschieds zwischen *Zeichen* und *Bild* ist das Thema — [[biosemiotik]] macht dasselbe für biologische Signale: Was ist der Unterschied zwischen einem Zeichen und dem was es auslöst?
 

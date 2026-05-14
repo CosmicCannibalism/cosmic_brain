@@ -18,7 +18,7 @@ status: in-progress
 
 ## Ausgangspunkt: Game of Life
 
-Conway's Game of Life (1970) ist kein Spiel — es ist ein zellulärer Automat. Ein Raster aus Zellen, jede entweder lebendig oder tot. Keine zentrale Steuerung. Nur drei Regeln:
+Conway's [[zellulaere_automaten|Game of Life]] (1970) ist kein Spiel — es ist ein zellulärer Automat. Ein Raster aus Zellen, jede entweder lebendig oder tot. Keine zentrale Steuerung. Nur drei Regeln:
 
 1. Lebende Zelle mit 2–3 Nachbarn → **überlebt**
 2. Lebende Zelle mit < 2 oder > 3 Nachbarn → **stirbt**
@@ -32,7 +32,7 @@ Daraus entstehen stabile Strukturen, Oszillatoren, wandernde Muster — [[emerge
 
 ## Der metabolische Automat
 
-Game of Life hat zwei Zustände. Biologische Zellen haben mindestens fünf:
+[[zellulaere_automaten|Game of Life]] hat zwei Zustände. Biologische Zellen haben mindestens fünf:
 
 | Biologischer Zustand | Automat-Zustand | Physisches Äquivalent |
 |---|---|---|
@@ -42,7 +42,7 @@ Game of Life hat zwei Zustände. Biologische Zellen haben mindestens fünf:
 | Abbau | KATABOLISMUS | Gel löst sich auf |
 | Tod | NULL | Behälter leer |
 
-Das ist kein Game of Life mehr — das ist ein **metabolischer Automat**. [[quorum_sensing|Quorum Sensing]] als zelluläre Automatik: Nachbarschaftsregeln ohne Kabel, ohne Protokoll. Nur Chemie.
+Das ist kein [[zellulaere_automaten|Game of Life]] mehr — das ist ein **metabolischer Automat**. [[quorum_sensing|Quorum Sensing]] als zelluläre Automatik: Nachbarschaftsregeln ohne Kabel, ohne Protokoll. Nur Chemie.
 
 > Wenn 3 oder mehr Nachbar-Einheiten im Katabolismus sind → Einheit beschleunigt eigenen Abbau.
 > Wenn alle Nachbarn in Reife → Einheit verlängert Stasis.

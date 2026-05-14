@@ -10,7 +10,7 @@ bereich: biologie
 
 > Griechisch: *autos* (selbst) + *phagein* (essen). Zelleigener Abbau- und Recyclingsystem: beschädigte Organellen, fehlgefaltete Proteine, zelluläre Abfälle werden eingeschlossen, in Lysosomen verdaut, die Bausteine wiederverwendet. Kein Versagen — zelluläre Wartung, Qualitätskontrolle, Selbsterhaltung durch Selbstauflösung.
 
-**Verwandte Themen:** [[anabolismus_katabolismus]] | [[artificial_bacteria_konzept]] | [[bacterial_adaptation|Endosporen]] | [[biosemiotik]] | [[__cosmicbrain__]]
+**Verwandte Themen:** [[anabolismus_katabolismus]] | [[artificial_bacteria_konzept]] | [[bakterielle_adaptation|Endosporen]] | [[biosemiotik]] | [[__cosmicbrain__]]
 
 ---
 

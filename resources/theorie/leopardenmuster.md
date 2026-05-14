@@ -64,7 +64,7 @@ Biologisch bestätigt für:
 
 Das Leopardenmuster und die Life Simulations sind Geschwister aus verschiedenen Jahrzehnten:
 
-| Leopardenmuster (Turing 1952) | Game of Life (Conway 1970) | Lenia (Chan 2019) |
+| Leopardenmuster (Turing 1952) | [[zellulaere_automaten|Game of Life]] (Conway 1970) | Lenia (Chan 2019) |
 |---|---|---|
 | Partielle Differentialgleichung | Diskrete Zellregel | Faltungskernel |
 | Kontinuierliches Feld | Binäres Raster | Kontinuierliches Feld |
@@ -72,7 +72,7 @@ Das Leopardenmuster und die Life Simulations sind Geschwister aus verschiedenen 
 | Räumliche Diffusion | Zeitliche Ticks | Beide |
 | Biologische Muster | Glider, Oszillatoren | Lebensähnliche Strukturen |
 
-Lenia ist im Kern ein zeitdiskretes Reaktions-Diffusions-System — der Faltungskernel entspricht dem Diffusionsoperator $\nabla^2$.
+Lenia ist im Kern ein zeitdiskretes [[reaktions_diffusion|Reaktions-Diffusions-System]] — der Faltungskernel entspricht dem Diffusionsoperator $\nabla^2$.
 
 ---
 

@@ -81,6 +81,29 @@ bereich: system
 >
 > ---
 >
+> ### Block 3 — Vault-weite Verlinkung
+>
+> **Globale Dauerregel — gilt bei jedem Kommando und bei jeder Datei die bearbeitet oder erstellt wird:**
+>
+> Jedes Vault-Dokument (.md-Datei) ist ein potenzielles Link-Ziel.
+> Wenn ein Begriff, Name oder Konzept in einem Text auftaucht zu dem eine .md-Datei im Vault existiert, bekommt er einen `[[wiki-link]]`.
+>
+> **Regeln:**
+> 1. Erstes Vorkommen eines verlinkbaren Begriffs *pro Abschnitt/Absatz* wird verlinkt
+> 2. Bestehende Links nicht duplizieren
+> 3. Link-Ziel ist der Dateiname ohne `.md`, Kleinbuchstaben, Unterstriche (z.B. `[[quorum_sensing]]`, `[[alan_turing]]`)
+> 4. Gilt sowohl vorwärts (neues Dokument verlinkt bestehende) als auch rückwärts (wenn neues Dokument erstellt wird → alle bestehenden Dokumente nach Erwähnungen scannen und dort ebenfalls verlinken)
+> 5. Gilt für alle Dokumente im Vault: resources/, projects/, tägliche Notes, __sandbox__, __cosmicbrain__
+> 6. Auch Varianten und deutsche Übersetzungen verlinken (z.B. „Quörum Sensing“ → `[[quorum_sensing]]`)
+>
+> **KI-Anweisung bei Kommando `verlinke den vault`:**
+> 1. Alle .md-Dateien im Vault auflisten — das sind die verfügbaren Link-Ziele
+> 2. Jedes Dokument auf Begriffe scannen die einem Vault-Dokument entsprechen
+> 3. Fehlende Links einfügen
+> 4. Zuerst die häufig referenzierten Kerndokumente (biologie/, theorie/, Projekte), dann __sandbox__ und tägliche Notes
+>
+> ---
+>
 > ### Struktur dieser Datei
 >
 > ```
@@ -104,7 +127,7 @@ Molekül das sich im Wachzustand im Gehirn ansammelt und Schlafdruck erzeugt. Im
 
 **Affective Labeling**
 Das bewusste Benennen von Gefühlen verändert die emotionale Reaktion neurobiologisch — Studien zeigen reduzierte Amygdala-Aktivierung wenn Emotionen in Worte gefasst werden (Lieberman et al., 2007). Eng verwandt mit [[emotionale_granularitaet|emotionaler Granularität]]: je präziser das sprachliche Label, desto größer der regulative Effekt. In der Medienkunst: die Frage ob Maschinen mit Labeling emotionale Zustände verarbeiten — oder ob sie nur Labels produzieren ohne Erfahrung dahinter.
-→ [[interoception_affective_labeling]] | [[emotionale_granularitaet]] | [[social_media_emotionale_granularitaet]] | [[endosemiotik]]
+→ [[interoception_affective_labeling]] | [[emotionale_granularitaet]] | [[social_media_emotionale_granularitaet]] | [[__cosmicbrain__#E|Endosemiotik]]
 
 **Aktivator**
 In Reaktions-Diffusions-Systemen (Turing, 1952): die Chemikalie die lokal ihre eigene Produktion verstärkt — positive Rückkopplung aus der Nähe. Erst im Zusammenspiel mit dem Inhibitor entstehen stabile Muster. Ohne Aktivator: kein Signal. Ohne Inhibitor: kein Muster, nur Diffusion. Das Verhältnis von Diffusionsgeschwindigkeit und Verstärkungsrate bestimmt ob Streifen, Flecken oder Spiralen entstehen. In der Medienkunst: Kreativprozesse als Aktivator-Inhibitor-System — lokale Idee versus systemische Dämpfung.
@@ -126,6 +149,10 @@ Biologischer Aufbauprozess — Zellen synthetisieren komplexe Moleküle aus einf
 Körpereigenes Endocannabinoid — das "Glücksmolekül". Wirkt wie natürliches THC, wird aber präzise dosiert und sekundenschnell abgebaut. Etymologie: Sanskrit *ananda* = Glückseligkeit. Medienkünstlerisch: das System das sich selbst reguliert, im Gegensatz zu externen Substanzen die es überfluten.
 → [[anandamid]] | [[thc]]
 
+**Antike Wahlautomaten der Griechischen Demokratie** *(Kleroterion)*
+Das Kleroterion war ein Losmechanismus im antiken Athen zur zufälligen Auswahl von Amtsträgern — Bronzetafeln mit Namensslots, schwarze und weiße Kugeln als Zufallsgenerator. Das Verfahren (Kleroteria: Auslosung) verhinderte Korruption durch Käuflichkeit von Ämtern und realisierte *Isonomia* — Gleichheit vor dem Gesetz. Aleatorische Demokratie: Zufall als politisches Prinzip, nicht Wahl. In der Medienkunst: Chance-Operationen als Gestaltungsprinzip (Cage, Duchamp), Zufall als ethische Alternative zur Optimierung — was wäre ein KI-System das loste statt lernte?
+→ [[zellulaere_automaten]] | [[pataphysik]] | [[__sandbox__]]
+
 **Autoinduktoren**
 Chemische Signalmoleküle die Bakterien kontinuierlich produzieren und in die Umgebung abgeben. Akkumulieren proportional zur Zelldichte — Grundmechanismus des Quorum Sensing. Erst wenn die Konzentration den Schwellenwert überschreitet, reagiert die Population kollektiv. Das Signal wird zum kollektiven Gedächtnis der Dichte.
 → [[quorum_sensing]] | [[biosemiotik]]
@@ -138,6 +165,10 @@ Selbstverdauung der Zelle — beschädigte Organellen, fehlgefaltete Proteine un
 Installationskonzept: ein geschlossenes metabolisches System auf Basis von Gelatine-Sol/Gel-Übergängen, enzymatischem Abbau und pH-Indikatoren (Anthocyan). Das System durchläuft einen autonomen Lebenszyklus (GEBURT → WACHSTUM → REIFE → ALTERUNG → TOD → RESET) und erbt über generatives Gedächtnis von vorherigen Zyklen. Mehrere Einheiten interagieren über ein gemeinsames Medium nach Quorum-Sensing-Prinzipien — ein metabolischer zellulärer Automat. Kein lebender Organismus, aber ein System das denselben Prinzipien folgt.
 → [[artificial_bacteria_konzept]] | [[artificial_bacteria_technik]] | [[anabolismus_katabolismus]] | [[quorum_sensing]] | [[__sandbox__]]
 
+**Attributionsfehler** *(Fundamentaler Attributionsfehler)*
+Kognitive Verzerrung: Verhalten anderer wird ihrer Persönlichkeit zugeschrieben, eigenes Verhalten der Situation — asymmetrische Kausalzuschreibung. Beschrieben von Lee Ross (1977). Sozialer Kontext, Systemdruck und Rollenstrukturen werden systematisch unterschätzt. Gegenprinzip: Situationales Denken, Systemdenken. In der Medienkunst: Algorithmen die Nutzern Fehler zuschreiben die das Interface erzeugt hat — und wie Design das Attributionsmuster steuert.
+→ [[verantwortungsnetzwerk]] | [[emotionale_granularitaet]] | [[__sandbox__]]
+
 ---
 
 ## B
@@ -147,7 +178,7 @@ Erweiterung von Friedrich Kittlers Medientheorie. Während Kittler Medien über 
 → [[biomodalitaet]] | [[__sandbox__]]
 
 **Biofilm**
-Dünne Schicht aus Mikroorganismen die sich auf Oberflächen anheften und eine schützende Matrix aus Polysacchariden bilden. Bakterien kommunizieren dabei über Quorum Sensing — kollektive Entscheidungsfindung ohne zentralen Akteur. In der Medienkunst: selbstorganisierende Strukturen, verteilte Intelligenz als ästhetisches Prinzip. Verbindung zu Bakterien als Architekten.
+Dünne Schicht aus Mikroorganismen die sich auf Oberflächen anheften und eine schützende Matrix aus Polysacchariden bilden. Bakterien kommunizieren dabei über Quorum Sensing — kollektive Entscheidungsfindung ohne zentralen Akteur. In der Medienkunst: selbstorganisierende Strukturen, verteilte Intelligenz als ästhetisches Prinzip. Bakterien kommunizieren dabei über Quorum Sensing — kollektive Entscheidungsfindung ohne zentralen Akteur. In der Medienkunst: selbstorganisierende Strukturen, verteilte Intelligenz als ästhetisches Prinzip. Verbindung zu Bakterien als Architekten.
 → [[__sandbox__]]
 
 **Biomedien**
@@ -157,6 +188,10 @@ Biologische Systeme als Medien im Sinne von Kittler/Hauser: lebende Körper, Org
 **Biosemiotik**
 Wissenschaft von Zeichen und Bedeutung in biologischen Systemen. Zellen kommunizieren, Pflanzen signalisieren Stress, Tiere kodieren Verhalten — Sprache und Bedeutung existieren weit vor dem Menschen. In der Medienkunst: Auflösung der Grenze zwischen technischem Signal und biologischem Zeichen.
 → [[biosemiotik]] | [[__sandbox__]]
+
+**Bogenhanf** *(Sansevieria trifasciata)*
+Eine der extremophilsten Zimmerpflanzen — überlebt ohne Wasser, ohne Licht, für Monate. Betreibt dennoch aktiven Stoffwechsel: Photosynthese, Autophagie, Wurzelkommunikation. Ihr charakteristisches Blattmuster — horizontale Bänder in Grün und Graugrün — entsteht durch ein Reaktions-Diffusions-System in der Epidermis. Die Pflanze trägt ein Turing-Muster auf ihrer Haut. In der Installation: lebender Träger für künstliche Papierblüten mit LED-Kernen — der Kontrast zwischen realem Metabolismus (Pflanze) und simuliertem Metabolismus (Code) ist der konzeptuelle Kern des Werks. Projektion kann Turing-Muster zurück auf die Pflanze werfen — die Gleichung, die die Pflanze erzeugt hat, auf die Pflanze selbst.
+→ [[reaktions_diffusion]] | [[leopardenmuster]] | [[biomodalitaet]] | [[metabolische_mimikry]] | [[autophagie]]
 
 ---
 
@@ -174,9 +209,17 @@ Die Annahme, dass Leben zwingend kohlenstoffbasiert sein muss. Sagan argumentier
 
 ## D
 
+**Degenerationseffekt**
+Qualitätsverfall durch wiederholte Kopierung, Übertragung oder Verarbeitung — jede Generation verliert Information. Analoges Tape: jede Kopie rauscht mehr, Farben verblassen. Digitale Kompression: Artefakte akkumulieren wenn Daten mehrfach kodiert und dekodiert werden. In der Medienkunst: Degradierung als ästhetisches Prinzip — der Verfall der Kopie als Erinnerung an den Ursprung, Unschärfe und Rauschen als Medium der Zeitlichkeit. Gegenteil von lossless: das Material trägt seine Geschichte als Fehler.
+→ [[anabolismus_katabolismus]] | [[__sandbox__]]
+
 **Digitale Membran**
 Konzept: Übertragung der semipermeablen Zellmembran auf digitale Systeme. Was wäre ein Interface das nicht alles durchlässt, sondern kontextsensitiv selektiert — das öffnet und schließt wie eine Zelle? Gegenmodell zum offenen Kanal. Die Membran als Designprinzip: Systeme die eine Grenze haben, die kommuniziert statt nur filtert.
 → [[semipermeable_membran]] | [[biosemiotik]] | [[__sandbox__]]
+
+**Digitales Herbarium**
+Systematische digitale Sammlung von Bildern, Scans oder Daten biologischer Objekte — Pflanzen, Pilze, Organismen — nach dem Vorbild klassischer botanischer Herbarien. Geht über Archivierung hinaus: verknüpfte Metadaten ermöglichen Muster zu erkennen die im physischen Herbarium unsichtbar wären. In der Medienkunst: das Herbarium als Geste der Aneignung und Klassifikation — was wird gesammelt, was bleibt draußen? Die Datenbank als Spiegel ihrer Schöpfer.
+→ [[biosemiotik]] | [[__sandbox__]]
 
 **DNA-Replikation**
 Kopiervorgang der DNA vor jeder Zellteilung — Voraussetzung für binäre Spaltung. Helicase öffnet den Doppelstrang, DNA-Polymerase synthetisiert entlang jedem Strang einen komplementaeren Gegenstrang. Ergebnis: zwei identische Moleküle aus einem. Fehlerrate ~1:10⁹ Basenpaare nach Reparaturmechanismen. Der Mechanismus macht Zellteilung zu Vererbung — und Mutation zu Variation und damit zu Evolution.
@@ -193,6 +236,10 @@ Das durchschnittliche Dopamin-Niveau im mesolimbischen System. Durch regelmäßi
 ---
 
 ## E
+
+**Electronic Art**
+Kunstgattung die elektronische Technologie als Medium, Material und Prozess einsetzt — nicht als Werkzeug, sondern als strukturelle Bedingung des Werks. Umfasst Video Art (Nam June Paik), Computer Art, Net Art, generative Systeme, interaktive Installationen und Hybrid-Elektronik. Der Schaltkreis, das Signal, die Rückkopplung sind nicht Mittel zum Zweck — sie sind Inhalt. In Deutschland maßgeblich durch die Stuttgarter Schule (Max Bense, Georg Nees) und Pioniere wie Walter Giers geprägt. In der Medienkunst: das Medium *ist* die Botschaft in einem technischen Sinne — kein analoges Äquivalent zur elektronischen Geste existiert.
+→ [[alan_turing]] | [[zellulaere_automaten]] | [[biomodalitaet]] | [[__sandbox__]]
 
 **Elongation**
 Streckungsphase der bakteriellen Zellteilung — nach DNA-Replikation verlängert sich die Zelle bis die zwei DNA-Kopien räumlich getrennt sind und Septumbildung einsetzen kann. Definiert zusammen mit Septumbildung die Mindestzeit einer Zellteilung. In der Medienkunst: Wachstum als sichtbarer Prozess — nicht binäres An/Aus, sondern kontinuierliche Ausdehnung vor dem Bruch. Das Dehnen vor der Trennung.
@@ -222,6 +269,10 @@ Resistente Ruhezustände mancher Bakterien (*Bacillus*, *Clostridium*) bei extre
 In Philosophie und Medientheorie: Dinge die existieren und wirken — nicht nur Menschen. Akteur-Netzwerk-Theorie (Latour): Entitäten sind alles was handelt, beeinflusst, verändert — Algorithmen, Bakterien, Infrastrukturen, Materialien. Im Kontext der Medienkunst: Auflösung des Anthropozentrismus. Nicht der Mensch allein ist Akteur im Werk.
 → [[verantwortungsnetzwerk]] | [[__sandbox__]]
 
+**Erfahrungsblindheit** *(Sensorische Deprivation & Halluzination)*
+Das Gehirn halluziniert nicht nur unter Substanzeinfluss — auch bei Entzug sensorischer Eingaben beginnt es eigene Inhalte zu generieren. Ganzfeld-Effekt, Dunkelkammer, Floatation Tank: ohne externe Reize füllt das Vorhersage-System des Gehirns (Predictive Processing) die sensorische Leere mit gespeicherten Mustern. Wenn das Modell keine Korrekturfeedbacks mehr erhält, beginnt es sich selbst zu bestätigen — unkontrollierte Prior-Aktivierung. In der Medienkunst: Installationen die durch Entzug statt Überwältigung Wahrnehmungsverschiebungen erzeugen.
+→ [[interoception_affective_labeling]] | [[emotionale_granularitaet]] | [[__sandbox__]]
+
 **EU Taxonomie**
 Klassifikationssystem der EU das definiert welche Wirtschaftsaktivitäten als "nachhaltig" gelten. Umstritten: fossiles Gas und Atomkraft wurden als grün eingestuft. In der Medienkunst: Sprache als politisches Instrument, Definition als Machtakt — wer definiert was "grün" ist, kontrolliert den Diskurs. Klassifikation als Gewalt.
 → [[eu_taxonomie]] | [[__sandbox__]]
@@ -237,6 +288,10 @@ Mimik beeinflusst das Gefühlserleben rückwirkend — wer lächelt fühlt sich 
 ---
 
 ## G
+
+**Gamma-Korrektur**
+Nichtlineare Anpassung der Helligkeit an die logarithmische Wahrnehmung des menschlichen Auges. LEDs und digitale Displays emittieren lineare Lichtmengen (doppelter PWM-Wert = doppelte Helligkeit), aber das Auge empfindet Helligkeitsunterschiede in dunklen Bereichen stärker als in hellen — nach dem Weber-Fechner-Gesetz. Ohne Gamma-Korrektur erscheint der untere Helligkeitsbereich übersprungen und der obere komprimiert. Gamma ~2.2 (sRGB-Standard) kompensiert diese Nichtlinearität. In der Medienkunst: jede LED-Installation, jedes Display-Interface ist implizit eine Aussage über die Differenz zwischen technischer Ausgabe und menschlicher Wahrnehmung — Gamma als Übersetzungsschicht zwischen Maschine und Körper.
+→ [[gamma_korrektur]] | [[__sandbox__]]
 
 **Gesichts-Elektromyografie (fEMG)**
 Messung minimaler elektrischer Aktivität in Gesichtsmuskeln. Erfasst emotionale Reaktionen die bewusst nicht kontrollierbar sind — biologischer Fingerabdruck von Gefühlszuständen. Relevant für Human-Computer-Interaction und affective computing.
@@ -308,6 +363,10 @@ Künstler (1887–1968), Erfinder des Readymades (1913): vorgefertigte Alltagsob
 Neuronaler Schaltkreis vom Ventralen Tegmentum (VTA) zum Nucleus Accumbens — das primäre Belohnungssystem des Gehirns. Dopaminausschüttung hier erzeugt Euphorie, Motivation, Verstärkungslernen. Wird durch THC, Zucker, Social Media direkt aktiviert.
 → [[dopamin]] | [[thc]]
 
+**Metaanalyse**
+Statistische Methode die Ergebnisse mehrerer unabhängiger Studien zu einer Frage zusammenfasst und quantitativ gewichtet — stärker als einzelne Studien, anfällig für Publication Bias. Ermöglicht Aussagen über Effektgrößen über Populationen hinweg. In der Medienkunst: Metaanalyse als epistemisches Modell — Wahrheit nicht als einzelne Beobachtung sondern als Aggregat. Wer die Metaanalyse schreibt, definiert was als Evidenz gilt.
+→ [[__sandbox__]]
+
 **Metabolischer Automat**
 Erweiterung des zellulären Automaten (Conway's Game of Life) auf metabolische Zustände — statt binär lebendig/tot: ANABOLISMUS, REIFE, KATABOLISMUS, TOD. Regeln nicht als Bit-Logik sondern als Chemie: pH-Level, Enzymkonzentration, Nachbar-Zustände bestimmen Zustandsübergänge. Das Konzept überträgt die emergente Logik von Game of Life auf physische, materielle Systeme. Realisiert im Installationskonzept [[artificial_bacteria_konzept|Artificial Bacteria]].
 → [[artificial_bacteria_konzept]] | [[emergenz]] | [[quorum_sensing]] | [[anabolismus_katabolismus]] | [[__sandbox__]]
@@ -319,6 +378,18 @@ Biologischer Prozess durch den Bakterien (besonders *Sporosarcina pasteurii*) Ka
 **Moral Agency** *(artifizielle)*
 Fähigkeit eines Akteurs moralisch zu handeln. Voraussetzungen: Kommunikationsfähigkeit, Handlungsfähigkeit, Autonomie, Urteilskraft. Unterschied: operationale Verantwortungsfähigkeit (Maschine führt korrekt aus) vs. moralischer Akteur (Maschine urteilt selbst).
 → [[__sandbox__]] | [[ai_ml_grundlagen]]
+
+**Muster Klassifikation** *(Pattern Recognition)*
+Erkennung und Kategorisierung wiederkehrender Strukturen in Daten, Bildern oder Signalen — Grundoperation maschinellen Lernens. Klassifizierungsalgorithmen finden Grenzen im Merkmalsraum zwischen Kategorien. Kein Algorithmus klassifiziert objektiv: die Trainingsdaten, die Kategorien und die Verlustfunktionen sind menschliche Entscheidungen. In der Medienkunst: das klassifizierende System als Spiegel seiner Schöpfer — was als Muster gilt und was als Rauschen, wer als Bedrohung und wer als Normalfall.
+→ [[leopardenmuster]] | [[reaktions_diffusion]] | [[zellulaere_automaten]] | [[__sandbox__]]
+
+---
+
+## N
+
+**Neuronales Gedankenlesen** *(Neural Decoding)*
+Dekodierung mentaler Zustände aus neuronalen Aktivierungsmustern — Brain-Computer-Interfaces die per fMRI, EEG oder implantierten Elektroden Gedanken, Vorstellungsbilder oder Intentionen aus Hirnaktivität auslesen. State of the Art 2024: Sprachrekonstruktion aus Hirnaktivität möglich, Bildrekonstruktion via Diffusionsmodelle. In der Medienkunst: das Gehirn als unmittelbares Interface, kein Körper als Mittler — und die Frage ob ein Interface das Gedanken liest noch Privatheit kennt.
+→ [[interoception_affective_labeling]] | [[emotionale_granularitaet]] | [[__sandbox__]]
 
 ---
 
@@ -335,7 +406,9 @@ Praxis ätherische Öle nach elementaren und astrologischen Resonanzen zu kompon
 **Pataphysik**
 Von Alfred Jarry (1873–1907) begründete "Wissenschaft der imaginären Lösungen" — untersucht Ausnahmen von Ausnahmen, das was über Metaphysik hinausgeht. Gegenmodell zur Logik. In der Medienkunst: Systeme die nicht funktionieren als ästhetische Aussage, das Absurde als Methode.
 → [[pataphysik]] | [[__sandbox__]]
-
+**PETG** *(Polyethylenterephthalat-Glycol)*
+Thermoplastisches Filament für 3D-Druck — Hybrid aus PET (Festigkeit, Klarheit) und modifizierter Glycol-Struktur (verbesserte Druckbarkeit, weniger Warping als PLA, höhere Temperaturbeständigkeit). Leicht transluzent bis klar, FDA-konform, chemisch resistent. In der Medienkunst: das Material der digitalen Fabrikation hat Geschichte und Zukunft — weder biologisch abbaubar noch fossile Dauerhaftigkeit. PETG als Mittelding: flexibel genug für Kunst, stabil genug für Funktion, transparent genug um Licht zu führen.
+→ [[artificial_bacteria_technik]] | [[__sandbox__]]
 **Petrochemie**
 Chemische Industrie basierend auf Erdöl und Erdgas. Fossile Energie als geronnene biologische Zeit — Millionen Jahre verdichtet in Plastik, Benzin, Kunstharzen, Farben. In der Medienkunst: das Material trägt die Geschichte seiner Entstehung. Die Gegenwart der Vergangenheit. Gegenmodell: biologisch abbaubare, nachwachsende Materialien.
 → [[petrochemie]] | [[__sandbox__]]
@@ -351,6 +424,10 @@ Zeichenprozesse in und zwischen Pflanzen — chemische Signale die Stress, Schä
 **Polysaccharide**
 Langkettige Kohlenhydratmoleküle bestehend aus Zuckerbausteinen. In biologischen Systemen als Strukturmaterial (Zellulose, Chitin), Energiespeicher (Stärke, Glykogen) oder als Schutzmatrix in Biofilmen. Bakterien produzieren polysaccharidbasierte Matrizen zur kollektiven Selbstorganisation. In der Medienkunst: Material das von Leben selbst produziert wird — Biofabrikation jenseits industrieller Fertigung.
 → [[__sandbox__]]
+
+**Populationsdenken** *(Ernst Mayr)*
+Biologisches Denken das Variation innerhalb einer Population als real und bedeutsam betrachtet — Gegenteil von typologischem Denken das einen Idealtyp sucht und Abweichungen als Fehler behandelt. Ernst Mayr identifizierte Populationsdenken als konzeptuelle Revolution der Evolutionsbiologie: es gibt kein „typisches“ Tier, nur Individuen in statistischer Verteilung. Variation ist nicht Lärm — sie ist das Material der Evolution. In der Medienkunst: Systeme die Diversität als Funktion behandeln statt als Bug.
+→ [[bakterielle_adaptation]] | [[quorum_sensing]] | [[emergenz]] | [[__sandbox__]]
 
 **Process S / Process C** *(Zwei-Prozess-Modell)*
 Das wissenschaftliche Modell der Schlafregulation. Process S: homöostatischer Schlapdruck (Adenosin-Akkumulation). Process C: zirkadianer Rhythmus (innere Uhr). Beide Systeme müssen zusammenpassen für guten Schlaf.
@@ -396,6 +473,10 @@ Zellmembran die selektiv durchlässig ist — lässt bestimmte Moleküle passier
 **Septumbildung**
 Bildung der Querwand (Septum) in der Mitte der Bakterienzelle kurz vor der Zelltrennung. Das Protein FtsZ polymerisiert zu einem Ring (Z-Ring) am zukünftigen Teilungspunkt, zieht sich zusammen und treibt das Einwärtswachstum von Membran und Zellwand. → [[zellteilung]] | [[bakterielle_vermehrung]]
 
+**Simulationen unseres Gehirns**
+Rechenmodelle neuronaler Prozesse — von einfachen konnektionistischen Netzwerken bis zu vollständigen Gehirn-Emulationen (Whole Brain Emulation, Blue Brain Project). Keine Simulation ist das Gehirn: sie kann Outputs produzieren die mit biologischen übereinstimmen, ohne dieselben Mechanismen zu benutzen. Philosophisch: ist eine perfekte Verhaltenssimulation eines Bewusstseins bewusst? Turings Frage als Neuroproblematik. In der Medienkunst: Hirnmodelle als Spiegel unserer Vorstellung von Intelligenz — das Modell verrät mehr über die Modellierenden als über das Gehirn.
+→ [[alan_turing]] | [[turing_land_duchamp_land]] | [[emergenz]] | [[__sandbox__]]
+
 **Slow-Wave-Sleep (SWS) / N3**
 Tiefschlafphase mit langsamen Delta-Wellen. Zuständig für körperliche Regeneration, Immunsystem, Wachstumshormon-Ausschüttung und Gehirnreinigung. Dominiert die erste Nachthälfte.
 → [[schlaf]] | [[immunsystem]]
@@ -403,6 +484,10 @@ Tiefschlafphase mit langsamen Delta-Wellen. Zuständig für körperliche Regener
 **Social Media** *(Emotional-Granularität)*
 Plattformen wie Instagram, Twitter/X und TikTok reduzieren das gesamte emotionale Spektrum auf eine Reaktionsgeste — den Like. Durch friktionslose Oberflächen, Engagement-Optimierung und Tempodruck entrainieren sie Nutzer auf grobe emotionale Kategorien und erodieren [[emotionale_granularitaet|emotionale Granularität]] systematisch. Das ist kein Versehen sondern Geschäftsmodell: nuancierte Emotionen konvertieren schlechter als schnelle Reflexreaktionen. In der Medienkunst: die Plattform als Instrument der Entdifferenzierung — und die Frage was ein Interface wäre das Granularität trainiert statt zerstört.
 → [[social_media_emotionale_granularitaet]] | [[emotionale_granularitaet]] | [[dopamin]] | [[__sandbox__]]
+
+**Stephen Wolfram**
+Britisch-amerikanischer Informatiker, Physiker und Mathematiker (* 1959). Schuf *Mathematica* (1988), *Wolfram|Alpha* (2009) und veröffentlichte *A New Kind of Science* (2002) — das Argument dass einfache Berechnungsregeln ein besseres Modell der Natur liefern als klassische Mathematik. Wolframs Kernthese: das Universum rechnet. Zentral: die **Wolfram-Klassifikation** zellulärer Automaten in vier Klassen (Fixpunkt / Periodisch / Chaotisch / Komplex), wobei Klasse IV universelle Berechnung erzeugt — **Rule 110** ist der einzige elementare 1D-Automat der als Turing-vollständig bewiesen wurde. 2020 folgt das Wolfram Physics Project: das Universum als wachsender Hypergraph. In der Medienkunst: wenn das Universum rechnet, ist jedes berechnende System kein Modell der Natur, sondern Teilnahme an ihr.
+→ [[zellulaere_automaten]] | [[alan_turing]] | [[reaktions_diffusion]] | [[emergenz]] | [[leopardenmuster]] | [[turing_land_duchamp_land]] | [[stephen_wolfram]]
 
 ---
 
@@ -442,6 +527,14 @@ Konzept aus der Technikethik: Verantwortung nicht als Eigenschaft eines einzelne
 
 ---
 
+## W
+
+**Walter Giers**
+Deutscher Pionier der elektronischen und Computer-Kunst (* 1940, Germersheim). Seit den 1960er Jahren entwickelt er interaktive Licht- und Elektronikinstallationen sowie computergenerierte Grafiken. Einer der Gründungsvertreter der systematischen Computerkunst in Deutschland, verbunden mit der Stuttgarter Schule (Max Bense, Georg Nees). Giers' Arbeit erkundet die Grenze zwischen Algorithmus und Ästhetik — systematische Formerzeugung durch Code, Maschinenlogik als künstlerisches Prinzip. In der Medienkunst: Vorläufer einer Praxis die heute in generativer KI weiterlebt — die Frage ob Regeln Schönheit erzeugen können.
+→ [[alan_turing]] | [[zellulaere_automaten]] | [[__cosmicbrain__#E|Electronic Art]] | [[__sandbox__]]
+
+---
+
 ## Z
 
 **Zelltrennung**
@@ -469,27 +562,11 @@ Botenstoffe des Immunsystems mit bidirektionaler Verbindung zum Schlaf: Tiefschl
 *Neue Begriffe für das Glossar hier notieren — werden beim nächsten `sortier das Glossar` alphabetisch einsortiert.*
 
 ```
-Digitales Herbarium
-
-Degenerationseffekt
-
-Populationsdenken
-
-Muster Klassifikation
-
-Neuronales gedankenlesen
-
-Metaanalyse
-
-Erfahrungsblindheit - Halluzinationen hervorrufen
-
-Simulationen unseres Gehirns
-
-Attributionsfehler
-
-Autoinduktor
-
-Gamma-Korrektur
+1D Automaten
+Transhumanismus
+humanismus
+posthumanismus
+mimikry
 ```
 
 ---
@@ -497,5 +574,8 @@ Gamma-Korrektur
 *Neue Begriffe für neue Files hier notieren — werden beim nächsten `erstell die neuen files` als vollständige Dokumente angelegt.*
 
 ```
-Gamma-Korrektur (leds - menschliche wahrnehmung)
+1D Automaten
+Transhumanismus
+humanismus
+posthumanismus
 ```

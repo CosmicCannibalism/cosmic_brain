@@ -170,7 +170,7 @@ Wenn verschiedene Regelsets gleichzeitig auf demselben Gitter laufen und Zellen 
 
 ## Räuber-Beute — Rotationssymmetrie
 
-Eine Variante ohne Zählen: **Typ A verdrängt Typ B, B verdrängt C, C verdrängt D, D verdrängt A** (Fels-Papier-Schere, zyklisch). Jede Spezies breitet sich durch ihre Beute aus, wird aber von ihrem Räuber verdrängt.
+Eine Variante ohne Zählen: **Typ A verdrängt Typ B, B verdrängt C, C verdrängt D, D verdrängt A** (Papier-Stein-Schere, zyklisch). Jede Spezies breitet sich durch ihre Beute aus, wird aber von ihrem Räuber verdrängt.
 
 Ergebnis: **rotierende Spiralwellen**, die sich über das gesamte Gitter ausbreiten. Keine stationären Muster, kein Gleichgewicht — ewige Rotation. Der gleiche Mechanismus liegt Belousov-Zhabotinsky-Reaktionen in der Chemie zugrunde.
 
@@ -252,4 +252,4 @@ Datei: `game_of_life2.html` im Vault-Root — direkt im Browser öffnen.
 
 ## Summary (EN)
 
-A cellular automaton is a grid where each cell computes its next state based solely on its immediate neighbors — no memory, no global view, no central control. From three simple rules (Conway's B3/S23) emerge four structural classes: still lifes (stable equilibria), oscillators (rhythmic patterns), spaceships (apparent motion), and chaotic growth. Different rule sets produce different "physics" — different species of behavior. Langton's Ant demonstrates that even an agent following two rules will spontaneously construct ordered infrastructure after thousands of chaotic steps. The connection to biology is not metaphorical: quorum sensing, Belousov-Zhabotinsky reactions, and biofilm formation follow identical principles. Emergence — complexity from simplicity — is the shared language of computation, chemistry, and life.
+A cellular automaton is a grid where each cell computes its next state based solely on its immediate neighbors — no memory, no global view, no central control. From three simple rules (Conway's B3/S23) emerge four structural classes: still lifes (stable equilibria), oscillators (rhythmic patterns), spaceships (apparent motion), and chaotic growth. Different rule sets produce different "physics" — different species of behavior. Langton's Ant demonstrates that even an agent following two rules will spontaneously construct ordered infrastructure after thousands of chaotic steps. The connection to biology is not metaphorical: [[quorum_sensing|quorum sensing]], Belousov-Zhabotinsky reactions, and biofilm formation follow identical principles. [[emergenz|Emergence]] — complexity from simplicity — is the shared language of computation, chemistry, and life.

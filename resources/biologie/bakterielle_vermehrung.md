@@ -149,7 +149,7 @@ Tick für Tick                               Faltungskernel, Glättung
 B3/S23                                      beliebige Wachstumsfunktion
 ```
 
-**Game of Life (Conway, 1970)**
+**[[zellulaere_automaten|Game of Life]] (Conway, 1970)**
 Die Referenz. Drei Zahlen (`B3/S23`) → Turing-Vollständigkeit. Kein Bakterium, kein biologisches Vorbild direkt — aber dieselbe Logik. Stärke: Beweisbar. Schwäche: zu diskret um wie Leben auszusehen.
 
 **Lenia (Bert Wang-Chak Chan, 2019)**
@@ -164,7 +164,7 @@ Zwischenstufe: GoL-Regeln auf kontinuierlichen Raum übertragen. Weichere Überg
 Jede Zelle ist ein kleines neuronales Netz. Die Regeln werden nicht manuell definiert — das System **lernt** seine eigenen Regeln aus einem Ziel-Zustand. Anwendung: Selbst-reparierende Texturen, die nach Schäden in ihre Form zurückwachsen. Direkte Analogie: Wundheilung, Geweberegenerierung.
 
 **Reaction-Diffusion Systeme (Turing, 1952)**
-Alan Turing beschreibt 1952 wie zwei diffundierende Chemikalien (Aktivator + Inhibitor) durch ihre Wechselwirkung Muster erzeugen — Streifen, Flecken, Spiralen. Das Leopardenmuster ist kein Zufall: es ist eine partielle Differentialgleichung.
+[[alan_turing|Alan Turing]] beschreibt 1952 wie zwei diffundierende Chemikalien (Aktivator + Inhibitor) durch ihre Wechselwirkung Muster erzeugen — Streifen, Flecken, Spiralen. Das [[leopardenmuster|Leopardenmuster]] ist kein Zufall: es ist eine partielle Differentialgleichung.
 
 $$\frac{\partial u}{\partial t} = D_u \nabla^2 u + f(u,v)$$
 $$\frac{\partial v}{\partial t} = D_v \nabla^2 v + g(u,v)$$

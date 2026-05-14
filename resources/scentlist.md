@@ -4,7 +4,7 @@ tags:
   - scentlist
   - reference
 typ: referenz
-bereich: cosmicalchemy
+area: cosmicalchemy
 ---
 
 # ✦ scentlist

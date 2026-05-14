@@ -500,6 +500,7 @@ input[type=range]::-webkit-slider-thumb {
           <button id="bHover">hover: off</button>
           <button id="bHoverAction">draw</button>
           <button id="bCamera">cam: off</button>
+          <select id="sCamDevice" title="Kamera auswählen" style="font-family:inherit;font-size:0.75rem;background:#111;color:#aaa;border:1px solid #333;border-radius:4px;padding:2px 4px;max-width:120px"><option value="">— cam wählen</option></select>
         </div>
         <div class="brow" id="camModeRow" style="display:none;flex-wrap:wrap;gap:3px">
           <button class="cammode-btn on" data-mode="-1">—</button>
@@ -511,6 +512,7 @@ input[type=range]::-webkit-slider-thumb {
           <button class="cammode-btn" data-mode="5">silhouette</button>
           <button class="cammode-btn" data-mode="6">kanten</button>
           <button class="cammode-btn" data-mode="7">verfolgung</button>
+          <button class="cammode-btn" data-mode="8">shape brush</button>
           <button id="bCaptureBg" style="opacity:0.4" title="Hintergrund einfrieren (B)">⊙ bg</button>
           <button id="bCamPreview" style="opacity:0.4" title="Kamerabild anzeigen">▣ live</button>
         </div>
@@ -1743,7 +1745,30 @@ document.getElementById('bHoverAction').onclick = () => {
   btn.textContent = hoverErase ? 'erase' : 'draw';
   btn.classList.toggle('on', hoverErase);
 };
-document.getElementById('bCamera').onclick = () => {
+// populate camera device list on first user gesture
+function _populateCamDevices() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+  navigator.mediaDevices.enumerateDevices().then(devices => {
+    const sel = document.getElementById('sCamDevice');
+    const prev = sel.value;
+    // keep placeholder
+    while (sel.options.length > 1) sel.remove(1);
+    devices.filter(d => d.kind === 'videoinput').forEach((d, idx) => {
+      const opt = document.createElement('option');
+      opt.value = d.deviceId;
+      opt.textContent = d.label || ('Kamera ' + (idx + 1));
+      sel.appendChild(opt);
+    });
+    if (prev) sel.value = prev; // restore selection if still available
+    // auto-select first real device if only one option
+    if (sel.options.length === 2) sel.selectedIndex = 1;
+  });
+}
+_populateCamDevices();
+if (navigator.mediaDevices && navigator.mediaDevices.addEventListener)
+  navigator.mediaDevices.addEventListener('devicechange', _populateCamDevices);
+
+document.getElementById('bCamera').onclick = async () => {
   if (cameraOn) {
     if (videoEl && videoEl.srcObject)
       videoEl.srcObject.getTracks().forEach(t => t.stop());
@@ -1759,30 +1784,60 @@ document.getElementById('bCamera').onclick = () => {
     alert('getUserMedia not available.\nOpen via http://localhost:8080 in Chrome, not file://');
     return;
   }
-  navigator.mediaDevices.getUserMedia({video: {width:320, height:240, facingMode:'user'}, audio: false})
-    .then(stream => {
-      videoEl = document.createElement('video');
-      videoEl.srcObject = stream;
-      videoEl.muted = true;
-      videoEl.autoplay = true;
-      videoEl.playsInline = true;
-      videoEl.oncanplay = () => {
-        cameraOn = true;
-        offCanvas = document.createElement('canvas');
-        offCanvas.width = W; offCanvas.height = H;
-        offCtx = offCanvas.getContext('2d', {alpha: false});
-        document.getElementById('camModeRow').style.display = '';
-        document.getElementById('scaleRow').style.display = '';
-        // wire preview if already requested
-        const prev = document.getElementById('camPreview');
-        if (prev.style.display !== 'none') prev.srcObject = stream;
-        const btn = document.getElementById('bCamera');
-        btn.textContent = 'cam: on'; btn.classList.add('on');
-        if (!running) draw();
-      };
-      videoEl.play().catch(e => alert('video.play() failed: ' + e));
-    })
-    .catch(err => { alert('camera error: ' + err.name + ' — ' + err.message); });
+  // Step 1: get permission with any camera — this unlocks real deviceIds in enumerateDevices
+  let tempStream;
+  try {
+    tempStream = await navigator.mediaDevices.getUserMedia({video: true, audio: false});
+  } catch(err) {
+    alert('camera error: ' + err.name + ' — ' + err.message);
+    return;
+  }
+  // Step 2: now enumerate with real labels + IDs, restore user selection
+  const selEl = document.getElementById('sCamDevice');
+  const prevLabel = selEl.options[selEl.selectedIndex] ? selEl.options[selEl.selectedIndex].textContent : '';
+  const devices = await navigator.mediaDevices.enumerateDevices();
+  while (selEl.options.length > 1) selEl.remove(1);
+  devices.filter(d => d.kind === 'videoinput').forEach((d, idx) => {
+    const opt = document.createElement('option');
+    opt.value = d.deviceId;
+    opt.textContent = d.label || ('Kamera ' + (idx + 1));
+    selEl.appendChild(opt);
+    if (d.label && prevLabel && d.label === prevLabel) selEl.value = d.deviceId;
+  });
+  // Step 3: stop the temp permission stream
+  tempStream.getTracks().forEach(t => t.stop());
+  // Step 4: start the real stream with the selected device
+  const deviceId = selEl.value;
+  const videoConstraints = deviceId
+    ? {deviceId: {exact: deviceId}, width:320, height:240}
+    : {width:320, height:240};
+  let stream;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({video: videoConstraints, audio: false});
+  } catch(err) {
+    alert('camera error: ' + err.name + ' — ' + err.message);
+    return;
+  }
+  videoEl = document.createElement('video');
+  videoEl.srcObject = stream;
+  videoEl.muted = true;
+  videoEl.autoplay = true;
+  videoEl.playsInline = true;
+  videoEl.oncanplay = () => {
+    cameraOn = true;
+    offCanvas = document.createElement('canvas');
+    offCanvas.width = W; offCanvas.height = H;
+    offCtx = offCanvas.getContext('2d', {alpha: false});
+    document.getElementById('camModeRow').style.display = '';
+    document.getElementById('scaleRow').style.display = '';
+    // wire preview if already requested
+    const prev = document.getElementById('camPreview');
+    if (prev.style.display !== 'none') prev.srcObject = stream;
+    const btn = document.getElementById('bCamera');
+    btn.textContent = 'cam: on'; btn.classList.add('on');
+    if (!running) draw();
+  };
+  videoEl.play().catch(e => alert('video.play() failed: ' + e));
 };
 
 document.querySelectorAll('.cammode-btn').forEach(btn => {
@@ -1977,6 +2032,8 @@ function _camTick() {
   // flow vectors (for mode 1)
   let flowX = 0, flowY = 0;
   let brightDiff = new Float32Array(5); // per-species-zone (mode 4)
+  // motion centroid (for mode 8)
+  let motSumX = 0, motSumY = 0, motWeight = 0;
 
   for (let y = 0; y < _motH; y++) {
     for (let x = 0; x < _motW; x++) {
@@ -2000,6 +2057,9 @@ function _camTick() {
       // brightness zones for mode 4
       const bz = Math.floor(lum / 52); // 0-4
       brightDiff[Math.min(bz,4)] += d;
+
+      // motion centroid for mode 8
+      if (d > 12) { motSumX += x * d; motSumY += y * d; motWeight += d; }
     }
   }
 
@@ -2096,6 +2156,16 @@ function _camTick() {
           age_grid[i(gr, gc)] = 1;
         }
       }
+    }
+  }
+
+  if (camMode === 8) { // shape brush — draws current brush shape at motion centroid
+    if (normDelta > 10 && motWeight > 0) {
+      const px = (1 - (motSumX / motWeight) / _motW) * W; // flip x: motion canvas is mirrored
+      const py = (motSumY / motWeight) / _motH * H;
+      const numTypes = MODES[modeIdx] === 'classic' ? 1 : 5;
+      paintType = Math.floor(Math.random() * numTypes) + 1;
+      applyBrushAt(px, py, 0);
     }
   }
 

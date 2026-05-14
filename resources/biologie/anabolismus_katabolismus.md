@@ -74,13 +74,13 @@ graph TD
 
 ## Medienkünstlerische Perspektive
 
-Die industrielle Ästhetik privilegiert den Aufbau: Produktion, Wachstum, Ausgabe. Katabolismus wird als Fehler, Zerfall, Verlust gelesen. Aber in biologischen Systemen ist der Abbau ebenso notwendig und strukturiert wie der Aufbau — Autophagie ist kein Versagen, sondern Wartung.
+Die industrielle Ästhetik privilegiert den Aufbau: Produktion, Wachstum, Ausgabe. Katabolismus wird als Fehler, Zerfall, Verlust gelesen. Aber in biologischen Systemen ist der Abbau ebenso notwendig und strukturiert wie der Aufbau — [[autophagie|Autophagie]] ist kein Versagen, sondern Wartung.
 
 Das Metabolismus-Modell als Kritik an digitalen Systemen: Software wächst, akkumuliert, vergrößert sich — aber vergisst, recycelt, verkleinert sich nie. Kein Katabolismus. Kein Vergessen. Das ist biologisch unmöglich und ästhetisch beschränkend.
 
 **Für die Skulptur:** Materialien die wachsen und sich gleichzeitig auflösen. Bakterien die [[kalziumkarbonat|Kalziumkarbonat]] aufbauen während andere Organismen es abbauen. Zeit als sichtbarer Parameter.
 
-**Für generative Systeme:** Algorithmen die nicht nur wachsen sondern auch vergessen, abbauen, recyceln. Das System, das sich selbst isst. Autophagie als Designprinzip.
+**Für generative Systeme:** Algorithmen die nicht nur wachsen sondern auch vergessen, abbauen, recyceln. Das System, das sich selbst isst. [[autophagie|Autophagie]] als Designprinzip.
 
 Verbindung zu [[__sandbox__#Kunstprojekte & Ideen|Monumentale Skulpturen — Recycling Ancient Art]]: historische Skulpturen nachbilden, zersetzen, neu formen — Anabolismus und Katabolismus als skulpturaler Prozess.
 

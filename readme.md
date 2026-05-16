@@ -69,6 +69,11 @@ Wikilinks zwischen Dateien. Bilden das Netz im Graph View. Klickbar. Bidirektion
 
 **Wann:** immer wenn ein Begriff in einem Text auftaucht der ein eigenes File hat.
 
+> **Globale Regel:** Jedes Vault-Dokument ist ein potenzielles Link-Ziel.
+> Das erste Vorkommen eines verlinkbaren Begriffs *pro Abschnitt* wird verlinkt.
+> Gilt vorwärts (neue Datei verlinkt bestehende) und rückwärts (neue Datei → bestehende Dokumente auf Erwähnung scannen).
+> Copilot-Kommando: **`verlinke den vault`**
+
 ```
 [[quorum_sensing]] · [[feuer]] · [[cosmicalchemys#Leo]]
 ```
@@ -178,6 +183,16 @@ Epigenetics
 3. Copilot sagen: **`erstell die neuen files`**
 
 Copilot: erstellt vollständiges `.md`-File → legt es in `resources/` ab → verlinkt in bestehenden Dokumenten → trägt es ins Glossar ein → leert Codeblock.
+
+---
+
+### Workflow 3 — Vault-weite Verlinkung
+
+1. Copilot sagen: **`verlinke den vault`**
+
+Copilot: scannt alle Dokumente auf Begriffe mit eigenen Vault-Dateien → fügt fehlende `[[wiki-links]]` ein → erste Erwähnung pro Abschnitt, keine Duplikate.
+
+**Gilt auch automatisch** bei `sortier das Glossar` und `erstell die neuen files`.
 
 ---
 

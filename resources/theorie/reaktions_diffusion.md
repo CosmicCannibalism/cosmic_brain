@@ -10,7 +10,7 @@ bereich: theorie
 
 # Reaktions-Diffusion — Muster aus Wechselwirkung
 
-> Zwei Substanzen, zwei Prozesse: Reaktion (lokale Wechselwirkung) + Diffusion (räumliche Ausbreitung). Aus ihrer Asymmetrie entstehen Muster — Streifen, Flecken, Spiralen, Labyrinth. Das Leopardenmuster ist eine Lösung. Das Herzrhythmus-Spiralmuster ist eine andere. Dasselbe Prinzip.
+> Zwei Substanzen, zwei Prozesse: Reaktion (lokale Wechselwirkung) + Diffusion (räumliche Ausbreitung). Aus ihrer Asymmetrie entstehen Muster — Streifen, Flecken, Spiralen, Labyrinth. Das [[leopardenmuster|Leopardenmuster]] ist eine Lösung. Das Herzrhythmus-Spiralmuster ist eine andere. Dasselbe Prinzip.
 
 **Verwandte Themen:** [[leopardenmuster]] | [[alan_turing]] | [[zellulaere_automaten]] | [[bakterielle_vermehrung]] | [[biosemiotik]] | [[__cosmicbrain__]]
 

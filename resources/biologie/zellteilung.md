@@ -11,7 +11,7 @@ bereich: biologie
 
 > Eine Zelle wird zu zwei. Vier Schritte, vollständig automatisch, ohne externe Steuerung. Der Vorgang ist das Ur-Programm: Zustand kopieren, Kopie trennen, System neu initialisieren. Grundlage aller Vermehrung, aller Evolution.
 
-**Verwandte Themen:** [[bakterielle_vermehrung]] | [[anabolismus_katabolismus]] | [[horizontaler_gentransfer]] | [[endosporen]] | [[artificial_bacteria_konzept]] | [[__cosmicbrain__]]
+**Verwandte Themen:** [[bakterielle_vermehrung]] | [[anabolismus_katabolismus]] | [[bakterielle_adaptation#Teil 2 — Horizontaler Gentransfer: Laufzeit-Code-Injektion|Horizontaler Gentransfer]] | [[bakterielle_adaptation|Endosporen]] | [[artificial_bacteria_konzept]] | [[__cosmicbrain__]]
 
 ---
 

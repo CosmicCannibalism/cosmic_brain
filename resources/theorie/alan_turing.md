@@ -20,7 +20,7 @@ bereich: theorie
 
 Abstraktes Rechenmodell: ein unendliches Band, ein Lese-/Schreibkopf, ein Regelwerk. Jede berechenbare Funktion lässt sich auf diesem simplen System ausführen. Die Turing-Maschine definiert was *Berechnen* überhaupt bedeutet — und damit die Grenzen des Berechenbaren (Entscheidungsproblem: manche Fragen haben keine algorithmische Antwort).
 
-**Konsequenz für Medienkunst:** Jeder Computer ist eine spezielle Turing-Maschine. Conways Game of Life ist Turing-vollständig — theoretisch in der Lage jede Berechnung anzustellen. Die Grenze zwischen "Programm" und "Leben" beginnt hier zu verschwimmen.
+**Konsequenz für Medienkunst:** Jeder Computer ist eine spezielle Turing-Maschine. Conways [[zellulaere_automaten|Game of Life]] ist Turing-vollständig — theoretisch in der Lage jede Berechnung anzustellen. Die Grenze zwischen "Programm" und "Leben" beginnt hier zu verschwimmen.
 
 ---
 
@@ -43,7 +43,7 @@ Antwort: [[reaktions_diffusion|Reaktions-Diffusions-Systeme]]. Zwei Chemikalien 
 $$\frac{\partial u}{\partial t} = D_u \nabla^2 u + f(u,v)$$
 $$\frac{\partial v}{\partial t} = D_v \nabla^2 v + g(u,v)$$
 
-Das Leopardenmuster ist keine Dekoration — es ist eine partielle Differentialgleichung die auf der Haut gelöst wird.
+Das [[leopardenmuster|Leopardenmuster]] ist keine Dekoration — es ist eine partielle Differentialgleichung die auf der Haut gelöst wird.
 
 → [[leopardenmuster]]
 

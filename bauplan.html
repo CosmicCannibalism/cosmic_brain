@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Bauplan — V2 Turing Spot · Metabolic Mimicry</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0a0a0a;
+    color: #d4c9a8;
+    font-family: 'Courier New', monospace;
+    min-height: 100vh;
+    padding: 40px 32px 80px;
+  }
+
+  h1 {
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #6a6050;
+    margin-bottom: 4px;
+  }
+  h2 {
+    font-size: 22px;
+    font-weight: normal;
+    color: #d4c9a8;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+  }
+  .subtitle {
+    font-size: 12px;
+    color: #5a5448;
+    letter-spacing: 0.15em;
+    margin-bottom: 48px;
+  }
+
+  .layout {
+    display: flex;
+    gap: 64px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .drawing-block {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .drawing-label {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #6a6050;
+    margin-bottom: -16px;
+  }
+
+  svg text {
+    font-family: 'Courier New', monospace;
+  }
+
+  /* Info table */
+  .info-block {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    min-width: 280px;
+  }
+
+  .ring-table {
+    border-collapse: collapse;
+    font-size: 12px;
+    width: 100%;
+  }
+  .ring-table th {
+    text-align: left;
+    font-weight: normal;
+    color: #6a6050;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0 16px 8px 0;
+    border-bottom: 1px solid #1e1e1e;
+  }
+  .ring-table td {
+    padding: 7px 16px 7px 0;
+    color: #b0a898;
+    border-bottom: 1px solid #131313;
+    vertical-align: top;
+  }
+  .ring-table td:first-child { color: #d4c9a8; }
+
+  .dot-kern  { color: #ffcc44; }
+  .dot-r1    { color: #ff8822; }
+  .dot-r2    { color: #ff4422; }
+  .dot-r3    { color: #4466ff; }
+  .dot-inh   { color: #4466ff; }
+
+  .section-head {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #4a4440;
+    margin-bottom: 12px;
+  }
+
+  .legend {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+  }
+  .legend-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #1a1a1a;
+    margin: 48px 0;
+  }
+
+  .datapath {
+    font-size: 11px;
+    color: #6a6050;
+    line-height: 2;
+    letter-spacing: 0.05em;
+    margin-top: 8px;
+  }
+  .datapath span { color: #ffcc44; }
+
+  .pcb-note {
+    font-size: 11px;
+    color: #5a5448;
+    line-height: 1.8;
+    border-left: 2px solid #222;
+    padding-left: 12px;
+    margin-top: 12px;
+  }
+
+  .warn { color: #ff6644; }
+  .ok   { color: #44cc88; }
+
+  @media print {
+    body { background: white; color: black; padding: 20px; }
+    svg { filter: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Metabolic Mimicry · Bauplan</h1>
+<h2>V2 — Turing Spot</h2>
+<p class="subtitle">WS2812B LED-Array · beide Flächenformate · konzentrische Ringstruktur</p>
+
+<!-- ═══════════════════════════════════════════════════════ 19×19cm -->
+
+<div class="layout">
+
+  <!-- SVG 19×19 -->
+  <div class="drawing-block">
+    <p class="drawing-label">19 × 19 cm — 35 LEDs</p>
+    <svg id="svg19" width="480" height="480" viewBox="-30 -30 250 250">
+
+      <!-- background -->
+      <rect x="0" y="0" width="190" height="190" fill="none" stroke="#1c1c1c" stroke-width="0.5"/>
+
+      <!-- dimension lines -->
+      <!-- top horizontal -->
+      <line x1="0" y1="-10" x2="190" y2="-10" stroke="#333" stroke-width="0.4"/>
+      <line x1="0" y1="-13" x2="0" y2="-7" stroke="#333" stroke-width="0.4"/>
+      <line x1="190" y1="-13" x2="190" y2="-7" stroke="#333" stroke-width="0.4"/>
+      <text x="95" y="-14" text-anchor="middle" fill="#555" font-size="6">190 mm</text>
+
+      <!-- left vertical -->
+      <line x1="-10" y1="0" x2="-10" y2="190" stroke="#333" stroke-width="0.4"/>
+      <line x1="-13" y1="0" x2="-7" y2="0" stroke="#333" stroke-width="0.4"/>
+      <line x1="-13" y1="190" x2="-7" y2="190" stroke="#333" stroke-width="0.4"/>
+      <text x="-17" y="95" text-anchor="middle" fill="#555" font-size="6" transform="rotate(-90,-17,95)">190 mm</text>
+
+      <!-- radius guide circles (very faint) -->
+      <circle cx="95" cy="95" r="30" fill="none" stroke="#1a2a1a" stroke-width="0.4" stroke-dasharray="2,3"/>
+      <circle cx="95" cy="95" r="60" fill="none" stroke="#1a2a1a" stroke-width="0.4" stroke-dasharray="2,3"/>
+      <circle cx="95" cy="95" r="85" fill="none" stroke="#1a1a2a" stroke-width="0.4" stroke-dasharray="2,3"/>
+
+      <!-- radius dimension lines (right side, 90°) -->
+      <!-- R1 = 30 -->
+      <line x1="95" y1="95" x2="125" y2="95" stroke="#2a3a2a" stroke-width="0.4"/>
+      <line x1="122" y1="93" x2="122" y2="97" stroke="#2a3a2a" stroke-width="0.4"/>
+      <text x="109" y="92" text-anchor="middle" fill="#3a5a3a" font-size="5">R1 30mm</text>
+
+      <!-- R2 = 60 -->
+      <line x1="125" y1="95" x2="155" y2="95" stroke="#2a3a2a" stroke-width="0.4"/>
+      <line x1="152" y1="93" x2="152" y2="97" stroke="#2a3a2a" stroke-width="0.4"/>
+      <text x="140" y="92" text-anchor="middle" fill="#3a5a3a" font-size="5">R2 60mm</text>
+
+      <!-- R3 = 85 -->
+      <line x1="155" y1="95" x2="180" y2="95" stroke="#2a2a3a" stroke-width="0.4"/>
+      <line x1="177" y1="93" x2="177" y2="97" stroke="#2a2a3a" stroke-width="0.4"/>
+      <text x="168" y="92" text-anchor="middle" fill="#3a3a5a" font-size="5">R3 85mm</text>
+
+      <!-- crosshair -->
+      <line x1="90" y1="95" x2="100" y2="95" stroke="#333" stroke-width="0.3"/>
+      <line x1="95" y1="90" x2="95" y2="100" stroke="#333" stroke-width="0.3"/>
+
+      <!-- DATA PATH line (thin amber arc hint) -->
+      <!-- just a visual indicator arrow at 12-o-clock connecting kern to ring1 -->
+      <line x1="95" y1="88" x2="95" y2="67" stroke="#ffcc4433" stroke-width="0.6" stroke-dasharray="1.5,1.5"/>
+
+      <!-- ── PCB rectangles + LED dots ── -->
+      <!-- Helper: PCB drawn as 8.5×5px rect (17mm×10mm scaled to mm coords)
+           tangential: long axis along arc tangent, LED chip at center -->
+
+      <!-- === KERN LED 0 === -->
+      <g id="led0">
+        <rect x="91" y="91" width="8" height="5" fill="none" stroke="#ffcc44" stroke-width="0.5" rx="0.5"/>
+        <circle cx="95" cy="95" r="2.5" fill="#ffcc44" fill-opacity="0.9"/>
+        <text x="97.5" y="93" fill="#ffcc44" font-size="4.5">0</text>
+      </g>
+
+      <!-- === RING 1 — 6 LEDs, r=30 === -->
+      <!-- PCB tangential: rotate rect so 17mm-axis is tangent to circle -->
+      <!-- LED 1: 0° → (95, 65) -->
+      <g transform="translate(95,65)">
+        <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ff8822" stroke-width="0.4" rx="0.4" transform="rotate(0)"/>
+        <circle cx="0" cy="0" r="2" fill="#ff8822" fill-opacity="0.85"/>
+        <text x="2.5" y="-1.5" fill="#ff8822" font-size="4">1</text>
+      </g>
+      <!-- LED 2: 60° → (121, 80) -->
+      <g transform="translate(121,80)">
+        <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ff8822" stroke-width="0.4" rx="0.4" transform="rotate(60)"/>
+        <circle cx="0" cy="0" r="2" fill="#ff8822" fill-opacity="0.85"/>
+        <text x="2.5" y="-1.5" fill="#ff8822" font-size="4">2</text>
+      </g>
+      <!-- LED 3: 120° → (121, 110) -->
+      <g transform="translate(121,110)">
+        <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ff8822" stroke-width="0.4" rx="0.4" transform="rotate(120)"/>
+        <circle cx="0" cy="0" r="2" fill="#ff8822" fill-opacity="0.85"/>
+        <text x="2.5" y="-1.5" fill="#ff8822" font-size="4">3</text>
+      </g>
+      <!-- LED 4: 180° → (95, 125) -->
+      <g transform="translate(95,125)">
+        <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ff8822" stroke-width="0.4" rx="0.4" transform="rotate(180)"/>
+        <circle cx="0" cy="0" r="2" fill="#ff8822" fill-opacity="0.85"/>
+        <text x="2.5" y="-1.5" fill="#ff8822" font-size="4">4</text>
+      </g>
+      <!-- LED 5: 240° → (69, 110) -->
+      <g transform="translate(69,110)">
+        <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ff8822" stroke-width="0.4" rx="0.4" transform="rotate(240)"/>
+        <circle cx="0" cy="0" r="2" fill="#ff8822" fill-opacity="0.85"/>
+        <text x="2.5" y="-1.5" fill="#ff8822" font-size="4">5</text>
+      </g>
+      <!-- LED 6: 300° → (69, 80) -->
+      <g transform="translate(69,80)">
+        <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ff8822" stroke-width="0.4" rx="0.4" transform="rotate(300)"/>
+        <circle cx="0" cy="0" r="2" fill="#ff8822" fill-opacity="0.85"/>
+        <text x="2.5" y="-1.5" fill="#ff8822" font-size="4">6</text>
+      </g>
+
+      <!-- === RING 2 — 12 LEDs, r=60 === -->
+      <!-- LED 7:0°(95,35) LED8:30°(125,43) LED9:60°(147,65) LED10:90°(155,95)
+           LED11:120°(147,125) LED12:150°(125,147) LED13:180°(95,155)
+           LED14:210°(65,147) LED15:240°(43,125) LED16:270°(35,95)
+           LED17:300°(43,65) LED18:330°(65,43) -->
+      <g id="ring2">
+        <g transform="translate(95,35)">  <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ff4422" stroke-width="0.4" rx="0.4" transform="rotate(0)"/>  <circle cx="0" cy="0" r="1.8" fill="#ff4422" fill-opacity="0.8"/> <text x="2.2" y="-1.5" fill="#ff4422" font-size="3.5">7</text>  </g>
+        <g transform="translate(125,43)"> <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ff4422" stroke-width="0.4" rx="0.4" transform="rotate(30)"/> <circle cx="0" cy="0" r="1.8" fill="#ff4422" fill-opacity="0.8"/> <text x="2.2" y="-1.5" fill="#ff4422" font-size="3.5">8</text>  </g>
+        <g transform="translate(147,65)"> <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ff4422" stroke-width="0.4" rx="0.4" transform="rotate(60)"/> <circle cx="0" cy="0" r="1.8" fill="#ff4422" fill-opacity="0.8"/> <text x="2.2" y="-1.5" fill="#ff4422" font-size="3.5">9</text>  </g>
+        <g transform="translate(155,95)"> <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ff4422" stroke-width="0.4" rx="0.4" transform="rotate(90)"/> <circle cx="0" cy="0" r="1.8" fill="#ff4422" fill-opacity="0.8"/> <text x="2.2" y="-1.5" fill="#ff4422" font-size="3.5">10</text> </g>
+        <g transform="translate(147,125)"><rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ff4422" stroke-width="0.4" rx="0.4" transform="rotate(120)"/><circle cx="0" cy="0" r="1.8" fill="#ff4422" fill-opacity="0.8"/> <text x="2.2" y="-1.5" fill="#ff4422" font-size="3.5">11</text> </g>
+        <g transform="translate(125,147)"><rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ff4422" stroke-width="0.4" rx="0.4" transform="rotate(150)"/><circle cx="0" cy="0" r="1.8" fill="#ff4422" fill-opacity="0.8"/> <text x="2.2" y="-1.5" fill="#ff4422" font-size="3.5">12</text> </g>
+        <g transform="translate(95,155)"> <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ff4422" stroke-width="0.4" rx="0.4" transform="rotate(180)"/><circle cx="0" cy="0" r="1.8" fill="#ff4422" fill-opacity="0.8"/> <text x="2.2" y="-1.5" fill="#ff4422" font-size="3.5">13</text> </g>
+        <g transform="translate(65,147)"> <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ff4422" stroke-width="0.4" rx="0.4" transform="rotate(210)"/><circle cx="0" cy="0" r="1.8" fill="#ff4422" fill-opacity="0.8"/> <text x="2.2" y="-1.5" fill="#ff4422" font-size="3.5">14</text> </g>
+        <g transform="translate(43,125)"> <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ff4422" stroke-width="0.4" rx="0.4" transform="rotate(240)"/><circle cx="0" cy="0" r="1.8" fill="#ff4422" fill-opacity="0.8"/> <text x="2.2" y="-1.5" fill="#ff4422" font-size="3.5">15</text> </g>
+        <g transform="translate(35,95)">  <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ff4422" stroke-width="0.4" rx="0.4" transform="rotate(270)"/><circle cx="0" cy="0" r="1.8" fill="#ff4422" fill-opacity="0.8"/> <text x="2.2" y="-1.5" fill="#ff4422" font-size="3.5">16</text> </g>
+        <g transform="translate(43,65)">  <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ff4422" stroke-width="0.4" rx="0.4" transform="rotate(300)"/><circle cx="0" cy="0" r="1.8" fill="#ff4422" fill-opacity="0.8"/> <text x="2.2" y="-1.5" fill="#ff4422" font-size="3.5">17</text> </g>
+        <g transform="translate(65,43)">  <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ff4422" stroke-width="0.4" rx="0.4" transform="rotate(330)"/><circle cx="0" cy="0" r="1.8" fill="#ff4422" fill-opacity="0.8"/> <text x="2.2" y="-1.5" fill="#ff4422" font-size="3.5">18</text> </g>
+      </g>
+
+      <!-- === RING 3 — 16 LEDs, r=85 === -->
+      <!-- Coords: 19→(95,10) 20→(128,17) 21→(155,35) 22→(174,63) 23→(180,95)
+           24→(174,128) 25→(155,155) 26→(128,174) 27→(95,180)
+           28→(63,174) 29→(35,155) 30→(17,128) 31→(10,95)
+           32→(17,63) 33→(35,35) 34→(63,17) -->
+      <g id="ring3">
+        <g transform="translate(95,10)">  <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#4466ff" stroke-width="0.4" rx="0.4" transform="rotate(0)"/>  <circle cx="0" cy="0" r="1.6" fill="#4466ff" fill-opacity="0.8"/> <text x="2" y="-1.2" fill="#4466ff" font-size="3">19</text> </g>
+        <g transform="translate(128,17)"> <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#4466ff" stroke-width="0.4" rx="0.4" transform="rotate(22.5)"/><circle cx="0" cy="0" r="1.6" fill="#4466ff" fill-opacity="0.8"/> <text x="2" y="-1.2" fill="#4466ff" font-size="3">20</text> </g>
+        <g transform="translate(155,35)"> <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#4466ff" stroke-width="0.4" rx="0.4" transform="rotate(45)"/>  <circle cx="0" cy="0" r="1.6" fill="#4466ff" fill-opacity="0.8"/> <text x="2" y="-1.2" fill="#4466ff" font-size="3">21</text> </g>
+        <g transform="translate(174,63)"> <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#4466ff" stroke-width="0.4" rx="0.4" transform="rotate(67.5)"/><circle cx="0" cy="0" r="1.6" fill="#4466ff" fill-opacity="0.8"/> <text x="2" y="-1.2" fill="#4466ff" font-size="3">22</text> </g>
+        <g transform="translate(180,95)"> <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#4466ff" stroke-width="0.4" rx="0.4" transform="rotate(90)"/>  <circle cx="0" cy="0" r="1.6" fill="#4466ff" fill-opacity="0.8"/> <text x="2" y="-1.2" fill="#4466ff" font-size="3">23</text> </g>
+        <g transform="translate(174,128)"><rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#4466ff" stroke-width="0.4" rx="0.4" transform="rotate(112.5)"/><circle cx="0" cy="0" r="1.6" fill="#4466ff" fill-opacity="0.8"/> <text x="2" y="-1.2" fill="#4466ff" font-size="3">24</text> </g>
+        <g transform="translate(155,155)"><rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#4466ff" stroke-width="0.4" rx="0.4" transform="rotate(135)"/> <circle cx="0" cy="0" r="1.6" fill="#4466ff" fill-opacity="0.8"/> <text x="2" y="-1.2" fill="#4466ff" font-size="3">25</text> </g>
+        <g transform="translate(128,174)"><rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#4466ff" stroke-width="0.4" rx="0.4" transform="rotate(157.5)"/><circle cx="0" cy="0" r="1.6" fill="#4466ff" fill-opacity="0.8"/> <text x="2" y="-1.2" fill="#4466ff" font-size="3">26</text> </g>
+        <g transform="translate(95,180)"> <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#4466ff" stroke-width="0.4" rx="0.4" transform="rotate(180)"/> <circle cx="0" cy="0" r="1.6" fill="#4466ff" fill-opacity="0.8"/> <text x="2" y="-1.2" fill="#4466ff" font-size="3">27</text> </g>
+        <g transform="translate(63,174)"> <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#4466ff" stroke-width="0.4" rx="0.4" transform="rotate(202.5)"/><circle cx="0" cy="0" r="1.6" fill="#4466ff" fill-opacity="0.8"/> <text x="2" y="-1.2" fill="#4466ff" font-size="3">28</text> </g>
+        <g transform="translate(35,155)"> <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#4466ff" stroke-width="0.4" rx="0.4" transform="rotate(225)"/> <circle cx="0" cy="0" r="1.6" fill="#4466ff" fill-opacity="0.8"/> <text x="2" y="-1.2" fill="#4466ff" font-size="3">29</text> </g>
+        <g transform="translate(17,128)"> <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#4466ff" stroke-width="0.4" rx="0.4" transform="rotate(247.5)"/><circle cx="0" cy="0" r="1.6" fill="#4466ff" fill-opacity="0.8"/> <text x="2" y="-1.2" fill="#4466ff" font-size="3">30</text> </g>
+        <g transform="translate(10,95)">  <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#4466ff" stroke-width="0.4" rx="0.4" transform="rotate(270)"/> <circle cx="0" cy="0" r="1.6" fill="#4466ff" fill-opacity="0.8"/> <text x="2" y="-1.2" fill="#4466ff" font-size="3">31</text> </g>
+        <g transform="translate(17,63)">  <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#4466ff" stroke-width="0.4" rx="0.4" transform="rotate(292.5)"/><circle cx="0" cy="0" r="1.6" fill="#4466ff" fill-opacity="0.8"/> <text x="2" y="-1.2" fill="#4466ff" font-size="3">32</text> </g>
+        <g transform="translate(35,35)">  <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#4466ff" stroke-width="0.4" rx="0.4" transform="rotate(315)"/> <circle cx="0" cy="0" r="1.6" fill="#4466ff" fill-opacity="0.8"/> <text x="2" y="-1.2" fill="#4466ff" font-size="3">33</text> </g>
+        <g transform="translate(63,17)">  <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#4466ff" stroke-width="0.4" rx="0.4" transform="rotate(337.5)"/><circle cx="0" cy="0" r="1.6" fill="#4466ff" fill-opacity="0.8"/> <text x="2" y="-1.2" fill="#4466ff" font-size="3">34</text> </g>
+      </g>
+
+      <!-- 0° = 12-Uhr marker -->
+      <line x1="95" y1="-2" x2="95" y2="8" stroke="#4466ff44" stroke-width="0.5"/>
+      <text x="98" y="5" fill="#333" font-size="4">0° / 12h</text>
+
+      <!-- center label -->
+      <text x="98" y="98" fill="#ffcc44" font-size="3.5">0</text>
+
+    </svg>
+
+    <!-- PCB detail -->
+    <div>
+      <p class="section-head">PCB-Detail (Maßstab ~3:1)</p>
+      <svg width="220" height="80" viewBox="-5 -10 88 50">
+        <rect x="0" y="0" width="51" height="30" fill="none" stroke="#444" stroke-width="1" rx="1"/>
+        <!-- LED chip -->
+        <rect x="17" y="7.5" width="15" height="15" fill="none" stroke="#ffcc44" stroke-width="0.8" rx="1"/>
+        <circle cx="24.5" cy="15" r="5" fill="#ffcc4433"/>
+        <text x="24.5" y="16.5" text-anchor="middle" fill="#ffcc44" font-size="5">LED</text>
+        <!-- Pads left -->
+        <text x="-3" y="7" fill="#666" font-size="4.5">VCC</text>
+        <text x="-3" y="13" fill="#666" font-size="4.5">DO</text>
+        <text x="-3" y="19" fill="#666" font-size="4.5">GND</text>
+        <!-- Pads right -->
+        <text x="53" y="7" fill="#666" font-size="4.5">VCC</text>
+        <text x="53" y="13" fill="#aaa" font-size="4.5">DI</text>
+        <text x="53" y="19" fill="#666" font-size="4.5">GND</text>
+        <!-- Dimension: 17mm width -->
+        <line x1="0" y1="34" x2="51" y2="34" stroke="#333" stroke-width="0.4"/>
+        <line x1="0" y1="32" x2="0" y2="36" stroke="#333" stroke-width="0.4"/>
+        <line x1="51" y1="32" x2="51" y2="36" stroke="#333" stroke-width="0.4"/>
+        <text x="25.5" y="40" text-anchor="middle" fill="#555" font-size="4">17 mm</text>
+        <!-- Dimension: 10mm height -->
+        <line x1="57" y1="0" x2="57" y2="30" stroke="#333" stroke-width="0.4"/>
+        <line x1="55" y1="0" x2="59" y2="0" stroke="#333" stroke-width="0.4"/>
+        <line x1="55" y1="30" x2="59" y2="30" stroke="#333" stroke-width="0.4"/>
+        <text x="64" y="16" fill="#555" font-size="4">10 mm</text>
+        <!-- tangential arrow -->
+        <text x="0" y="-5" fill="#5a5a3a" font-size="4">← tangential (17mm-Achse entlang Kreisbogen)</text>
+      </svg>
+    </div>
+
+  </div><!-- /drawing-block 19x19 -->
+
+  <!-- INFO 19×19 -->
+  <div class="info-block">
+    <div>
+      <p class="section-head">Ringe — 19 × 19 cm</p>
+      <table class="ring-table">
+        <tr>
+          <th>#</th><th>Funktion</th><th>n</th><th>Radius</th><th>Δ°</th><th>Abstand</th>
+        </tr>
+        <tr><td class="dot-kern">0 Kern</td><td>Aktivator-Quelle</td><td>1</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td class="dot-r1">R1</td><td>Aktivator innen</td><td>6</td><td>30 mm</td><td>60°</td><td>31 mm</td></tr>
+        <tr><td class="dot-r2">R2</td><td>Aktivator außen</td><td>12</td><td>60 mm</td><td>30°</td><td>31 mm</td></tr>
+        <tr><td class="dot-r3">R3</td><td>Inhibitor</td><td>16</td><td>85 mm</td><td>22.5°</td><td>33 mm</td></tr>
+        <tr><td></td><td style="color:#5a5448">Gesamt</td><td><strong>35</strong></td><td></td><td></td><td></td></tr>
+      </table>
+    </div>
+
+    <div class="legend">
+      <p class="section-head">Legende</p>
+      <div class="legend-row"><div class="legend-dot" style="background:#ffcc44"></div><span style="color:#ffcc44">Kern (0)</span> — Aktivator-Quelle</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#ff8822"></div><span style="color:#ff8822">Ring 1 (1–6)</span> — Aktivator innen</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#ff4422"></div><span style="color:#ff4422">Ring 2 (7–18)</span> — Aktivator außen</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#4466ff"></div><span style="color:#4466ff">Ring 3 (19–34)</span> — Inhibitor</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#444; border:1px solid #888"></div>PCB-Umriss (17×10 mm)</div>
+    </div>
+
+    <div>
+      <p class="section-head">Datenpfad</p>
+      <div class="datapath">
+        <span>Arduino</span> DATA<br>
+        → [<span>0</span>] Kern<br>
+        → [<span>1</span>→<span>2</span>→<span>3</span>→<span>4</span>→<span>5</span>→<span>6</span>] Ring 1 ↻<br>
+        → [<span>7</span>→…→<span>18</span>] Ring 2 ↻<br>
+        → [<span>19</span>→…→<span>34</span>] Ring 3 ↻<br>
+        → nächste Blüte
+      </div>
+      <div class="pcb-note">
+        Ringwechsel-Drähte immer an <strong>0° (12 Uhr)</strong> radial herausführen.<br>
+        Min. Mittenabstand: <strong>22 mm</strong> (17 mm PCB + ~5 mm Spielraum).<br>
+        Handwerk-Toleranz: ±3–5 mm.
+      </div>
+    </div>
+
+    <div>
+      <p class="section-head">Stromversorgung</p>
+      <div class="pcb-note">
+        Max. Strom 19×19cm: <strong>2.1 A @5V</strong><br>
+        VCC + GND als Busleitung (0.5mm²) parallel zu allen PCBs.<br>
+        <span class="warn">Nicht</span> über Datenkette routen.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /layout 19×19 -->
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════════════════════════ 9×9cm -->
+
+<div style="margin-bottom: 32px">
+  <h2 style="font-size:16px; margin-bottom:4px">9 × 9 cm — 15 LEDs</h2>
+  <p class="subtitle" style="margin-bottom:0">Kern + Aktivator-Ring (5) + Inhibitor-Ring (9)</p>
+</div>
+
+<div class="layout">
+
+  <!-- SVG 9×9 -->
+  <div class="drawing-block">
+    <p class="drawing-label">9 × 9 cm — 15 LEDs</p>
+    <svg width="380" height="380" viewBox="-30 -30 150 150">
+      <!-- border -->
+      <rect x="0" y="0" width="90" height="90" fill="none" stroke="#1c1c1c" stroke-width="0.5"/>
+
+      <!-- dimension top -->
+      <line x1="0" y1="-10" x2="90" y2="-10" stroke="#333" stroke-width="0.4"/>
+      <line x1="0" y1="-13" x2="0" y2="-7" stroke="#333" stroke-width="0.4"/>
+      <line x1="90" y1="-13" x2="90" y2="-7" stroke="#333" stroke-width="0.4"/>
+      <text x="45" y="-14" text-anchor="middle" fill="#555" font-size="5">90 mm</text>
+
+      <!-- dimension left -->
+      <line x1="-10" y1="0" x2="-10" y2="90" stroke="#333" stroke-width="0.4"/>
+      <line x1="-13" y1="0" x2="-7" y2="0" stroke="#333" stroke-width="0.4"/>
+      <line x1="-13" y1="90" x2="-7" y2="90" stroke="#333" stroke-width="0.4"/>
+      <text x="-17" y="45" text-anchor="middle" fill="#555" font-size="5" transform="rotate(-90,-17,45)">90 mm</text>
+
+      <!-- guide circles -->
+      <circle cx="45" cy="45" r="19" fill="none" stroke="#1a2a1a" stroke-width="0.4" stroke-dasharray="2,2"/>
+      <circle cx="45" cy="45" r="35" fill="none" stroke="#1a1a2a" stroke-width="0.4" stroke-dasharray="2,2"/>
+
+      <!-- radius dimensions -->
+      <line x1="45" y1="45" x2="64" y2="45" stroke="#2a3a2a" stroke-width="0.4"/>
+      <line x1="61" y1="43" x2="61" y2="47" stroke="#2a3a2a" stroke-width="0.4"/>
+      <text x="54" y="43" text-anchor="middle" fill="#3a5a3a" font-size="4">R1 19</text>
+
+      <line x1="64" y1="45" x2="80" y2="45" stroke="#2a2a3a" stroke-width="0.4"/>
+      <line x1="77" y1="43" x2="77" y2="47" stroke="#2a2a3a" stroke-width="0.4"/>
+      <text x="72" y="43" text-anchor="middle" fill="#3a3a5a" font-size="4">R2 35</text>
+
+      <!-- crosshair -->
+      <line x1="41" y1="45" x2="49" y2="45" stroke="#333" stroke-width="0.3"/>
+      <line x1="45" y1="41" x2="45" y2="49" stroke="#333" stroke-width="0.3"/>
+
+      <!-- 0° marker -->
+      <text x="47" y="8" fill="#333" font-size="3.5">0°</text>
+
+      <!-- KERN LED 0 -->
+      <g transform="translate(45,45)">
+        <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ffcc44" stroke-width="0.5" rx="0.5"/>
+        <circle cx="0" cy="0" r="2.5" fill="#ffcc44" fill-opacity="0.9"/>
+        <text x="3" y="-1.5" fill="#ffcc44" font-size="4">0</text>
+      </g>
+
+      <!-- RING 1 — 5 LEDs, r=19, 72° apart -->
+      <!-- 1:0°→(45,26)  2:72°→(63,39)  3:144°→(56,60)  4:216°→(34,60)  5:288°→(27,39) -->
+      <g transform="translate(45,26)">  <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ff8822" stroke-width="0.4" rx="0.4" transform="rotate(0)"/>   <circle cx="0" cy="0" r="2" fill="#ff8822" fill-opacity="0.85"/><text x="2.5" y="-1.5" fill="#ff8822" font-size="3.5">1</text></g>
+      <g transform="translate(63,39)">  <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ff8822" stroke-width="0.4" rx="0.4" transform="rotate(72)"/>  <circle cx="0" cy="0" r="2" fill="#ff8822" fill-opacity="0.85"/><text x="2.5" y="-1.5" fill="#ff8822" font-size="3.5">2</text></g>
+      <g transform="translate(56,60)">  <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ff8822" stroke-width="0.4" rx="0.4" transform="rotate(144)"/> <circle cx="0" cy="0" r="2" fill="#ff8822" fill-opacity="0.85"/><text x="2.5" y="-1.5" fill="#ff8822" font-size="3.5">3</text></g>
+      <g transform="translate(34,60)">  <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ff8822" stroke-width="0.4" rx="0.4" transform="rotate(216)"/> <circle cx="0" cy="0" r="2" fill="#ff8822" fill-opacity="0.85"/><text x="2.5" y="-1.5" fill="#ff8822" font-size="3.5">4</text></g>
+      <g transform="translate(27,39)">  <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ff8822" stroke-width="0.4" rx="0.4" transform="rotate(288)"/> <circle cx="0" cy="0" r="2" fill="#ff8822" fill-opacity="0.85"/><text x="2.5" y="-1.5" fill="#ff8822" font-size="3.5">5</text></g>
+
+      <!-- RING 2 — 9 LEDs, r=35, 40° apart -->
+      <!-- 6:0°→(45,10)  7:40°→(68,18)  8:80°→(80,39)  9:120°→(75,63) 10:160°→(57,78)
+           11:200°→(33,78) 12:240°→(15,63) 13:280°→(11,39) 14:320°→(23,18) -->
+      <g transform="translate(45,10)">  <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#4466ff" stroke-width="0.4" rx="0.4" transform="rotate(0)"/>   <circle cx="0" cy="0" r="1.8" fill="#4466ff" fill-opacity="0.8"/><text x="2.2" y="-1.2" fill="#4466ff" font-size="3.5">6</text></g>
+      <g transform="translate(68,18)">  <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#4466ff" stroke-width="0.4" rx="0.4" transform="rotate(40)"/>  <circle cx="0" cy="0" r="1.8" fill="#4466ff" fill-opacity="0.8"/><text x="2.2" y="-1.2" fill="#4466ff" font-size="3.5">7</text></g>
+      <g transform="translate(80,39)">  <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#4466ff" stroke-width="0.4" rx="0.4" transform="rotate(80)"/>  <circle cx="0" cy="0" r="1.8" fill="#4466ff" fill-opacity="0.8"/><text x="2.2" y="-1.2" fill="#4466ff" font-size="3.5">8</text></g>
+      <g transform="translate(75,63)">  <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#4466ff" stroke-width="0.4" rx="0.4" transform="rotate(120)"/> <circle cx="0" cy="0" r="1.8" fill="#4466ff" fill-opacity="0.8"/><text x="2.2" y="-1.2" fill="#4466ff" font-size="3.5">9</text></g>
+      <g transform="translate(57,78)">  <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#4466ff" stroke-width="0.4" rx="0.4" transform="rotate(160)"/> <circle cx="0" cy="0" r="1.8" fill="#4466ff" fill-opacity="0.8"/><text x="2.2" y="-1.2" fill="#4466ff" font-size="3.5">10</text></g>
+      <g transform="translate(33,78)">  <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#4466ff" stroke-width="0.4" rx="0.4" transform="rotate(200)"/> <circle cx="0" cy="0" r="1.8" fill="#4466ff" fill-opacity="0.8"/><text x="2.2" y="-1.2" fill="#4466ff" font-size="3.5">11</text></g>
+      <g transform="translate(15,63)">  <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#4466ff" stroke-width="0.4" rx="0.4" transform="rotate(240)"/> <circle cx="0" cy="0" r="1.8" fill="#4466ff" fill-opacity="0.8"/><text x="2.2" y="-1.2" fill="#4466ff" font-size="3.5">12</text></g>
+      <g transform="translate(11,39)">  <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#4466ff" stroke-width="0.4" rx="0.4" transform="rotate(280)"/> <circle cx="0" cy="0" r="1.8" fill="#4466ff" fill-opacity="0.8"/><text x="2.2" y="-1.2" fill="#4466ff" font-size="3.5">13</text></g>
+
+      <!-- LED 14 warning — close to edge -->
+      <g transform="translate(23,18)">
+        <rect x="-4" y="-2.5" width="8" height="5" fill="none" stroke="#ff6644" stroke-width="0.6" rx="0.4" transform="rotate(320)"/>
+        <circle cx="0" cy="0" r="1.8" fill="#ff6644" fill-opacity="0.8"/>
+        <text x="2.2" y="-1.2" fill="#ff6644" font-size="3.5">14</text>
+      </g>
+      <!-- warning annotation for LED 6 -->
+      <line x1="45" y1="10" x2="55" y2="-5" stroke="#ff664455" stroke-width="0.4"/>
+      <text x="56" y="-7" fill="#ff6644" font-size="3.5">⚠ 10mm Rand</text>
+
+    </svg>
+  </div>
+
+  <!-- INFO 9×9 -->
+  <div class="info-block">
+    <div>
+      <p class="section-head">Ringe — 9 × 9 cm</p>
+      <table class="ring-table">
+        <tr>
+          <th>#</th><th>Funktion</th><th>n</th><th>Radius</th><th>Δ°</th><th>Abstand</th>
+        </tr>
+        <tr><td class="dot-kern">0 Kern</td><td>Aktivator-Quelle</td><td>1</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td class="dot-r1">R1</td><td>Aktivator</td><td>5</td><td>19 mm</td><td>72°</td><td>22 mm</td></tr>
+        <tr><td class="dot-inh">R2</td><td>Inhibitor</td><td>9</td><td>35 mm</td><td>40°</td><td>24 mm</td></tr>
+        <tr><td></td><td style="color:#5a5448">Gesamt</td><td><strong>15</strong></td><td></td><td></td><td></td></tr>
+      </table>
+    </div>
+
+    <div>
+      <p class="section-head">Datenpfad</p>
+      <div class="datapath">
+        <span>Arduino</span> DATA<br>
+        → [<span>0</span>] Kern<br>
+        → [<span>1</span>→<span>2</span>→<span>3</span>→<span>4</span>→<span>5</span>] Ring 1 ↻<br>
+        → [<span>6</span>→…→<span>14</span>] Ring 2 ↻<br>
+        → nächste Blüte
+      </div>
+    </div>
+
+    <div>
+      <p class="section-head">Achtung — Randkante</p>
+      <div class="pcb-note">
+        <span class="warn">LED 6</span> bei y = 10 mm — PCB tangential bis y ≈ 5 mm.<br>
+        Option A: Papiermaché oben weiter formen.<br>
+        Option B: LED 6 auf <strong>y = 15 mm</strong> setzen (Δ +5 mm).<br><br>
+        Max. Strom 9×9cm: <strong>0.9 A @5V</strong>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /layout 9×9 -->
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════════════════════════ VERDRAHTUNG -->
+
+<div style="margin-bottom: 24px">
+  <h2 style="font-size:16px; margin-bottom:4px">Verdrahtung</h2>
+</div>
+
+<div class="layout" style="gap:40px">
+  <svg width="560" height="130" viewBox="0 0 560 130">
+    <style>
+      .wire-label { font-family: 'Courier New', monospace; }
+    </style>
+    <!-- 5V bus -->
+    <line x1="10" y1="20" x2="540" y2="20" stroke="#ff4422" stroke-width="2"/>
+    <text x="5" y="16" fill="#ff4422" font-size="9" class="wire-label">5V</text>
+    <!-- GND bus -->
+    <line x1="10" y1="40" x2="540" y2="40" stroke="#4444aa" stroke-width="2"/>
+    <text x="5" y="36" fill="#4444aa" font-size="9" class="wire-label">GND</text>
+
+    <!-- PCBs -->
+    <g id="pcb0">
+      <rect x="80" y="55" width="60" height="35" fill="none" stroke="#666" stroke-width="1" rx="2"/>
+      <text x="110" y="69" text-anchor="middle" fill="#ffcc44" font-size="8" class="wire-label">LED 0</text>
+      <text x="110" y="79" text-anchor="middle" fill="#666" font-size="7" class="wire-label">Kern</text>
+      <!-- VCC tap -->
+      <line x1="110" y1="55" x2="110" y2="40" stroke="#ff4422" stroke-width="1" stroke-dasharray="3,2"/>
+      <line x1="110" y1="55" x2="110" y2="40" stroke="#ff4422" stroke-width="1" stroke-dasharray="3,2"/>
+      <!-- GND tap -->
+      <line x1="120" y1="55" x2="120" y2="40" stroke="#4444aa" stroke-width="1" stroke-dasharray="3,2"/>
+    </g>
+    <g id="pcb1">
+      <rect x="180" y="55" width="60" height="35" fill="none" stroke="#666" stroke-width="1" rx="2"/>
+      <text x="210" y="69" text-anchor="middle" fill="#ff8822" font-size="8" class="wire-label">LED 1</text>
+      <text x="210" y="79" text-anchor="middle" fill="#666" font-size="7" class="wire-label">Ring 1</text>
+      <line x1="210" y1="55" x2="210" y2="40" stroke="#ff4422" stroke-width="1" stroke-dasharray="3,2"/>
+      <line x1="220" y1="55" x2="220" y2="40" stroke="#4444aa" stroke-width="1" stroke-dasharray="3,2"/>
+    </g>
+    <g id="pcbn">
+      <rect x="280" y="55" width="60" height="35" fill="none" stroke="#666" stroke-width="1" rx="2"/>
+      <text x="310" y="69" text-anchor="middle" fill="#888" font-size="8" class="wire-label">LED n</text>
+      <text x="310" y="79" text-anchor="middle" fill="#555" font-size="7" class="wire-label">...</text>
+      <line x1="310" y1="55" x2="310" y2="40" stroke="#ff4422" stroke-width="1" stroke-dasharray="3,2"/>
+      <line x1="320" y1="55" x2="320" y2="40" stroke="#4444aa" stroke-width="1" stroke-dasharray="3,2"/>
+    </g>
+    <g id="pcblast">
+      <rect x="380" y="55" width="60" height="35" fill="none" stroke="#666" stroke-width="1" rx="2"/>
+      <text x="410" y="69" text-anchor="middle" fill="#4466ff" font-size="8" class="wire-label">LED 34</text>
+      <text x="410" y="79" text-anchor="middle" fill="#666" font-size="7" class="wire-label">Ring 3</text>
+      <line x1="410" y1="55" x2="410" y2="40" stroke="#ff4422" stroke-width="1" stroke-dasharray="3,2"/>
+      <line x1="420" y1="55" x2="420" y2="40" stroke="#4444aa" stroke-width="1" stroke-dasharray="3,2"/>
+    </g>
+
+    <!-- Arduino DATA line -->
+    <text x="5" y="100" fill="#ffcc44" font-size="9" class="wire-label">DATA</text>
+    <line x1="40" y1="95" x2="80" y2="72.5" stroke="#ffcc44" stroke-width="1.2"/>
+    <!-- DO→DI arrows between PCBs -->
+    <line x1="140" y1="72.5" x2="180" y2="72.5" stroke="#ffcc44" stroke-width="1.2"/>
+    <polygon points="177,70 183,72.5 177,75" fill="#ffcc44"/>
+    <line x1="240" y1="72.5" x2="280" y2="72.5" stroke="#ffcc44" stroke-width="1.2"/>
+    <polygon points="277,70 283,72.5 277,75" fill="#ffcc44"/>
+    <line x1="340" y1="72.5" x2="380" y2="72.5" stroke="#ffcc44" stroke-width="1.2"/>
+    <polygon points="377,70 383,72.5 377,75" fill="#ffcc44"/>
+    <line x1="440" y1="72.5" x2="480" y2="72.5" stroke="#ffcc44" stroke-width="1.2" stroke-dasharray="4,3"/>
+    <text x="490" y="76" fill="#555" font-size="8" class="wire-label">→ nächste Blüte</text>
+
+    <!-- DO/DI labels -->
+    <text x="140" y="68" fill="#886622" font-size="7" class="wire-label">DO</text>
+    <text x="175" y="68" fill="#886622" font-size="7" class="wire-label">DI</text>
+    <text x="240" y="68" fill="#886622" font-size="7" class="wire-label">DO</text>
+    <text x="275" y="68" fill="#886622" font-size="7" class="wire-label">DI</text>
+    <text x="340" y="68" fill="#886622" font-size="7" class="wire-label">DO</text>
+    <text x="375" y="68" fill="#886622" font-size="7" class="wire-label">DI</text>
+
+    <!-- legend -->
+    <line x1="10" y1="115" x2="30" y2="115" stroke="#ff4422" stroke-width="2"/>
+    <text x="35" y="118" fill="#888" font-size="8" class="wire-label">VCC (Bus, parallel, 0.5mm²)</text>
+    <line x1="200" y1="115" x2="220" y2="115" stroke="#4444aa" stroke-width="2"/>
+    <text x="225" y="118" fill="#888" font-size="8" class="wire-label">GND (Bus, parallel)</text>
+    <line x1="360" y1="115" x2="380" y2="115" stroke="#ffcc44" stroke-width="1.5"/>
+    <text x="385" y="118" fill="#888" font-size="8" class="wire-label">DATA (Datenkette, seriell)</text>
+  </svg>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════════════════════════ BAU-REIHENFOLGE -->
+
+<div style="margin-bottom: 24px">
+  <h2 style="font-size:16px; margin-bottom:4px">Bau-Reihenfolge</h2>
+</div>
+
+<div style="display:flex; flex-direction:column; gap:0; max-width:680px">
+  <div style="display:flex; gap:20px; align-items:flex-start; padding:14px 0; border-bottom:1px solid #131313">
+    <div style="font-size:11px;color:#4a4440;min-width:24px;padding-top:1px">01</div>
+    <div style="font-size:13px;color:#d4c9a8;line-height:1.6">Drahtrahmen formen → Papiermaché (Zeitungspapier + Kleister) → vollständig trocknen lassen</div>
+  </div>
+  <div style="display:flex; gap:20px; align-items:flex-start; padding:14px 0; border-bottom:1px solid #131313">
+    <div style="font-size:11px;color:#4a4440;min-width:24px;padding-top:1px">02</div>
+    <div style="font-size:13px;color:#d4c9a8;line-height:1.6">Weiß sprühlackieren → trocknen</div>
+  </div>
+  <div style="display:flex; gap:20px; align-items:flex-start; padding:14px 0; border-bottom:1px solid #131313">
+    <div style="font-size:11px;color:#4a4440;min-width:24px;padding-top:1px">03</div>
+    <div style="font-size:13px;color:#d4c9a8;line-height:1.6"><strong>Kreuzfaden:</strong> zwei Fäden durch die Blüte (H + V). Schnittpunkt = Kern (LED 0). Bleistift markieren.</div>
+  </div>
+  <div style="display:flex; gap:20px; align-items:flex-start; padding:14px 0; border-bottom:1px solid #131313">
+    <div style="font-size:11px;color:#4a4440;min-width:24px;padding-top:1px">04</div>
+    <div style="font-size:13px;color:#d4c9a8;line-height:1.6">Zirkel auf Kern: Radien R1 / R2 / R3 aufzeichnen. Winkelteilung einmessen. Alle LED-Positionen als Bleistiftpunkt markieren.</div>
+  </div>
+  <div style="display:flex; gap:20px; align-items:flex-start; padding:14px 0; border-bottom:1px solid #131313">
+    <div style="font-size:11px;color:#4a4440;min-width:24px;padding-top:1px">05</div>
+    <div style="font-size:13px;color:#d4c9a8;line-height:1.6">PCBs mit kleiner Menge Heißkleber fixieren — <strong>tangential ausrichten</strong> (17mm-Achse entlang Kreisbogen, 10mm-Achse radial)</div>
+  </div>
+  <div style="display:flex; gap:20px; align-items:flex-start; padding:14px 0; border-bottom:1px solid #131313">
+    <div style="font-size:11px;color:#4a4440;min-width:24px;padding-top:1px">06</div>
+    <div style="font-size:13px;color:#d4c9a8;line-height:1.6">VCC + GND Busleitung löten (0.5mm² Kupferdraht, parallel zu allen PCBs)</div>
+  </div>
+  <div style="display:flex; gap:20px; align-items:flex-start; padding:14px 0; border-bottom:1px solid #131313">
+    <div style="font-size:11px;color:#4a4440;min-width:24px;padding-top:1px">07</div>
+    <div style="font-size:13px;color:#d4c9a8;line-height:1.6">Datenkette löten: DO → DI, Kern → Ring 1 → Ring 2 (→ Ring 3). Ringwechsel-Drähte immer bei <strong>0° (12 Uhr)</strong>.</div>
+  </div>
+  <div style="display:flex; gap:20px; align-items:flex-start; padding:14px 0; border-bottom:1px solid #131313">
+    <div style="font-size:11px;color:#4a4440;min-width:24px;padding-top:1px">08</div>
+    <div style="font-size:13px;color:#d4c9a8;line-height:1.6">Diffusor-Plexi (1 mm, matt) aufsetzen und fixieren</div>
+  </div>
+  <div style="display:flex; gap:20px; align-items:flex-start; padding:14px 0">
+    <div style="font-size:11px;color:#44cc88;min-width:24px;padding-top:1px">09</div>
+    <div style="font-size:13px;color:#d4c9a8;line-height:1.6">Test: FastLED <code style="color:#ffcc44;background:#111;padding:1px 5px;border-radius:3px">colorWipe()</code> — alle LEDs einzeln adressieren prüfen</div>
+  </div>
+</div>
+
+<hr class="divider">
+<p style="font-size:10px; color:#2a2a2a; letter-spacing:0.1em">Metabolic Mimicry · V2 Turing Spot · Bauplan · <a href="resources/metabolic_mimicry.md" style="color:#3a3a2a">metabolic_mimicry.md</a></p>
+
+</body>
+</html>

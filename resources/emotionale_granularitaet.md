@@ -23,8 +23,8 @@ Emotionale Granularität beschreibt wie feinkörnig jemand seine emotionalen Zus
 **Hohe Granularität:** "Ich bin enttäuscht und etwas beschämt, aber nicht wütend" — präzise Differenzierung.
 
 Das ist keine rein linguistische Fähigkeit. Emotionale Granularität ist eng verknüpft mit:
-- **Interoception** — Wahrnehmung körperlicher Signale (Herzrate, Anspannung, Atemfrequenz)
-- **Affective Labeling** — Benennen von Zuständen verändert ihre neuronale Verarbeitung
+- **[[interoception_affective_labeling|Interoception]]** — Wahrnehmung körperlicher Signale (Herzrate, Anspannung, Atemfrequenz)
+- **[[interoception_affective_labeling|Affective Labeling]]** — Benennen von Zuständen verändert ihre neuronale Verarbeitung
 - **Emotionsregulation** — wer präzise versteht was er fühlt, kann gezielter reagieren
 
 ---
@@ -46,7 +46,7 @@ Verbindung zu [[__cosmicbrain__#G|Gesichts-Elektromyografie (fEMG)]]: fEMG misst
 
 **Maschinen simulieren Granularität** — Sprachmodelle geben differenzierte emotionale Outputs, ohne einen Körper zu haben, ohne Interoception, ohne Vorerfahrung. Ist das emotionale Granularität oder ihre Imitation?
 
-**Granularität als Interface-Design** — Systeme die nur binäre oder grobe emotionale Inputs verarbeiten (gut/schlecht, like/dislike) erzwingen niedrige Granularität beim Nutzer. Social Media ist ein granularitätsfeindliches System: ein Like-Button für Freude, Überraschung, Stolz, Rührung, Bewunderung.
+**Granularität als Interface-Design** — Systeme die nur binäre oder grobe emotionale Inputs verarbeiten (gut/schlecht, like/dislike) erzwingen niedrige Granularität beim Nutzer. [[social_media_emotionale_granularitaet|Social Media]] ist ein granularitätsfeindliches System: ein Like-Button für Freude, Überraschung, Stolz, Rührung, Bewunderung.
 
 **Messung vs. Erleben** — Messingstrumente wie fEMG erfassen physiologische Korrelate von Emotion ohne die subjektive Qualität. Die Maschine misst Granularität ohne sie zu erleben.
 

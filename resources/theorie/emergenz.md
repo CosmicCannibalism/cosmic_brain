@@ -112,7 +112,7 @@ Die Frage ob man das System "versteht" verschiebt sich: man kann alle Regeln ken
 
 Emergenz ist das Strukturprinzip nicht-hierarchischer Systeme:
 
-- Quorum Sensing: kollektive Entscheidung ohne Zentrum
+- [[quorum_sensing|Quorum Sensing]]: kollektive Entscheidung ohne Zentrum
 - Schwarm: Intelligenz ohne Anführer
 - Sprache: Bedeutung ohne Gesetzgeber
 - Märkte: Preise ohne Preisfestsetzer
@@ -125,4 +125,4 @@ In der Medienkunst: Systeme die emergent sind, machen ihre eigene nicht-hierarch
 
 ## Summary (EN)
 
-Emergence is the appearance of properties at a system level that are not present in or predictable from the individual components. Weak emergence (in principle simulable from rules, but not analytically derivable) is the relevant case for generative systems — Game of Life gliders, leopard spots, flocking behaviour. Strong emergence (consciousness) remains philosophically contested. Conditions: many components, local interactions, non-linear dynamics, no global controller. Emergence is both a scientific description and a political model: collective behaviour without hierarchy, intelligence without centre, pattern without designer.
+Emergence is the appearance of properties at a system level that are not present in or predictable from the individual components. Weak emergence (in principle simulable from rules, but not analytically derivable) is the relevant case for generative systems — [[zellulaere_automaten|Game of Life]] gliders, [[leopardenmuster|leopard spots]], flocking behaviour. Strong emergence (consciousness) remains philosophically contested. Conditions: many components, local interactions, non-linear dynamics, no global controller. Emergence is both a scientific description and a political model: collective behaviour without hierarchy, intelligence without centre, pattern without designer.

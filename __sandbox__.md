@@ -37,7 +37,7 @@ Hexen führten handgeschriebene Bücher mit Ritualen, Rezepten, Wissen. Was wär
 ### Monumentale Skulpturen — Recycling Ancient Art
 Historische, emblematische Skulpturen nachbilden, zersetzen lassen, neu formen. Material als Zeitträger. Abbau als künstlerischer Akt — [[__cosmicbrain__#A|Anabolismus]] und [[__cosmicbrain__#K|Katabolismus]] als Skulpturprozess.
 
-### Game of Life
+### [[zellulaere_automaten|Game of Life]]
 Conways Game of Life als Ausgangspunkt: einfache Regeln, emergente Komplexität. Was passiert wenn biologische Regeln (Stoffwechsel, Membran, Reproduktion) als Zelluläre-Automaten-Logik übersetzt werden? → [[artificial_bacteria_konzept]]
 
 ### Haus der Kunst München
@@ -57,10 +57,10 @@ Kontext / Ausstellungsort — mögliche Referenz oder Zielort.
 ## Biologie als Medientheorie
 
 - **Maschinen haben keine [[__cosmicbrain__#S|semipermeable]] Membran** — sie tauschen keine Stoffe mit ihrer Umgebung. Kein Stoffwechsel, kein Milieu, keine Grenze die zugleich offen und selektiv ist. Das ist der fundamentale Unterschied zu lebenden Systemen.
-- **Anabolismus vs. Katabolismus** — Aufbau und Abbau als gleichwertige Prozesse. In der Kunst: Entstehung und Zerfall als gleichberechtigte ästhetische Zustände.
+- **[[anabolismus_katabolismus|Anabolismus]] vs. [[anabolismus_katabolismus|Katabolismus]]** — Aufbau und Abbau als gleichwertige Prozesse. In der Kunst: Entstehung und Zerfall als gleichberechtigte ästhetische Zustände.
 - **Riß im Stoffwechsel** — Unterbrechung als produktiver Zustand. Was passiert wenn der Kreislauf bricht?
 - **Bakterien als Architekten** — Mikroorganismen die Strukturen bauen ([[__cosmicbrain__#B|Biofilm]], [[__cosmicbrain__#K|Kalziumkarbonat]]). Nicht Werkzeug, sondern Akteur.
-- **Biosemiotisch** — Zeichen und Bedeutung in biologischen Systemen. Zellen kommunizieren, Pflanzen signalisieren — Sprache ist älter als der Mensch.
+- **[[biosemiotik|Biosemiotisch]]** — Zeichen und Bedeutung in biologischen Systemen. Zellen kommunizieren, Pflanzen signalisieren — Sprache ist älter als der Mensch.
 - **[[__cosmicbrain__#P|Petrochemie]]** — fossile Energie als geronnene biologische Zeit. Das Material trägt seine Geschichte.
 - **Früher Marmor für die Ewigkeit — heute wandelbare, abbaubare, wiederverwendbare Materialien.** Vergänglichkeit als neue Permanenz.
 - **Referenz:** Carl Sagan — *Cosmic Connection* — [[__cosmicbrain__#K|Kohlenstoffchauvinismus]]: die Annahme dass Leben zwingend kohlenstoffbasiert sein muss. *Beyond the Carbon Chain.* → [[literatur]]

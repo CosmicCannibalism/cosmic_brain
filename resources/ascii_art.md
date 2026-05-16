@@ -12,7 +12,7 @@ bereich: werkzeug
 
 > Text der zum Bild wird. **ASCII Art** nutzt Zeichen aus dem druckbaren Zeichensatz um Bilder, Logos und Muster zu formen — ohne Pixel, ohne Farbe, nur durch Anordnung von Symbolen im Zeichenraster. Die älteste Form digitaler Bildgebung.
 
-**Verwandte Themen:** [[zellulaere_automaten]] | [[biosemiotik]] | [[pataphysik]] | [[petroglyphen]] | [[__cosmicbrain__]]
+**Verwandte Themen:** [[zellulaere_automaten]] | [[biosemiotik]] | [[pataphysik]] | [[konzept_moodboard|Petroglyphen]] | [[__cosmicbrain__]]
 
 ---
 
@@ -81,6 +81,99 @@ figlet -I2          # Fontverzeichnis ausgeben
 ls $(figlet -I2)    # alle .flf-Dateien anzeigen
 ```
 
+---
+
+## Font-Galerie — Beispiel: `cosmiccannibalism`
+
+### smslant — ✦ kompakt, kursiv, clean
+```
+                     _                        _ __        ___
+ _______  ___ __ _  (_)__________ ____  ___  (_) /  ___ _/ (_)__ __ _
+/ __/ _ \(_-</  ' \/ / __/ __/ _ `/ _ \/ _ \/ / _ \/ _ `/ / (_-</  ' \
+\__/\___/___/_/_/_/_/\__/\__/\_,_/_//_/_//_/_/_.__/\_,_/_/_/___/_/_/_/
+```
+
+### slant — elegant, größer
+```
+  _________  _________ ___  (_)_____________ _____  ____  (_) /_  ____ _/ (_)
+ / ___/ __ \/ ___/ __ `__ \/ / ___/ ___/ __ `/ __ \/ __ \/ / __ \/ __ `/ / /
+/ /__/ /_/ (__  ) / / / / / / /__/ /__/ /_/ / / / / / / / / /_/ / /_/ / / /
+\___/\____/____/_/ /_/ /_/_/\___/\___/\__,_/_/ /_/_/ /_/_/_.___/\__,_/_/_/
+```
+
+### speed — futuristisch, underscored
+```
+__________________________ ______(_)_________________ _________________(_)
+_  ___/  __ \_  ___/_  __ `__ \_  /_  ___/  ___/  __ `/_  __ \_  __ \_  /
+/ /__ / /_/ /(__  )_  / / / / /  / / /__ / /__ / /_/ /_  / / /  / / /  /
+\___/ \____//____/ /_/ /_/ /_//_/  \___/ \___/ \__,_/ /_/ /_//_/ /_//_/
+```
+
+### lean — minimalistisch, dynamisch
+```
+    _/_/_/    _/_/      _/_/_/  _/_/_/  _/_/          _/_/_/    _/_/_/
+ _/        _/    _/  _/_/      _/    _/    _/  _/  _/        _/
+_/        _/    _/      _/_/  _/    _/    _/  _/  _/        _/
+ _/_/_/    _/_/    _/_/_/    _/    _/    _/  _/    _/_/_/    _/_/_/
+```
+
+### block — massiv, quadratisch
+```
+  _|_|_|    _|_|      _|_|_|  _|_|_|  _|_|          _|_|_|    _|_|_|
+_|        _|    _|  _|_|      _|    _|    _|  _|  _|        _|
+_|        _|    _|      _|_|  _|    _|    _|  _|  _|        _|
+  _|_|_|    _|_|    _|_|_|    _|    _|    _|  _|    _|_|_|    _|_|_|
+```
+
+### shadow — abgeflacht, Schatten-Effekt
+```
+  __|  _ \   __| __ `__ \  |  __|  __|  _` | __ \  __ \  | __ \   _` | | |
+ (    (   |\__ \ |   |   | | (    (    (   | |   | |   | | |   | (   | | |
+\___|\___/ ____/_|  _|  _|_|\___|\___|\__,_|_|  _|_|  _|_|_.__/ \__,_|_|_|
+```
+
+### graffiti — street art, asymmetrisch
+```
+  ____  ____  ______ _____ |__| ____  ____ _____    ____   ____ |__\_ |__
+_/ ___\/  _ \/  ___//     \|  |/ ___\/ ___\\__  \  /    \ /    \|  || __ \
+\  \__(  <_> )___ \|  Y Y  \  \  \__\  \___ / __ \|   |  \   |  \  || \_\ \
+ \___  >____/____  >__|_|  /__|\___  >___  >____  /___|  /___|  /__||___  /
+     \/          \/      \/        \/    \/     \/     \/     \/        \/
+```
+
+### cosmic — ornamental, komplex
+```
+  .,-:::::     ...      .::::::. .        :   :::  .,-:::::   .,-:::::
+,;;;'````'  .;;;;;;;.  ;;;`    ` ;;,.    ;;;  ;;;,;;;'````' ,;;;'````'
+[[[        ,[[     \[[,'[==/[[[[,[[[[, ,[[[[, [[[[[[        [[[
+$$$        $$$,     $$$  '''    $$$$$$$$$"$$$ $$$$$$        $$$
+`88bo,__,o,"888,_ _,88P 88b    dP888 Y88" 888o888`88bo,__,o,`88bo,__,o,
+  "YUMMMMMP" "YMMMMMP"   "YMmMY" MMM  M'  "MMMMMM  "YUMMMMMP" "YUMMMMMP"
+```
+
+### small — 3-zeilig, kompakt
+```
+ __ ___ ____ __ (_)__ __ __ _ _ _  _ _ (_) |__  __ _| (_)____ __
+/ _/ _ (_-< '  \| / _/ _/ _` | ' \| ' \| | '_ \/ _` | | (_-< '  \
+\__\___/__/_|_|_|_\__\__\__,_|_||_|_||_|_|_.__/\__,_|_|_/__/_|_|_|
+```
+
+### mini — 2-zeilig, maximal kompakt
+```
+ _ _  _._ _ o _ _ _.._ ._ o|_  _.|o _._ _
+(_(_)_>| | ||(_(_(_|| || |||_)(_|||_>| | |
+```
+
+### doom — klassisch (Standard-big)
+```
+  ___ ___  ___ _ __ ___  _  ___ ___ __ _ _ __  _ __  _| |__   __ _| |_ ___
+ / __/ _ \/ __| '_ ` _ \| |/ __/ __/ _` | '_ \| '_ \| | '_ \ / _` | | / __|
+| (_| (_) \__ \ | | | | | | (_| (_| (_| | | | | | | | | |_) | (_| | | \__ \
+ \___\___/|___/_| |_| |_|_|\___\___\__,_|_| |_|_| |_|_|_.__/ \__,_|_|_|___/
+```
+
+---
+
 ### Zeichenersatz für Unicode-Blocks
 
 figlet gibt `#` aus — durch Unicode-Blockzeichen ersetzen:
@@ -116,7 +209,7 @@ figlet -f banner3 "TEXT" | sed 's/#/█/g' | while IFS= read -r line; do echo "*
 
 ASCII Art ist das älteste digitale Bildmedium — und gleichzeitig das primitivste. Es arbeitet mit der Grundeinheit aller digitalen Kommunikation: dem Zeichen. Kein Pixel, kein Rasterformat, nur der Buchstabe als Baustein.
 
-Die Verwandtschaft zu [[petroglyphen]] liegt auf der Hand: beide formen Bedeutung durch Einritzen in ein Raster — dort Stein, hier Terminal-Grid. Beide sind körperlos in ihrer Herstellung, reduziert auf Kontur und Kontrast.
+Die Verwandtschaft zu [[konzept_moodboard|Petroglyphen]] liegt auf der Hand: beide formen Bedeutung durch Einritzen in ein Raster — dort Stein, hier Terminal-Grid. Beide sind körperlos in ihrer Herstellung, reduziert auf Kontur und Kontrast.
 
 In der Medienkunst: ASCII Art als Kommentar auf Bildgebung selbst. Wenn ein `█` ein Pixel ist, was ist dann ein Pixel? Die Auflösung des Unterschieds zwischen *Zeichen* und *Bild* ist das Thema — [[biosemiotik]] macht dasselbe für biologische Signale: Was ist der Unterschied zwischen einem Zeichen und dem was es auslöst?
 

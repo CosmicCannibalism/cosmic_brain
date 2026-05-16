@@ -11,7 +11,7 @@ bereich: theorie
 
 > Zwei miteinander verwobene Fähigkeiten: **Interoception** ist die Wahrnehmung des eigenen Körperinnenraums — Herzschlag, Hunger, Atemrhythmus, Spannung, Schmerz. **Affective Labeling** ist die Sprache dafür — das präzise Benennen eines Gefühlszustands. Gemeinsam sind sie die Grundlage emotionaler Granularität: wer seinen Körper nicht hören kann, kann ihn nicht beschreiben.
 
-**Verwandte Themen:** [[emotionale_granularitaet]] | [[social_media_emotionale_granularitaet]] | [[biosemiotik]] | [[endosemiotik]] | [[__cosmicbrain__]] | [[__sandbox__]]
+**Verwandte Themen:** [[emotionale_granularitaet]] | [[social_media_emotionale_granularitaet]] | [[biosemiotik]] | [[__cosmicbrain__]] | [[__sandbox__]]
 
 ---
 

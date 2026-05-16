@@ -211,7 +211,7 @@ Einheit B (Wachstum)──┤── [Gemeinsames Reservoir] ──── alle sa
 Einheit C (TOD) ──┘   (pH sinkt, Enzymkonzentration steigt)
 ```
 
-**Emergente Regeln (analog Game of Life):**
+**Emergente Regeln (analog [[zellulaere_automaten|Game of Life]]):**
 - Wenn pH im gemeinsamen Reservoir < 6.0 → alle Einheiten verkürzen Reife-Dauer
 - Wenn > 50% der Einheiten in REIFE → Reservoir stabilisiert sich (Pufferung)
 - Wenn isolierte Einheit (Netz-Trennung) → stirbt schneller ohne Stützeffekt

@@ -1,0 +1,3042 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="data:,">
+<title>Primordial Soup — MIDI</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; overflow:hidden; font-family:'Supply','Courier New',monospace; }
+canvas { display:block; }
+#vignette-overlay {
+  position:fixed; inset:0; pointer-events:none; z-index:10;
+  border-radius:0;
+  transition: border-radius 0.3s;
+}
+
+/* ── Info Panel (Figma) ──────────────────────────── */
+#infopanel {
+  position: fixed;
+  bottom: 26px;
+  left: 26px;
+  width: fit-content;
+  border-radius: 19px;
+  background: rgba(0,0,0,0.30);
+  box-shadow: 0 0 0 1.5px #2E2E2E;
+  z-index: 999999;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 8px 36px;
+  gap: 5px;
+  font-family: 'Supply', 'Courier New', monospace;
+  overflow: visible;
+}
+#svg-eye {
+  position: fixed;
+  top: 20px;
+  left: 76px;
+  width: 44px;
+  height: 44px;
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: 999999;
+}
+#svg-logo {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 44px;
+  height: 44px;
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: 999999;
+}
+.ip-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ip-slash {
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #FFFFFF;
+  letter-spacing: 0.04em;
+  -webkit-text-stroke: 7px black;
+  paint-order: stroke fill;
+}
+.ip-label {
+  font-weight: 300;
+  font-size: 1.3rem;
+  color: #FFFFFF;
+  letter-spacing: 0.06em;
+  -webkit-text-stroke: 7px black;
+  paint-order: stroke fill;
+}
+.ip-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 14px;
+  border-radius: 8px;
+  margin-left: 6px;
+}
+.ip-bracket {
+  font-weight: 300;
+  font-size: 1.3rem;
+  color: #FFFFFF;
+  letter-spacing: 0.04em;
+  -webkit-text-stroke: 7px black;
+  paint-order: stroke fill;
+}
+.ip-gen-val {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #FFB700;
+  letter-spacing: 0.1em;
+  min-width: 64px;
+  text-align: center;
+  -webkit-text-stroke: 7px black;
+  paint-order: stroke fill;
+}
+.ip-pop-val {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #6F00FF;
+  letter-spacing: 0.1em;
+  min-width: 64px;
+  text-align: center;
+  -webkit-text-stroke: 7px black;
+  paint-order: stroke fill;
+}
+#legend {
+  position:fixed; top:10px; left:14px;
+  font-size:.68rem; line-height:2; letter-spacing:.07em;
+  pointer-events:none;
+}
+.dot {
+  display:inline-block; width:9px; height:9px;
+  border-radius:50%; margin-right:5px; vertical-align:middle;
+}
+
+/* ── Science panels row container ──────────────────── */
+#sci-row {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 8px;
+  z-index: 999999;
+  pointer-events: none;
+}
+.sci-panel {
+  border-radius: 14px;
+  background: rgba(0,0,0,0.30);
+  box-shadow: 0 0 0 1.5px #2E2E2E;
+  font-family: 'Supply', 'Courier New', monospace;
+  overflow: hidden;
+  padding: 8px 12px 6px;
+  display: flex;
+  flex-direction: column;
+  width: 170px;
+  height: 112px;
+}
+.sci-title {
+  font-size: .52rem;
+  letter-spacing: .12em;
+  color: #FFFFFF;
+  font-weight: 700;
+  -webkit-text-stroke: 1px black;
+  paint-order: stroke fill;
+  white-space: nowrap;
+  height: 16px;
+  display: flex;
+  align-items: center;
+}
+.sci-canvas {
+  display: block;
+  border-radius: 4px;
+  background: transparent;
+  flex: 1;
+  width: 100%;
+  height: 70px;
+  margin: 4px 0;
+}
+.sci-val {
+  font-size: .52rem;
+  letter-spacing: .08em;
+  color: #FFFFFF;
+  -webkit-text-stroke: 1px black;
+  paint-order: stroke fill;
+  white-space: nowrap;
+  height: 16px;
+  display: flex;
+  align-items: center;
+}
+#panelToggle { display:none; }
+
+/* ── Collapsible panel ────────────────────────────── */
+#panel {
+  position:fixed;
+  top:160px; left:50%;
+  transform:translateX(-50%);
+  width:min(720px, 96vw);
+  background:transparent;
+  border:none;
+  border-radius:14px;
+  overflow:hidden;
+  max-height:0;
+  opacity:0;
+  transition:max-height .3s cubic-bezier(.4,0,.2,1), opacity .25s, box-shadow 0s .3s, background 0s .3s;
+  z-index:9999999;
+  pointer-events:none;
+}
+#panel.open {
+  max-height:calc(100vh - 200px); overflow-y:auto;
+  opacity:1; pointer-events:auto;
+  background:rgba(0,0,0,0.60);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  box-shadow: 0 0 0 1.5px #2E2E2E;
+  transition:max-height .3s cubic-bezier(.4,0,.2,1), opacity .25s;
+}
+
+#panelInner {
+  padding:14px 20px 20px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px 28px;
+}
+
+.psec { display:flex; flex-direction:column; gap:6px; }
+.psec-label {
+  font-size:.52rem; color:#FFB700;
+  letter-spacing:.18em; margin-bottom:1px;
+  opacity:0.55;
+  -webkit-text-stroke: 0px black;
+}
+.brow { display:flex; flex-wrap:wrap; gap:5px; }
+
+/* ── Buttons ──────────────────────────────────────── */
+button {
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.1);
+  color:rgba(255,255,255,0.45);
+  font:.68rem 'Supply','Courier New',monospace; padding:4px 12px;
+  cursor:pointer; letter-spacing:.07em;
+  transition:all .12s;
+}
+button:hover { background:rgba(111,0,255,0.12); border-color:rgba(111,0,255,0.4); color:#fff; }
+button.on    { border-color:rgba(255,183,0,.55); color:#FFB700; background:rgba(255,183,0,0.07); }
+
+/* ── Sliders ──────────────────────────────────────── */
+.srow {
+  display:flex; align-items:center; gap:8px;
+}
+.srow label {
+  font-size:.58rem; color:rgba(255,183,0,.35);
+  width:68px; letter-spacing:.05em; flex-shrink:0;
+}
+.srow input[type=range] {
+  flex:1; height:2px; cursor:pointer;
+  -webkit-appearance:none; appearance:none;
+  background:rgba(255,255,255,.13); outline:none; border:none;
+}
+.srow input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance:none;
+  width:10px; height:10px; border-radius:50%;
+  background:#6F00FF; cursor:pointer;
+  box-shadow:0 0 4px rgba(111,0,255,0.6);
+}
+/* all range inputs outside .srow also get purple thumb */
+input[type=range] {
+  -webkit-appearance:none; appearance:none;
+  background:rgba(255,255,255,.13); height:2px; cursor:pointer; outline:none; border:none;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance:none;
+  width:10px; height:10px; border-radius:50%;
+  background:#6F00FF; cursor:pointer;
+  box-shadow:0 0 4px rgba(111,0,255,0.6);
+}
+.srow .val {
+  font-size:.58rem; color:rgba(111,0,255,.6);
+  width:32px; text-align:right; letter-spacing:.04em; flex-shrink:0;
+}
+.srow .modval {
+  font-size:.55rem; color:#FFB700;
+  min-width:28px; text-align:right; flex-shrink:0;
+  display:none;
+}
+.srow .modval.active { display:block; }
+.pmute {
+  width:13px; height:13px; padding:0; font-size:.6rem; line-height:1;
+  border:none; background:transparent; cursor:pointer; flex-shrink:0;
+  color:rgba(255,255,255,0.12); border-radius:50%;
+}
+.pmute.patched { color:rgba(255,183,0,0.65); }
+.pmute.muted   { color:rgba(255,80,80,0.85); }
+.spdbtn {
+  flex:1; padding:1px 0; font-size:.48rem; letter-spacing:.06em;
+  border:1px solid rgba(255,255,255,0.08);
+  background:transparent; color:rgba(255,255,255,0.25); cursor:pointer;
+  border-radius:2px;
+}
+.spdbtn.on { border-color:rgba(255,255,255,.3); color:rgba(255,255,255,.7); background:rgba(255,255,255,0.06); }
+.srow select {
+  flex:1; background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.1);
+  color:rgba(255,255,255,0.45); font:.58rem monospace;
+  padding:2px 4px; cursor:pointer; outline:none;
+}
+.srow select option { background:#111; }
+/* ── LFO panel ────────────────────────────────────── */
+/* ── MIDI Panel ───────────────────────────────────── */
+#midiToggle {
+  position:fixed; bottom:26px; right:26px;
+  z-index:9999999; font:.62rem 'Supply','Courier New',monospace;
+  letter-spacing:.1em; padding:5px 14px;
+}
+#midiToggle.on { border-color:rgba(255,80,80,.7); color:#ff5050; background:rgba(255,80,80,0.08); }
+#midiPanel {
+  position:fixed; bottom:60px; right:26px;
+  width:260px;
+  background:rgba(0,0,0,0.75);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-radius:12px;
+  box-shadow:0 0 0 1.5px #2E2E2E;
+  z-index:9999999;
+  padding:12px 16px 14px;
+  display:none;
+  flex-direction:column;
+  gap:7px;
+  font-family:'Supply','Courier New',monospace;
+}
+#midiPanel.open { display:flex; }
+.midi-title {
+  font-size:.52rem; color:#FFB700;
+  letter-spacing:.18em; margin-bottom:2px; opacity:.55;
+}
+.midi-row {
+  display:flex; align-items:center; gap:7px;
+}
+.midi-row label {
+  font-size:.56rem; color:rgba(255,255,255,.35);
+  width:84px; letter-spacing:.04em; flex-shrink:0;
+}
+.midi-row select, .midi-row input[type=range] {
+  flex:1;
+}
+.midi-row .val {
+  font-size:.55rem; color:rgba(111,0,255,.7);
+  width:28px; text-align:right; flex-shrink:0;
+}
+.midi-status {
+  font-size:.52rem; color:rgba(255,255,255,.25);
+  letter-spacing:.05em; min-height:14px;
+}
+.midi-status.ok  { color:rgba(80,255,120,.7); }
+.midi-status.err { color:rgba(255,80,80,.7);  }
+.midi-ch-row {
+  display:grid; grid-template-columns:1fr 1fr; gap:4px 10px;
+}
+.midi-ch-item {
+  display:flex; align-items:center; gap:4px;
+}
+.midi-ch-dot {
+  width:7px; height:7px; border-radius:50%; flex-shrink:0;
+}
+.midi-ch-label {
+  font-size:.52rem; color:rgba(255,255,255,.3); letter-spacing:.04em;
+}
+#lfoToggle { display:none; }
+#lfoToggle:hover { color:rgba(255,255,255,.7); }
+#lfoToggle.open  { color:rgba(255,255,255,.6); border-color:rgba(255,255,255,.2); }
+#lfoPanel {
+  position:fixed; top:160px; right:0;
+  width:0;
+  height:calc(100vh - 160px);
+  background:transparent;
+  border:none;
+  overflow:hidden;
+  transition:width .3s cubic-bezier(.4,0,.2,1);
+  z-index:9999999;
+}
+#lfoPanel.open { width:252px; overflow-y:auto; }
+#lfoPanelInner {
+  padding:16px 8px 16px 14px;
+  display:flex; flex-direction:column;
+  gap:8px; min-width:214px;
+}
+.lfocol {
+  display:flex; flex-direction:column; gap:5px;
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:4px;
+  background:rgba(4,4,4,1);
+  padding:8px 9px 10px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.7);
+}
+.lfocol-title {
+  font-size:.52rem; color:rgba(255,255,255,.28);
+  letter-spacing:.2em; margin-bottom:2px;
+  font-family:'Supply','Courier New',monospace;
+}
+.lfocol canvas {
+  display:block; width:100%; height:36px;
+  background:rgba(0,0,0,0.6); margin-bottom:2px;
+}
+.psel {
+  flex-shrink:0; width:28px;
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.07);
+  color:rgba(255,255,255,0.25); font:.5rem monospace;
+  padding:0; cursor:pointer; outline:none;
+}
+.psel.patched { border-color:rgba(255,180,60,.6); color:rgba(255,180,60,.9); }
+.psel option { background:#111; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="vignette-overlay"></div>
+<video id="camPreview" style="display:none;position:fixed;bottom:12px;right:12px;width:180px;height:auto;border-radius:6px;opacity:0.85;transform:scaleX(-1);z-index:999;pointer-events:none" autoplay muted playsinline></video>
+
+<img src="resources/assets/3rd_eye.svg" id="svg-eye" alt="">
+<img src="resources/assets/logo_cc.svg" id="svg-logo" alt="">
+
+<!-- Science panels -->
+<div id="sci-row">
+  <div id="panel-lorenz" class="sci-panel">
+    <div class="sci-title">// LORENZ ATTRACTOR</div>
+    <canvas id="lorenz-c" class="sci-canvas" width="146" height="70"></canvas>
+    <div class="sci-val">σ=10 ρ=28 β=8/3</div>
+  </div>
+  <div id="panel-entropy" class="sci-panel">
+    <div class="sci-title">// SEMIOSE SIGNAL</div>
+    <canvas id="entropy-c" class="sci-canvas" width="146" height="70"></canvas>
+    <div class="sci-val" id="entropy-val">H = 0.000</div>
+  </div>
+  <div id="panel-quorum" class="sci-panel">
+    <div class="sci-title">// QUORUM STATE</div>
+    <canvas id="quorum-c" class="sci-canvas" width="146" height="70"></canvas>
+    <div class="sci-val" id="quorum-val">— —</div>
+  </div>
+</div>
+
+<div id="infopanel">
+  <div class="ip-row">
+    <span class="ip-slash">//</span>
+    <span class="ip-label">Generation</span>
+    <span class="ip-field">
+      <span class="ip-bracket">&lt;</span>
+      <span class="ip-gen-val" id="gen">0</span>
+      <span class="ip-bracket">&gt;</span>
+    </span>
+  </div>
+  <div class="ip-row">
+    <span class="ip-slash">//</span>
+    <span class="ip-label">Population</span>
+    <span class="ip-field">
+      <span class="ip-bracket">&lt;</span>
+      <span class="ip-pop-val" id="pop">0</span>
+      <span class="ip-bracket">&gt;</span>
+    </span>
+  </div>
+</div>
+<div id="legend"></div>
+
+<!-- always-visible toggle -->
+<button id="panelToggle">☰ controls</button>
+
+<!-- collapsible panel -->
+<div id="panel">
+  <div id="panelInner">
+
+    <!-- LEFT column: buttons -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+
+      <div class="psec">
+        <span class="psec-label">PLAYBACK</span>
+        <div class="brow">
+          <button id="bPlay">▶</button>
+          <button id="bStep">›</button>
+          <button id="bMode">mode: classic</button>
+          <button id="bBW">b&w</button>
+          <span style="font-size:.62rem;color:rgba(255,255,255,.25);letter-spacing:.08em;padding:4px 6px;align-self:center">FPS&thinsp;<span id="fps">0</span></span>
+        </div>
+      </div>
+
+      <div class="psec">
+        <span class="psec-label">PATTERNS</span>
+        <div class="brow">
+          <button id="bRnd">noise</button>
+          <button id="bGun">glider gun</button>
+          <button id="bPulsar">pulsar</button>
+          <button id="bAnt">langton ant</button>
+        </div>
+      </div>
+
+      <div class="psec">
+        <span class="psec-label">DISTURBANCES</span>
+        <div class="brow">
+          <button id="bChaos">chaos burst</button>
+          <button id="bVoid">void burst</button>
+          <button id="bMeteor">meteor</button>
+          <button id="bClear">clear</button>
+          <button id="bShot">screenshot</button>
+        </div>
+        <div style="font-size:.55rem;color:rgba(255,255,255,.13);letter-spacing:.06em;margin-top:2px">
+          right-click canvas · [space] play · [m] meteor · [c] void · [v] burst
+        </div>
+      </div>
+
+      <div class="psec">
+        <span class="psec-label">BRUSH MODE</span>
+        <div class="brow">
+          <button id="bHover">hover: off</button>
+          <button id="bHoverAction">draw</button>
+          <button id="bCamera">cam: off</button>
+          <select id="sCamDevice" title="Kamera auswählen" style="font-family:inherit;font-size:0.75rem;background:#111;color:#aaa;border:1px solid #333;border-radius:4px;padding:2px 4px;max-width:120px"><option value="">— cam wählen</option></select>
+        </div>
+        <div class="brow" id="camModeRow" style="display:none;flex-wrap:wrap;gap:3px">
+          <button class="cammode-btn on" data-mode="-1">—</button>
+          <button class="cammode-btn" data-mode="0">burst/void</button>
+          <button class="cammode-btn" data-mode="1">meteors</button>
+          <button class="cammode-btn" data-mode="2">zones</button>
+          <button class="cammode-btn" data-mode="3">stille=tod</button>
+          <button class="cammode-btn" data-mode="4">brightness</button>
+          <button class="cammode-btn" data-mode="5">silhouette</button>
+          <button class="cammode-btn" data-mode="6">kanten</button>
+          <button class="cammode-btn" data-mode="7">verfolgung</button>
+          <button class="cammode-btn" data-mode="8">shape brush</button>
+          <button id="bCaptureBg" style="opacity:0.4" title="Hintergrund einfrieren (B)">⊙ bg</button>
+          <button id="bCamPreview" style="opacity:0.4" title="Kamerabild anzeigen">▣ live</button>
+        </div>
+        <div class="brow" id="fisheyeRow" style="display:flex;gap:3px;flex-wrap:wrap;align-items:center">
+          <button id="bFisheye">fish: off</button>
+          <button id="bFishCells" class="fisheye-sub" style="opacity:0.45" title="Fisheye auf Zellen">cells</button>
+          <button id="bFishCam" class="fisheye-sub" style="opacity:0.45" title="Fisheye auf Kamera">cam</button>
+          <input type="range" id="sFishStr" class="fisheye-sub" style="opacity:0.45;width:70px" min="1" max="200" value="50" title="Stärke">
+          <span class="val fisheye-sub" id="vFishStr" style="opacity:0.45">0.50</span>
+        </div>
+        <div class="brow" style="display:flex;gap:3px;flex-wrap:wrap;align-items:center" id="curveRow">
+          <button id="bRound">round: off</button>
+          <input type="range" id="sRound" style="width:70px;opacity:0.4" min="0" max="50" value="8" title="Radius %">
+          <span class="val" id="vRound" style="opacity:0.4">8</span>
+          <button id="bKugel">kugel: off</button>
+          <input type="range" id="sKugel" style="width:70px;opacity:0.4" min="1" max="200" value="40" title="Kugel-Stärke">
+          <span class="val" id="vKugel" style="opacity:0.4">0.40</span>
+        </div>
+        <div class="brow" id="scaleRow" style="display:none;gap:4px;flex-wrap:wrap;align-items:center">
+          <span style="font-size:9px;opacity:0.6">scale</span>
+          <span style="font-size:9px;opacity:0.5">cells</span>
+          <input type="range" id="sScaleCells" style="width:70px" min="10" max="300" value="100">
+          <span class="val" id="vScaleCells">1.00</span>
+          <span style="font-size:9px;opacity:0.5">cam</span>
+          <input type="range" id="sScaleCam" style="width:70px" min="10" max="300" value="100">
+          <span class="val" id="vScaleCam">1.00</span>
+        </div>
+      </div>
+
+      <div class="psec">
+        <span class="psec-label">PRESETS</span>
+        <div class="brow">
+          <button id="bSave">⇩ save</button>
+          <button id="bLoad">⇧ load</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT column: sliders -->
+    <div class="psec">
+      <span class="psec-label">PARAMETERS</span>
+
+      <div class="srow">
+        <label>speed</label>
+        <select class="psel" id="pFps"><option value="-1">—</option><option value="0">L1</option><option value="1">L2</option><option value="2">L3</option></select><input type="range" id="sSpeed" min="2" max="60" value="30">
+        <span class="val" id="vSpeed">30</span><span class="modval" id="mSpeed"></span><button class="pmute" id="mutFps" title="mute mod">◎</button>
+      </div>
+      <div class="srow">
+        <label>cell size</label>
+        <input type="range" id="sCellSize" min="3" max="12" value="5">
+        <span class="val" id="vCellSize">5</span>
+      </div>
+      <div class="srow">
+        <label>mutation</label>
+        <select class="psel" id="pMut"><option value="-1">—</option><option value="0">L1</option><option value="1">L2</option><option value="2">L3</option></select><input type="range" id="sMutation" min="0" max="100" value="0">
+        <span class="val" id="vMutation">0</span><span class="modval" id="mMutation"></span><button class="pmute" id="mutMut" title="mute mod">◎</button>
+      </div>
+      <div class="srow">
+        <label>trail</label>
+        <select class="psel" id="pTrail"><option value="-1">—</option><option value="0">L1</option><option value="1">L2</option><option value="2">L3</option></select><input type="range" id="sTrail" min="0" max="999" value="820">
+        <span class="val" id="vTrail">.820</span><span class="modval" id="mTrail"></span><button class="pmute" id="mutTrail" title="mute mod">◎</button>
+      </div>
+      <div class="srow">
+        <label>density</label>
+        <input type="range" id="sDensity" min="5" max="65" value="28">
+        <span class="val" id="vDensity">28%</span>
+      </div>
+      <div class="srow">
+        <label>shape</label>
+        <select id="sShape">
+          <option value="circle">circle</option>
+          <option value="rect">rectangle</option>
+          <option value="tri">triangle ▽</option>
+        </select>
+        <button id="bRotate" style="flex-shrink:0;padding:3px 8px;font-size:.58rem">⟳ off</button>
+      </div>
+      <div class="srow">
+        <label>hollow</label>
+        <button id="bHollow" style="flex-shrink:0;padding:3px 8px;font-size:.58rem" class="on">on</button>
+        <select class="psel" id="pHollow"><option value="-1">—</option><option value="0">L1</option><option value="1">L2</option><option value="2">L3</option></select>
+        <input type="range" id="sHollow" min="1" max="95" value="28" style="flex:1">
+        <span class="val" id="vHollow">28</span><span class="modval" id="mHollow"></span><button class="pmute" id="mutHollow" title="mute mod">◎</button>
+      </div>
+      <div class="srow">
+        <label>evt radius</label>
+        <select class="psel" id="pRadius"><option value="-1">—</option><option value="0">L1</option><option value="1">L2</option><option value="2">L3</option></select><input type="range" id="sRadius" min="4" max="80" value="25">
+        <span class="val" id="vRadius">25</span><span class="modval" id="mRadius"></span><button class="pmute" id="mutRadius" title="mute mod">◎</button>
+      </div>
+      <div class="srow">
+        <label>meteor cnt</label>
+        <input type="range" id="sMeteorCnt" min="1" max="12" value="2">
+        <span class="val" id="vMeteorCnt">2</span>
+      </div>
+      <div class="srow">
+        <label>brush lag</label>
+        <select class="psel" id="pLag"><option value="-1">—</option><option value="0">L1</option><option value="1">L2</option><option value="2">L3</option></select><input type="range" id="sOffset" min="0" max="97" value="0">
+        <span class="val" id="vOffset">0</span><span class="modval" id="mOffset"></span><button class="pmute" id="mutLag" title="mute mod">◎</button>
+      </div>
+      <div class="srow">
+        <label>hue shift</label>
+        <select class="psel" id="pHue"><option value="-1">—</option><option value="0">L1</option><option value="1">L2</option><option value="2">L3</option></select><input type="range" id="sHue" min="0" max="360" value="0">
+        <span class="val" id="vHue">0°</span><span class="modval" id="mHue"></span><button class="pmute" id="mutHue" title="mute mod">◎</button>
+      </div>
+      <div class="srow">
+        <label>saturation</label>
+        <select class="psel" id="pSat"><option value="-1">—</option><option value="0">L1</option><option value="1">L2</option><option value="2">L3</option></select><input type="range" id="sSat" min="0" max="200" value="100">
+        <span class="val" id="vSat">100%</span><span class="modval" id="mSat"></span><button class="pmute" id="mutSat" title="mute mod">◎</button>
+      </div>
+      <div class="srow">
+        <label>hue drift</label>
+        <select class="psel" id="pDrift"><option value="-1">—</option><option value="0">L1</option><option value="1">L2</option><option value="2">L3</option></select><input type="range" id="sHueDrift" min="0" max="30" value="0">
+        <span class="val" id="vHueDrift">0</span><span class="modval" id="mHueDrift"></span><button class="pmute" id="mutDrift" title="mute mod">◎</button>
+      </div>
+      <div class="srow">
+        <label>glow</label>
+        <select class="psel" id="pGlow"><option value="-1">—</option><option value="0">L1</option><option value="1">L2</option><option value="2">L3</option></select><input type="range" id="sGlow" min="0" max="100" value="0">
+        <span class="val" id="vGlow">0</span><span class="modval" id="mGlow"></span><button class="pmute" id="mutGlow" title="mute mod">◎</button>
+      </div>
+      <div class="srow">
+        <label>age bright</label>
+        <select class="psel" id="pAgeBright"><option value="-1">—</option><option value="0">L1</option><option value="1">L2</option><option value="2">L3</option></select><input type="range" id="sAgeBright" min="0" max="100" value="0">
+        <span class="val" id="vAgeBright">0</span><span class="modval" id="mAgeBright"></span><button class="pmute" id="mutAgeBright" title="mute mod">◎</button>
+      </div>
+      <div class="srow">
+        <label>cam blend</label>
+        <select id="sBlend">
+          <option value="screen">screen</option>
+          <option value="lighter">add</option>
+          <option value="multiply">multiply</option>
+          <option value="difference">difference</option>
+          <option value="overlay">overlay</option>
+          <option value="hard-light">hard-light</option>
+          <option value="color-dodge">color-dodge</option>
+        </select>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<input type="file" id="presetFile" accept=".json" style="display:none">
+<button id="lfoToggle">∿ lfos</button>
+
+<!-- MIDI Panel -->
+<button id="midiToggle">⬡ midi</button>
+<div id="midiPanel">
+  <div class="midi-title">MIDI OUTPUT</div>
+  <div class="midi-status" id="midiStatus">— not initialized</div>
+  <div class="midi-row">
+    <label>enable</label>
+    <button id="bMidiInit" style="flex:1;padding:3px 8px;font-size:.58rem">init midi</button>
+    <button id="bMidiReset" style="flex:1;padding:3px 8px;font-size:.58rem;opacity:.6" title="All Notes Off (CC123+CC120) auf allen Kanälen">all off</button>
+  </div>
+  <div class="midi-title" style="margin-top:4px">REALTIME</div>
+  <div class="midi-row">
+    <label>ch1 stimmen</label>
+    <input type="range" id="sMidiCh1Div" min="1" max="8" step="1" value="8">
+    <span class="val" id="vMidiCh1Div">8</span>
+  </div>
+  <div class="midi-row">
+    <label>cc smooth</label>
+    <input type="range" id="sMidiRate" min="1" max="25" step="1" value="8">
+    <span class="val" id="vMidiRate">med</span>
+  </div>
+  <div class="midi-row">
+    <label>note length</label>
+    <input type="range" id="sMidiNoteLen" min="20" max="800" value="80">
+    <span class="val" id="vMidiNoteLen">80ms</span>
+  </div>
+  <div class="midi-title" style="margin-top:4px">CHANNEL MAP</div>
+  <div class="midi-ch-row">
+    <div class="midi-ch-item"><div class="midi-ch-dot" style="background:rgb(0,180,255)"></div><span class="midi-ch-label">CH1 · percussion</span></div>
+    <div class="midi-ch-item"><div class="midi-ch-dot" style="background:rgb(110,30,255)"></div><span class="midi-ch-label">CH2 · bass/drone</span></div>
+    <div class="midi-ch-item"><div class="midi-ch-dot" style="background:rgb(255,210,0)"></div><span class="midi-ch-label">CH3 · melodic</span></div>
+    <div class="midi-ch-item"><div class="midi-ch-dot" style="background:rgb(255,80,80)"></div><span class="midi-ch-label">CH4 · fx/glitch</span></div>
+  </div>
+  <div class="midi-title" style="margin-top:4px">EVENT CC</div>
+  <div class="midi-row">
+    <label>burst → CC12</label>
+    <div class="midi-status ok" id="midiCcBurst">—</div>
+  </div>
+  <div class="midi-row">
+    <label>meteor → CC13</label>
+    <div class="midi-status ok" id="midiCcMeteor">—</div>
+  </div>
+  <div class="midi-row">
+    <label>density → CC1</label>
+    <div class="midi-status ok" id="midiCcDensity">—</div>
+  </div>
+</div>
+<div id="lfoPanel">
+  <div id="lfoPanelInner">
+    <div class="lfocol">
+      <div class="lfocol-title" style="display:flex;justify-content:space-between;align-items:center">LFO 1 <button id="lfoPause0" style="padding:1px 7px;font-size:.52rem">⏸</button></div>
+      <canvas id="lfoC0" width="160" height="36"></canvas>
+      <div class="srow"><label>wave</label><select id="lfoW0"><option value="sin">sin</option><option value="tri">tri</option><option value="rect">rect</option><option value="rnd">rnd</option></select></div>
+      <div class="srow"><label>speed</label>
+        <div style="display:flex;flex-direction:column;gap:3px;flex:1">
+          <div style="display:flex;gap:3px">
+            <button class="spdbtn on" data-lfo="0" data-rng="lo">lo</button>
+            <button class="spdbtn" data-lfo="0" data-rng="mid">mid</button>
+            <button class="spdbtn" data-lfo="0" data-rng="hi">hi</button>
+          </div>
+          <input type="range" id="lfoSpd0" min="0.1" max="10" step="0.1" value="10">
+        </div>
+        <span class="val" id="lfoSpdV0">10</span></div>
+      <div class="srow"><label>offset</label><input type="range" id="lfoOff0" min="-100" max="100" value="0"><span class="val" id="lfoOffV0">0</span></div>
+      <div class="srow"><label>attn</label><input type="range" id="lfoAtn0" min="0" max="100" value="100"><span class="val" id="lfoAtnV0">1.0</span></div>
+      <div class="srow"><label>fm src</label><select id="lfoMod0"><option value="-1">none</option><option value="1">L2</option><option value="2">L3</option></select></div>
+      <div class="srow"><label>fm depth</label><input type="range" id="lfoMdp0" min="0" max="100" value="0"><span class="val" id="lfoMdpV0">0.00</span></div>
+    </div>
+    <div class="lfocol">
+      <div class="lfocol-title" style="display:flex;justify-content:space-between;align-items:center">LFO 2 <button id="lfoPause1" style="padding:1px 7px;font-size:.52rem">⏸</button></div>
+      <canvas id="lfoC1" width="160" height="36"></canvas>
+      <div class="srow"><label>wave</label><select id="lfoW1"><option value="sin">sin</option><option value="tri">tri</option><option value="rect">rect</option><option value="rnd">rnd</option></select></div>
+      <div class="srow"><label>speed</label>
+        <div style="display:flex;flex-direction:column;gap:3px;flex:1">
+          <div style="display:flex;gap:3px">
+            <button class="spdbtn on" data-lfo="1" data-rng="lo">lo</button>
+            <button class="spdbtn" data-lfo="1" data-rng="mid">mid</button>
+            <button class="spdbtn" data-lfo="1" data-rng="hi">hi</button>
+          </div>
+          <input type="range" id="lfoSpd1" min="0.1" max="10" step="0.1" value="10">
+        </div>
+        <span class="val" id="lfoSpdV1">10</span></div>
+      <div class="srow"><label>offset</label><input type="range" id="lfoOff1" min="-100" max="100" value="0"><span class="val" id="lfoOffV1">0</span></div>
+      <div class="srow"><label>attn</label><input type="range" id="lfoAtn1" min="0" max="100" value="100"><span class="val" id="lfoAtnV1">1.0</span></div>
+      <div class="srow"><label>fm src</label><select id="lfoMod1"><option value="-1">none</option><option value="0">L1</option><option value="2">L3</option></select></div>
+      <div class="srow"><label>fm depth</label><input type="range" id="lfoMdp1" min="0" max="100" value="0"><span class="val" id="lfoMdpV1">0.00</span></div>
+    </div>
+    <div class="lfocol">
+      <div class="lfocol-title" style="display:flex;justify-content:space-between;align-items:center">LFO 3 <button id="lfoPause2" style="padding:1px 7px;font-size:.52rem">⏸</button></div>
+      <canvas id="lfoC2" width="160" height="36"></canvas>
+      <div class="srow"><label>wave</label><select id="lfoW2"><option value="sin">sin</option><option value="tri">tri</option><option value="rect">rect</option><option value="rnd">rnd</option></select></div>
+      <div class="srow"><label>speed</label>
+        <div style="display:flex;flex-direction:column;gap:3px;flex:1">
+          <div style="display:flex;gap:3px">
+            <button class="spdbtn on" data-lfo="2" data-rng="lo">lo</button>
+            <button class="spdbtn" data-lfo="2" data-rng="mid">mid</button>
+            <button class="spdbtn" data-lfo="2" data-rng="hi">hi</button>
+          </div>
+          <input type="range" id="lfoSpd2" min="0.1" max="10" step="0.1" value="10">
+        </div>
+        <span class="val" id="lfoSpdV2">10</span></div>
+      <div class="srow"><label>offset</label><input type="range" id="lfoOff2" min="-100" max="100" value="0"><span class="val" id="lfoOffV2">0</span></div>
+      <div class="srow"><label>attn</label><input type="range" id="lfoAtn2" min="0" max="100" value="100"><span class="val" id="lfoAtnV2">1.0</span></div>
+      <div class="srow"><label>fm src</label><select id="lfoMod2"><option value="-1">none</option><option value="0">L1</option><option value="1">L2</option></select></div>
+      <div class="srow"><label>fm depth</label><input type="range" id="lfoMdp2" min="0" max="100" value="0"><span class="val" id="lfoMdpV2">0.00</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+//  PRIMORDIAL SOUP  — optimised multi-mode life simulation
+//  Rendering: ImageData pixel buffer — no per-cell canvas ops or gradients
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d', { alpha: false });
+
+let CELL = 5;
+let W, H, COLS, ROWS;
+let imgData, pixels;
+let offCanvas = null, offCtx = null;
+let _fisheyeLUT  = null;
+let _fisheyeBuf  = null;
+
+function resize() {
+  W = window.innerWidth;
+  H = window.innerHeight;
+  canvas.width  = W;
+  canvas.height = H;
+  COLS = Math.floor(W / CELL);
+  ROWS = Math.floor(H / CELL);
+  imgData = ctx.createImageData(W, H);
+  pixels  = imgData.data;
+  // set alpha channel once — never touched again
+  for (let i = 3; i < pixels.length; i += 4) pixels[i] = 255;
+  if (offCanvas) { offCanvas.width = W; offCanvas.height = H; }
+  if (_fisheyeLUT) _buildFisheyeLUT(); // rebuild LUT on resize if fisheye active
+}
+resize();
+window.addEventListener('resize', () => { resize(); initGrids(); randomFill(); });
+
+// ── Species ───────────────────────────────────────────────────────────────────
+// Typ 0 = tot, Typ 1–5 = Spezies mit eigenen Regeln
+
+const TYPES = [
+  null,
+  { name:'Pioneer',   birth:[3],        survive:[2,3],       color:[0,180,255]   },  // H=200 cyan-blue
+  { name:'Spreader',  birth:[3,6],      survive:[2,3,4],     color:[110,30,255]  },  // H=272 violet
+  { name:'Clusterer', birth:[3,4,5],    survive:[4,5,6,7],   color:[255,30,90]   },  // H=344 red-pink
+  { name:'Nomad',     birth:[3],        survive:[1,2,3,4],   color:[255,210,0]   },  // H=56  yellow
+  { name:'Ghost',     birth:[2,5],      survive:[1,2,3,5,6], color:[30,255,110]  },  // H=128 green
+];
+
+// Pre-keyed color arrays (avoid property lookup in hot render loop)
+const CR = new Uint8Array(6), CG = new Uint8Array(6), CB = new Uint8Array(6);
+for (let t = 1; t <= 5; t++) {
+  CR[t] = TYPES[t].color[0];
+  CG[t] = TYPES[t].color[1];
+  CB[t] = TYPES[t].color[2];
+}
+
+// ── Grids ─────────────────────────────────────────────────────────────────────
+let type_grid; // Uint8Array: Typ der Zelle
+let age_grid;  // Uint16Array: Alter
+
+function initGrids() {
+  type_grid = new Uint8Array(ROWS * COLS);
+  age_grid  = new Uint16Array(ROWS * COLS);
+}
+initGrids();
+
+const i   = (r, c) => r * COLS + c;
+const gi  = i; // alias used below
+
+function alive(r, c) {
+  return type_grid[i((r+ROWS)%ROWS, (c+COLS)%COLS)] > 0;
+}
+function typeAt(r, c) {
+  return type_grid[((r+ROWS)%ROWS) * COLS + ((c+COLS)%COLS)];
+}
+
+// ── Simulation Modes ──────────────────────────────────────────────────────────
+const MODES = ['classic','multispec','predator','brian','cyclic'];
+let modeIdx = 0;
+
+// ── Runtime parameters ────────────────────────────────────────────────────────
+let mutationRate = 0;      // probability per dead cell per step
+let trailDecay   = 0.820;   // pixel RGB decay factor per frame (0–0.999)
+let fillDensity  = 0.28;
+let targetFps    = 30;
+let bwMode       = false;
+let eventRadius  = 25;     // radius used by chaos/void bursts + meteor size
+let meteorCount  = 2;      // how many meteors per trigger
+let hueShift     = 0;      // 0–360 degrees
+let satScale     = 1.0;    // 0–2.0
+let hueDrift     = 0;      // degrees per tick
+let glowAmount   = 0;      // 0–1, brightness of 1-px glow border
+let ageBright    = 0;      // 0–1, extra brightness scaling by age
+// Brush hover + camera
+let drawOnHover  = false;
+let hoverErase   = false;
+let cameraOn     = false;
+let videoEl      = null;
+let camMode      = -1;          // active camera interaction mode (-1 = none)
+let fisheyeOn    = false;
+let fisheyeCells = true;
+let fisheyeCam   = false;
+let _vidFishCanvas = null, _vidFishCtx = null; // for fisheye on camera
+let fisheyeStrength = 0.5;
+let scaleCells = 1.0;
+let scaleCam   = 1.0;
+let roundOn    = false;
+let roundRadius = 8;   // percent of min(W,H)
+let kugelOn    = false;
+let kugelStr   = 0.4;
+let _kugelLUT  = null, _kugelBuf = null;
+let blendMode    = 'screen';
+// Shape hollow
+let shapeHollow = true;
+let hollowThick = 0.28;
+// LFO state
+const lfos = [0,1,2].map(() => ({ wave:'sin', speed:10, offset:0, attn:1, phase:0, modSrc:-1, modDepth:0, rndVal:0, paused:false }));
+// Patch routing: base values (slider raw) + which LFO is assigned
+const baseVals = { fps:30, mutation:0, trail:820, radius:25, lag:0, hue:0, sat:100, drift:0, glow:0, ageBright:0, hollow:28 };
+const patchMap  = { fps:-1, mutation:-1, trail:-1, radius:-1, lag:-1, hue:-1, sat:-1, drift:-1, glow:-1, ageBright:-1, hollow:-1 };
+const pRanges   = { fps:[2,60], mutation:[0,100], trail:[0,999], radius:[4,80], lag:[0,97], hue:[0,360], sat:[0,200], drift:[0,30], glow:[0,100], ageBright:[0,100], hollow:[1,95] };
+const sliderIds  = { fps:'sSpeed', mutation:'sMutation', trail:'sTrail', radius:'sRadius', lag:'sOffset', hue:'sHue', sat:'sSat', drift:'sHueDrift', glow:'sGlow', ageBright:'sAgeBright', hollow:'sHollow' };
+const modValIds  = { fps:'mSpeed', mutation:'mMutation', trail:'mTrail', radius:'mRadius', lag:'mOffset', hue:'mHue', sat:'mSat', drift:'mHueDrift', glow:'mGlow', ageBright:'mAgeBright', hollow:'mHollow' };
+const muteIds    = { fps:'mutFps', mutation:'mutMut', trail:'mutTrail', radius:'mutRadius', lag:'mutLag', hue:'mutHue', sat:'mutSat', drift:'mutDrift', glow:'mutGlow', ageBright:'mutAgeBright', hollow:'mutHollow' };
+const muteMap    = { fps:false, mutation:false, trail:false, radius:false, lag:false, hue:false, sat:false, drift:false, glow:false, ageBright:false, hollow:false };
+const pselIds    = { fps:'pFps', mutation:'pMut', trail:'pTrail', radius:'pRadius', lag:'pLag', hue:'pHue', sat:'pSat', drift:'pDrift', glow:'pGlow', ageBright:'pAgeBright', hollow:'pHollow' };
+const modValFmt  = {
+  fps:       v => (v|0)+'',
+  mutation:  v => (v|0)+'',
+  trail:     v => (v/100).toFixed(2),
+  radius:    v => (v|0)+'',
+  lag:       v => (v|0)+'',
+  hue:       v => (v|0)+'°',
+  sat:       v => (v|0)+'%',
+  drift:     v => (v|0)+'',
+  glow:      v => (v|0)+'',
+  ageBright: v => (v|0)+'',
+  hollow:    v => (v|0)+'',
+};
+
+// Derived display colors — rebuilt when hue/sat changes
+const DR = new Uint8Array(6), DG = new Uint8Array(6), DB = new Uint8Array(6);
+function rebuildColors() {
+  for (let t = 1; t <= 5; t++) {
+    const [r, g, b] = TYPES[t].color;
+    const rn=r/255, gn=g/255, bn=b/255;
+    const max=Math.max(rn,gn,bn), min=Math.min(rn,gn,bn), d=max-min;
+    let h=0, s=0, l=(max+min)/2;
+    if (d > 0) {
+      s = d / (1 - Math.abs(2*l - 1));
+      if      (max===rn) h = ((gn-bn)/d + 6) % 6;
+      else if (max===gn) h = (bn-rn)/d + 2;
+      else               h = (rn-gn)/d + 4;
+      h *= 60;
+    }
+    h = (h + hueShift) % 360;
+    s = Math.min(s * satScale, 1);
+    const c=s*(1-Math.abs(2*l-1)), x=c*(1-Math.abs((h/60)%2-1)), m=l-c/2;
+    let ro=0, go=0, bo=0;
+    const sec = Math.floor(h/60) % 6;
+    if      (sec===0){ro=c;go=x;bo=0;}
+    else if (sec===1){ro=x;go=c;bo=0;}
+    else if (sec===2){ro=0;go=c;bo=x;}
+    else if (sec===3){ro=0;go=x;bo=c;}
+    else if (sec===4){ro=x;go=0;bo=c;}
+    else             {ro=c;go=0;bo=x;}
+    DR[t]=Math.round((ro+m)*255); DG[t]=Math.round((go+m)*255); DB[t]=Math.round((bo+m)*255);
+  }
+}
+rebuildColors();
+
+// ── Classic (Conway B3/S23) ───────────────────────────────────────────────────
+function stepClassic() {
+  const nt = new Uint8Array(ROWS * COLS);
+  const na = new Uint16Array(ROWS * COLS);
+  for (let r=0; r<ROWS; r++) {
+    for (let c=0; c<COLS; c++) {
+      let n = 0;
+      for (let dr=-1;dr<=1;dr++) for (let dc=-1;dc<=1;dc++) {
+        if (dr===0&&dc===0) continue;
+        if (alive(r+dr,c+dc)) n++;
+      }
+      const t = typeAt(r,c);
+      const idx = i(r,c);
+      if (t>0 && (n===2||n===3)) {
+        // Reclassify by survival pressure each step:
+        // n=2 sparse/edge → type 2 (Spreader/violet), n=3 dense/core → type 3 (Clusterer/red)
+        nt[idx] = (n===2) ? 2 : 3;
+        na[idx] = age_grid[idx]+1;
+      } else if (t===0) {
+        if (n===3) { nt[idx]=1; na[idx]=1; }  // born → type 1 (Pioneer/cyan)
+        else if (mutationRate>0 && Math.random()<mutationRate) { nt[idx]=4; na[idx]=1; } // mutation → type 4 (Nomad/yellow)
+      }
+    }
+  }
+  type_grid=nt; age_grid=na;
+}
+
+// ── Multi-Species ─────────────────────────────────────────────────────────────
+function stepMultiSpec() {
+  const nt = new Uint8Array(ROWS * COLS);
+  const na = new Uint16Array(ROWS * COLS);
+
+  const nc = new Uint8Array(6);
+  for (let r=0; r<ROWS; r++) {
+    for (let c=0; c<COLS; c++) {
+      nc[0]=nc[1]=nc[2]=nc[3]=nc[4]=nc[5]=0;
+      for (let dr=-1;dr<=1;dr++) for (let dc=-1;dc<=1;dc++) {
+        if (dr===0&&dc===0) continue;
+        nc[typeAt(r+dr,c+dc)]++;
+      }
+      const total = nc[1]+nc[2]+nc[3]+nc[4]+nc[5];
+      const self  = typeAt(r,c);
+      const idx   = i(r,c);
+
+      if (self > 0) {
+        if (TYPES[self].survive.includes(total)) {
+          nt[idx] = self;
+          na[idx] = age_grid[idx]+1;
+        }
+      } else {
+        let winner = 0, maxN = 0;
+        for (let t=1; t<=5; t++) {
+          if (nc[t] > maxN) { maxN=nc[t]; winner=t; }
+        }
+        if (winner > 0 && TYPES[winner].birth.includes(total)) {
+          nt[idx] = winner; na[idx] = 1;
+        } else if (mutationRate>0 && Math.random()<mutationRate) {
+          nt[idx] = Math.ceil(Math.random()*5); na[idx] = 1;
+        }
+      }
+    }
+  }
+  type_grid=nt; age_grid=na;
+}
+
+// ── Predator-Beute (Rock-Paper-Scissors) ─────────────────────────────────────
+// 1 frisst 5, 2 frisst 1, 3 frisst 2, 4 frisst 3, 5 frisst 4
+function eats(a,b) {
+  if (a===0||b===0) return false;
+  return b === (a % 5) + 1;
+}
+
+function stepPredator() {
+  const nt = new Uint8Array(ROWS * COLS);
+  const na = new Uint16Array(ROWS * COLS);
+
+  const nc = new Uint8Array(6);
+  for (let r=0; r<ROWS; r++) {
+    for (let c=0; c<COLS; c++) {
+      nc[0]=nc[1]=nc[2]=nc[3]=nc[4]=nc[5]=0;
+      for (let dr=-1;dr<=1;dr++) for (let dc=-1;dc<=1;dc++) {
+        if (dr===0&&dc===0) continue;
+        nc[typeAt(r+dr,c+dc)]++;
+      }
+      const self = typeAt(r,c);
+      const idx  = i(r,c);
+
+      if (self > 0) {
+        let eaten = false;
+        for (let t=1; t<=5; t++) {
+          if (nc[t] >= 3 && eats(t, self)) { eaten=true; break; }
+        }
+        if (!eaten) { nt[idx] = self; na[idx] = age_grid[idx]+1; }
+      } else {
+        let spawned = false;
+        for (let t=1; t<=5; t++) {
+          if (nc[t] === 3) { nt[idx]=t; na[idx]=1; spawned=true; break; }
+        }
+        if (!spawned && mutationRate>0 && Math.random()<mutationRate) {
+          nt[idx] = Math.ceil(Math.random()*5); na[idx] = 1;
+        }
+      }
+    }
+  }
+  type_grid=nt; age_grid=na;
+}
+// ── Brian's Brain (3-state excitable medium) ──────────────────────────────────────
+// dead(0) → firing(1) if exactly 2 firing neighbors
+// firing(1) → refractory(2) → dead(0)
+function stepBrian() {
+  const nt = new Uint8Array(ROWS * COLS);
+  const na = new Uint16Array(ROWS * COLS);
+  for (let r=0; r<ROWS; r++) {
+    for (let c=0; c<COLS; c++) {
+      const self = type_grid[i(r,c)];
+      const idx  = i(r,c);
+      if (self === 2) {
+        // refractory → dead (nt stays 0)
+      } else if (self === 1) {
+        nt[idx] = 2; na[idx] = age_grid[idx]+1;
+      } else {
+        let nFire = 0;
+        for (let dr=-1;dr<=1;dr++) for (let dc=-1;dc<=1;dc++) {
+          if (dr===0&&dc===0) continue;
+          if (typeAt(r+dr,c+dc) === 1) nFire++;
+        }
+        if (nFire === 2) { nt[idx]=1; na[idx]=1; }
+        else if (mutationRate>0 && Math.random()<mutationRate) { nt[idx]=1; na[idx]=1; }
+      }
+    }
+  }
+  type_grid=nt; age_grid=na;
+}
+
+// ── Cyclic CA (rotating spirals) ────────────────────────────────────────────
+// A cell advances 1→2→3→4→5→1 when it has ≥1 neighbor in the next state.
+// Dead cells (0) are outside the cycle; mutation seeds them.
+function stepCyclic() {
+  const nt = new Uint8Array(ROWS * COLS);
+  const na = new Uint16Array(ROWS * COLS);
+  for (let r=0; r<ROWS; r++) {
+    for (let c=0; c<COLS; c++) {
+      const self = type_grid[i(r,c)];
+      const idx  = i(r,c);
+      if (self === 0) {
+        if (mutationRate>0 && Math.random()<mutationRate) { nt[idx]=Math.ceil(Math.random()*5); na[idx]=1; }
+        continue;
+      }
+      const next = (self % 5) + 1;
+      let hasNext = false;
+      outer: for (let dr=-1;dr<=1;dr++) {
+        for (let dc=-1;dc<=1;dc++) {
+          if (dr===0&&dc===0) continue;
+          if (typeAt(r+dr,c+dc) === next) { hasNext=true; break outer; }
+        }
+      }
+      if (hasNext) { nt[idx]=next; na[idx]=1; }
+      else         { nt[idx]=self; na[idx]=age_grid[idx]+1; }
+    }
+  }
+  type_grid=nt; age_grid=na;
+}
+// ── Master Step ───────────────────────────────────────────────────────────────
+let generation = 0;
+let staleCount = 0;
+
+function step() {
+  if      (MODES[modeIdx]==='classic')   stepClassic();
+  else if (MODES[modeIdx]==='multispec') stepMultiSpec();
+  else if (MODES[modeIdx]==='predator')  stepPredator();
+  else if (MODES[modeIdx]==='brian')     stepBrian();
+  else if (MODES[modeIdx]==='cyclic')    stepCyclic();
+  generation++;
+
+  // Auto-perturbation: drop meteors when population stays critically low
+  if (generation % 80 === 0) {
+    let pop = 0;
+    for (let k=0; k<type_grid.length; k++) if (type_grid[k]>0) pop++;
+    if (pop < ROWS * COLS * 0.04) {
+      staleCount++;
+      if (staleCount >= 2) { dropMeteor(3); staleCount = 0; }
+    } else {
+      staleCount = 0;
+    }
+  }
+}
+
+// ── Pixel-buffer renderer ─────────────────────────────────────────────────────
+// No canvas paths, no gradients — pure ImageData pixel writes.
+// Trail = per-frame RGB multiply toward black (no separate trail array needed).
+function draw() {
+  // 1. Fade all pixels toward black
+  const d = trailDecay;
+  for (let p = 0; p < pixels.length; p += 4) {
+    pixels[p]   = (pixels[p]   * d) | 0;
+    pixels[p+1] = (pixels[p+1] * d) | 0;
+    pixels[p+2] = (pixels[p+2] * d) | 0;
+    // [p+3] is always 255, never touched
+  }
+
+  // 2. Paint alive cells as solid CELL×CELL blocks
+  let pop = 0;
+  for (let r = 0; r < ROWS; r++) {
+    const py0 = r * CELL;
+    for (let c = 0; c < COLS; c++) {
+      const t = type_grid[r * COLS + c];
+      if (t === 0) continue;
+      pop++;
+      let R = bwMode ? 230 : DR[t];
+      let G = bwMode ? 230 : DG[t];
+      let B = bwMode ? 230 : DB[t];
+
+      // age brightness: scales up from 0 at birth, peaks ~age 60
+      if (ageBright > 0 && !bwMode) {
+        const a = age_grid[r * COLS + c];
+        const bf = Math.min(a / 60, 1.0) * ageBright;
+        R = Math.min(255, R + (255 - R) * bf) | 0;
+        G = Math.min(255, G + (255 - G) * bf) | 0;
+        B = Math.min(255, B + (255 - B) * bf) | 0;
+      }
+
+      const px0 = c * CELL;
+
+      // glow: write dimmed ring of 1px around the cell block
+      if (glowAmount > 0) {
+        const gR = (R * glowAmount) | 0;
+        const gG = (G * glowAmount) | 0;
+        const gB = (B * glowAmount) | 0;
+        const y1 = py0 - 1, y2 = py0 + CELL;
+        const x1 = px0 - 1, x2 = px0 + CELL;
+        // top & bottom rows
+        for (let x = x1; x <= x2; x++) {
+          if (x >= 0 && x < W) {
+            if (y1 >= 0) { let p=(y1*W+x)*4; pixels[p]=Math.min(255,pixels[p]+gR); pixels[p+1]=Math.min(255,pixels[p+1]+gG); pixels[p+2]=Math.min(255,pixels[p+2]+gB); }
+            if (y2 < H)  { let p=(y2*W+x)*4; pixels[p]=Math.min(255,pixels[p]+gR); pixels[p+1]=Math.min(255,pixels[p+1]+gG); pixels[p+2]=Math.min(255,pixels[p+2]+gB); }
+          }
+        }
+        // left & right cols
+        for (let y = py0; y < py0+CELL; y++) {
+          if (y >= 0 && y < H) {
+            if (x1 >= 0) { let p=(y*W+x1)*4; pixels[p]=Math.min(255,pixels[p]+gR); pixels[p+1]=Math.min(255,pixels[p+1]+gG); pixels[p+2]=Math.min(255,pixels[p+2]+gB); }
+            if (x2 < W)  { let p=(y*W+x2)*4; pixels[p]=Math.min(255,pixels[p]+gR); pixels[p+1]=Math.min(255,pixels[p+1]+gG); pixels[p+2]=Math.min(255,pixels[p+2]+gB); }
+          }
+        }
+      }
+
+      for (let pr = py0, end = py0 + CELL; pr < end; pr++) {
+        let p = (pr * W + px0) * 4;
+        for (let pc = 0; pc < CELL; pc++, p += 4) {
+          pixels[p]   = R;
+          pixels[p+1] = G;
+          pixels[p+2] = B;
+        }
+      }
+    }
+  }
+
+  if (cameraOn && offCtx && videoEl && videoEl.readyState >= 1) {
+    // cell layer
+    if (fisheyeOn && fisheyeCells) {
+      offCtx.putImageData(new ImageData(_applyFisheyePix(pixels), W, H), 0, 0);
+    } else {
+      offCtx.putImageData(imgData, 0, 0);
+    }
+    // camera layer
+    const cw = W * scaleCam, ch = H * scaleCam;
+    const cx = (W - cw) / 2, cy = (H - ch) / 2;
+    if (fisheyeOn && fisheyeCam && _vidFishCanvas) {
+      _vidFishCtx.drawImage(videoEl, 0, 0, W, H);
+      const vd = _vidFishCtx.getImageData(0, 0, W, H);
+      const distorted = _applyFisheyePix(vd.data);
+      _vidFishCtx.putImageData(new ImageData(distorted, W, H), 0, 0);
+      ctx.drawImage(_vidFishCanvas, cx, cy, cw, ch);
+    } else {
+      ctx.drawImage(videoEl, cx, cy, cw, ch);
+    }
+    ctx.globalCompositeOperation = blendMode;
+    // cell layer with scale
+    if (scaleCells !== 1.0) {
+      const lw = W * scaleCells, lh = H * scaleCells;
+      const lx = (W - lw) / 2, ly = (H - lh) / 2;
+      ctx.drawImage(offCanvas, lx, ly, lw, lh);
+    } else {
+      ctx.drawImage(offCanvas, 0, 0);
+    }
+    ctx.globalCompositeOperation = 'source-over';
+  } else {
+    if (fisheyeOn && fisheyeCells) {
+      const src = new ImageData(_applyFisheyePix(pixels), W, H);
+      if (scaleCells !== 1.0) {
+        offCtx && offCtx.putImageData(src, 0, 0);
+        const lw = W * scaleCells, lh = H * scaleCells;
+        ctx.clearRect(0, 0, W, H); // clear
+        ctx.drawImage(offCanvas, (W-lw)/2, (H-lh)/2, lw, lh);
+      } else {
+        ctx.putImageData(src, 0, 0);
+      }
+    } else if (scaleCells !== 1.0) {
+      // scale without fisheye — need temp canvas
+      if (!offCanvas) {
+        offCanvas = document.createElement('canvas');
+        offCanvas.width = W; offCanvas.height = H;
+        offCtx = offCanvas.getContext('2d', {alpha:false});
+      }
+      offCtx.putImageData(imgData, 0, 0);
+      ctx.clearRect(0, 0, W, H);
+      const lw = W * scaleCells, lh = H * scaleCells;
+      ctx.drawImage(offCanvas, (W-lw)/2, (H-lh)/2, lw, lh);
+    } else {
+      ctx.putImageData(imgData, 0, 0);
+    }
+  }
+  document.getElementById('gen').textContent = generation;
+  document.getElementById('pop').textContent = pop;
+}
+
+function _updateKugelCSS() {
+  const ov = document.getElementById('vignette-overlay');
+  if (!kugelOn) { ov.style.background = 'none'; return; }
+  // pct of half-diagonal that stays transparent
+  const innerPct = Math.max(0, (1 - kugelStr * 0.4) * 100);
+  ov.style.background = `radial-gradient(ellipse at center, transparent ${innerPct}%, black 100%)`;
+}
+
+// ── Langton's Ant ─────────────────────────────────────────────────────────────
+let ants = [];
+function spawnAnts(n=6) {
+  ants = [];
+  for (let k=0; k<n; k++) {
+    ants.push({
+      r: Math.floor(ROWS/2) + Math.floor(Math.random()*20-10),
+      c: Math.floor(COLS/2) + Math.floor(Math.random()*20-10),
+      dir: Math.floor(Math.random()*4),
+      type: (k%5)+1
+    });
+  }
+}
+
+let antMode = false;
+
+function stepAnts() {
+  const dr = [-1,0,1,0];
+  const dc = [0,1,0,-1];
+  for (const ant of ants) {
+    const idx = i(ant.r, ant.c);
+    if (type_grid[idx] === 0) {
+      ant.dir = (ant.dir+1)%4;
+      type_grid[idx] = ant.type;
+      age_grid[idx]  = 1;
+    } else {
+      ant.dir = (ant.dir+3)%4;
+      type_grid[idx] = 0;
+      age_grid[idx]  = 0;
+    }
+    ant.r = ((ant.r + dr[ant.dir]) + ROWS) % ROWS;
+    ant.c = ((ant.c + dc[ant.dir]) + COLS) % COLS;
+  }
+}
+
+// ── Patterns ──────────────────────────────────────────────────────────────────
+function randomFill() {
+  initGrids();
+  generation = 0; staleCount = 0; antMode = false;
+  const m = MODES[modeIdx];
+  const numTypes = (m === 'classic' || m === 'brian') ? 1 : 5;
+  const density  = m === 'brian' ? Math.min(fillDensity, 0.15) : fillDensity;
+  for (let k=0; k<ROWS*COLS; k++) {
+    if (Math.random() < density) {
+      type_grid[k] = Math.floor(Math.random()*numTypes)+1;
+      age_grid[k]  = 1;
+    }
+  }
+}
+
+function placePattern(pattern, r0, c0, t=1) {
+  pattern.forEach(([dr,dc]) => {
+    const r=(r0+dr+ROWS)%ROWS, c=(c0+dc+COLS)%COLS;
+    type_grid[i(r,c)]=t; age_grid[i(r,c)]=1;
+  });
+}
+
+const GLIDER_GUN = [
+  [0,24],[1,22],[1,24],[2,12],[2,13],[2,20],[2,21],[2,34],[2,35],
+  [3,11],[3,15],[3,20],[3,21],[3,34],[3,35],[4,0],[4,1],[4,10],[4,16],[4,20],[4,21],
+  [5,0],[5,1],[5,10],[5,14],[5,16],[5,17],[5,22],[5,24],[6,10],[6,16],[6,24],
+  [7,11],[7,15],[8,12],[8,13]
+];
+const PULSAR = [
+  [0,2],[0,3],[0,4],[0,8],[0,9],[0,10],[2,0],[2,5],[2,7],[2,12],
+  [3,0],[3,5],[3,7],[3,12],[4,0],[4,5],[4,7],[4,12],[5,2],[5,3],[5,4],[5,8],[5,9],[5,10],
+  [7,2],[7,3],[7,4],[7,8],[7,9],[7,10],[8,0],[8,5],[8,7],[8,12],
+  [9,0],[9,5],[9,7],[9,12],[10,0],[10,5],[10,7],[10,12],[12,2],[12,3],[12,4],[12,8],[12,9],[12,10],
+];
+
+// ── Variation tools ───────────────────────────────────────────────────────────
+function dropMeteor(count=meteorCount) {
+  if (window._midi) window._midi.meteor();
+  const numTypes = MODES[modeIdx] === 'classic' ? 1 : 5;
+  for (let m=0; m<count; m++) {
+    const base = Math.max(4, eventRadius * 0.6 | 0);
+    const size = base + Math.floor(Math.random() * Math.max(1, base * 0.5));
+    const r0 = 2 + Math.floor(Math.random()*(ROWS-size-4));
+    const c0 = 2 + Math.floor(Math.random()*(COLS-size-4));
+    for (let dr=0; dr<size; dr++) {
+      for (let dc=0; dc<size; dc++) {
+        if (Math.random() < 0.45) {
+          const idx = i(r0+dr, c0+dc);
+          type_grid[idx] = Math.floor(Math.random()*numTypes)+1;
+          age_grid[idx]  = 1;
+        }
+      }
+    }
+  }
+}
+
+function chaosBurst() {
+  if (window._midi) window._midi.burst(0.85);
+  const numTypes = MODES[modeIdx] === 'classic' ? 1 : 5;
+  const cr = Math.floor(ROWS*(0.15 + Math.random()*0.7));
+  const cc = Math.floor(COLS*(0.15 + Math.random()*0.7));
+  const radius = eventRadius;
+  for (let dr=-radius; dr<=radius; dr++) {
+    for (let dc=-radius; dc<=radius; dc++) {
+      if (dr*dr + dc*dc > radius*radius) continue;
+      if (Math.random() < 0.48) {
+        const r = (cr+dr+ROWS)%ROWS, c = (cc+dc+COLS)%COLS;
+        type_grid[i(r,c)] = Math.floor(Math.random()*numTypes)+1;
+        age_grid[i(r,c)]  = 1;
+      }
+    }
+  }
+}
+
+function voidBurst() {
+  if (window._midi) window._midi.void();
+  const cr = Math.floor(ROWS*(0.15 + Math.random()*0.7));
+  const cc = Math.floor(COLS*(0.15 + Math.random()*0.7));
+  const radius = eventRadius;
+  for (let dr=-radius; dr<=radius; dr++) {
+    for (let dc=-radius; dc<=radius; dc++) {
+      if (dr*dr + dc*dc > radius*radius) continue;
+      if (Math.random() < 0.75) {
+        const r = (cr+dr+ROWS)%ROWS, c = (cc+dc+COLS)%COLS;
+        type_grid[i(r,c)] = 0;
+        age_grid[i(r,c)]  = 0;
+      }
+    }
+  }
+}
+
+// ── LFO engine ────────────────────────────────────────────────────────────────
+function lfoOut(idx) {
+  const lfo = lfos[idx];
+  let ph = lfo.phase;
+  if (lfo.modSrc >= 0 && lfo.modSrc !== idx) {
+    const ms = lfos[lfo.modSrc];
+    const mt = ((ms.phase % 1) + 1) % 1;
+    const mv = ms.wave==='sin'  ? Math.sin(mt*Math.PI*2) :
+               ms.wave==='tri'  ? (mt<0.5?4*mt-1:3-4*mt) :
+               ms.wave==='rect' ? (mt<0.5?1:-1) : ms.rndVal;
+    ph += mv * lfo.modDepth;
+  }
+  const t = ((ph % 1) + 1) % 1;
+  const v = lfo.wave==='sin'  ? Math.sin(t*Math.PI*2) :
+            lfo.wave==='tri'  ? (t<0.5?4*t-1:3-4*t) :
+            lfo.wave==='rect' ? (t<0.5?1:-1) : lfo.rndVal;
+  return Math.max(-1, Math.min(1, (v + lfo.offset) * lfo.attn));
+}
+
+function advanceLFOs() {
+  for (let k=0; k<3; k++) {
+    const lfo = lfos[k];
+    if (lfo.paused) continue;
+    const prev = lfo.phase;
+    lfo.phase += lfo.speed * 0.001;
+    if (lfo.wave === 'rnd' && Math.floor(lfo.phase) !== Math.floor(prev))
+      lfo.rndVal = Math.random() * 2 - 1;
+  }
+}
+
+function applyPatches() {
+  let needColors = false;
+  for (const key in patchMap) {
+    const li = patchMap[key];
+    if (li < 0 || muteMap[key]) continue;
+    const [mn, mx] = pRanges[key];
+    const slEl = document.getElementById(sliderIds[key]);
+    const atten = slEl ? (+slEl.value / +slEl.max) : 0.5;
+    const v = Math.max(mn, Math.min(mx, baseVals[key] + lfoOut(li) * (mx - mn) * atten));
+    switch(key) {
+      case 'fps':       targetFps    = v|0; break;
+      case 'mutation':  mutationRate = v/100*0.004; break;
+      case 'trail':     trailDecay   = v/1000; break;
+      case 'radius':    eventRadius  = v|0; break;
+      case 'lag':       brushLag     = v/100; break;
+      case 'hue':       hueShift     = v; needColors=true; break;
+      case 'sat':       satScale     = v/100; needColors=true; break;
+      case 'drift':     hueDrift     = v; break;
+      case 'glow':      glowAmount   = v/100; break;
+      case 'ageBright': ageBright    = v/100; break;
+      case 'hollow':    hollowThick  = v/100; break;
+    }
+    const mEl = document.getElementById(modValIds[key]);
+    if (mEl) mEl.textContent = modValFmt[key](v);
+  }
+  if (needColors) rebuildColors();
+}
+
+function drawLFOCanvases() {
+  for (let k=0; k<3; k++) {
+    const cv = document.getElementById('lfoC'+k);
+    if (!cv) continue;
+    const lc = cv.getContext('2d');
+    const cw = cv.width, ch = cv.height;
+    lc.fillStyle = '#050505';
+    lc.fillRect(0, 0, cw, ch);
+    const lfo = lfos[k];
+    const cycles = Math.max(1, Math.round(lfo.speed / 10));
+    // midline + cycle dividers
+    lc.strokeStyle = 'rgba(255,255,255,0.07)';
+    lc.lineWidth = 1;
+    lc.beginPath(); lc.moveTo(0, ch/2); lc.lineTo(cw, ch/2); lc.stroke();
+    if (cycles > 1) {
+      lc.setLineDash([2,3]);
+      for (let c=1; c<cycles; c++) {
+        const cx = (c/cycles)*cw;
+        lc.beginPath(); lc.moveTo(cx, 0); lc.lineTo(cx, ch); lc.stroke();
+      }
+      lc.setLineDash([]);
+    }
+    // wave — x=cw is "now" (lfo.phase), x=0 is (cycles) cycles ago
+    lc.strokeStyle = 'rgba(111,0,255,0.85)';
+    lc.lineWidth = 1.5;
+    lc.beginPath();
+    for (let x=0; x<cw; x++) {
+      const t0 = lfo.phase + (x/cw - 1) * cycles;
+      let ph = t0;
+      if (lfo.modSrc >= 0 && lfo.modSrc !== k) {
+        const ms = lfos[lfo.modSrc];
+        const speedRatio = ms.paused ? 0 : (ms.speed / Math.max(lfo.speed, 0.001));
+        const mt = ((t0 * speedRatio) % 1 + 1) % 1;
+        const mv = ms.wave==='sin'  ? Math.sin(mt*Math.PI*2) :
+                   ms.wave==='tri'  ? (mt<0.5?4*mt-1:3-4*mt) :
+                   ms.wave==='rect' ? (mt<0.5?1:-1) : ms.rndVal;
+        ph += mv * lfo.modDepth;
+      }
+      const nt = ((ph % 1) + 1) % 1;
+      const v  = lfo.wave==='sin'  ? Math.sin(nt*Math.PI*2) :
+                 lfo.wave==='tri'  ? (nt<0.5?4*nt-1:3-4*nt) :
+                 lfo.wave==='rect' ? (nt<0.5?1:-1) : lfo.rndVal;
+      const vy = Math.max(-1, Math.min(1, (v + lfo.offset) * lfo.attn));
+      const y  = (1 - (vy+1)/2) * (ch-2) + 1;
+      x===0 ? lc.moveTo(x, y) : lc.lineTo(x, y);
+    }
+    lc.stroke();
+    // playhead at right edge = current moment
+    lc.strokeStyle = 'rgba(255,80,80,0.9)';
+    lc.lineWidth = 1;
+    lc.beginPath(); lc.moveTo(cw-1, 0); lc.lineTo(cw-1, ch); lc.stroke();
+  }
+}
+
+// ── Legende ───────────────────────────────────────────────────────────────────
+function updateLegend() {
+  const leg = document.getElementById('legend');
+  const m = MODES[modeIdx];
+  if (m === 'classic' || m === 'brian' || bwMode) { leg.innerHTML=''; return; }
+  leg.innerHTML = TYPES.slice(1).map(t =>
+    `<div><span class="dot" style="background:rgb(${t.color.join(',')})"></span><span style="color:rgba(255,255,255,.3);font-size:.65rem">${t.name}</span></div>`
+  ).join('');
+}
+updateLegend();
+
+// ── Malen / Brush ────────────────────────────────────────────────────────────
+// Left-drag  = paint cells
+// Right-drag = void brush
+// brushLag 0 = instant, >0 = brush lerps toward mouse each frame
+let mouseDown   = false;
+let mouseBtn    = 0;
+let paintType   = 1;
+let brushLag    = 0;
+let brushShape  = 'circle'; // 'circle' | 'rect' | 'tri'
+let brushRotate = false;
+let brushAngle  = 0; // radians, incremented each loop tick      // 0–0.97 — lerp lag factor
+let _mouseX = 0, _mouseY = 0;    // actual mouse position (pixels)
+let _brushX = 0, _brushY = 0;   // lagged brush position (pixels)
+
+function inShape(dr, dc, radius) {
+  // rotate coordinates if brush rotation is active
+  if (brushRotate && brushAngle !== 0) {
+    const cos = Math.cos(-brushAngle), sin = Math.sin(-brushAngle);
+    const rdr = dr * cos - dc * sin;
+    const rdc = dr * sin + dc * cos;
+    dr = rdr; dc = rdc;
+  }
+  if (!shapeHollow) {
+    if (brushShape === 'circle') return dr*dr + dc*dc <= radius*radius;
+    if (brushShape === 'rect')   return Math.abs(dr) <= radius && Math.abs(dc) <= radius;
+    const hw = radius * (radius - dr) / (2 * radius); // tri ▽
+    return dr >= -radius && dr <= radius && Math.abs(dc) <= hw;
+  }
+  const thick = Math.max(1, radius * hollowThick);
+  if (brushShape === 'circle') {
+    const d2 = dr*dr + dc*dc, r2 = radius*radius;
+    const inner = radius - thick;
+    return d2 <= r2 && d2 >= inner*inner;
+  } else if (brushShape === 'rect') {
+    return Math.abs(dr) <= radius && Math.abs(dc) <= radius &&
+           !(Math.abs(dr) < radius - thick && Math.abs(dc) < radius - thick);
+  } else { // tri ▽
+    const halfW  = radius * (radius - dr) / (2 * radius);
+    const halfWi = Math.max(0, halfW - thick);
+    const inOut  = dr >= -radius && dr <= radius && Math.abs(dc) <= halfW;
+    const inIn   = dr >= -radius + thick && dr <= radius - thick && Math.abs(dc) <= halfWi;
+    return inOut && !inIn;
+  }
+}
+
+function applyBrushAt(px, py, btn) {
+  if (btn === undefined) btn = mouseBtn;
+  const cr = Math.floor(py / CELL);
+  const cc = Math.floor(px / CELL);
+  const radius = eventRadius;
+  if (radius <= 1) {
+    if (cr<0||cr>=ROWS||cc<0||cc>=COLS) return;
+    const idx = i(cr, cc);
+    if (btn === 2) { type_grid[idx]=0; age_grid[idx]=0; }
+    else           { type_grid[idx]=paintType; age_grid[idx]=1; }
+  } else {
+    for (let dr = -radius; dr <= radius; dr++) {
+      for (let dc = -radius; dc <= radius; dc++) {
+        if (!inShape(dr, dc, radius)) continue;
+        const r = (cr+dr+ROWS) % ROWS, c = (cc+dc+COLS) % COLS;
+        if (btn === 2) {
+          type_grid[i(r,c)] = 0; age_grid[i(r,c)] = 0;
+        } else {
+          if (Math.random() < 0.65) { type_grid[i(r,c)] = paintType; age_grid[i(r,c)] = 1; }
+        }
+      }
+    }
+  }
+  // Eine CH1-Kurznote pro Brush-Aufruf: Pitch = Brush-Zeile
+  if (window._midi) window._midi.brushNote(cr, btn);
+  // Sende mouseX als CC11 (Expression) auf CH1 bei jedem Brush-Event
+  if (typeof sendCC === 'function' && midiEnabled && midiOut) {
+    const cvs = document.getElementById('c');
+    if (cvs) {
+      const rect = cvs.getBoundingClientRect();
+      const relX = Math.max(0, Math.min(rect.width, _mouseX - rect.left));
+      const mx = Math.round((relX / rect.width) * 127);
+      sendCC(1, 21, mx); // TEST: jetzt CC21 statt CC11
+    }
+  }
+}
+
+canvas.addEventListener('mousedown', e => {
+  e.preventDefault();
+  mouseDown = true;
+  mouseBtn  = e.button;
+  _mouseX = e.clientX; _mouseY = e.clientY;
+  // snap brush to mouse on first click regardless of lag
+  _brushX = _mouseX; _brushY = _mouseY;
+  const numTypes = modeIdx===0 ? 1 : 5;
+  paintType = Math.floor(Math.random()*numTypes)+1;
+  applyBrushAt(_brushX, _brushY);
+  if (!running) draw();
+});
+canvas.addEventListener('mousemove', e => {
+  _mouseX = e.clientX; _mouseY = e.clientY;
+  // (CC11 wird jetzt nur noch bei Brush-Events gesendet)
+  if (drawOnHover && !mouseDown) {
+    _brushX = _mouseX; _brushY = _mouseY;
+    const numTypes = modeIdx===0 ? 1 : 5;
+    paintType = Math.floor(Math.random()*numTypes)+1;
+    applyBrushAt(_brushX, _brushY, hoverErase ? 2 : 0);
+    if (!running) draw();
+    return;
+  }
+  if (!mouseDown) return;
+  if (brushLag === 0) {
+    // no lag: apply immediately
+    _brushX = _mouseX; _brushY = _mouseY;
+    applyBrushAt(_brushX, _brushY);
+    if (!running) draw();
+  }
+  // with lag: brush updates happen in the loop tick
+});
+canvas.addEventListener('mouseup',    () => mouseDown = false);
+canvas.addEventListener('mouseleave', () => mouseDown = false);
+canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+// ── Haupt-Loop ────────────────────────────────────────────────────────────────
+let running=false, lastTs=0, lastFps=performance.now(), fpsCount=0;
+
+function loop(ts) {
+  if (!running) return;
+  requestAnimationFrame(loop);
+  const interval = 1000 / targetFps;
+  if (ts - lastTs < interval - 1) return;
+  lastTs = ts;
+
+  if (antMode) stepAnts();
+  else         step();
+
+  // rotate brush angle
+  if (brushRotate) brushAngle += 0.08;
+
+  // hue drift: auto-animate hueShift
+  if (hueDrift > 0) {
+    hueShift = (hueShift + hueDrift * 0.1) % 360;
+    rebuildColors();
+  }
+
+  // lagged brush: lerp brush position toward mouse, paint each tick
+  if (mouseDown && brushLag > 0) {
+    _brushX += (_mouseX - _brushX) * (1 - brushLag);
+    _brushY += (_mouseY - _brushY) * (1 - brushLag);
+    applyBrushAt(_brushX, _brushY);
+  }
+
+  draw();
+
+  fpsCount++;
+  if (ts - lastFps >= 1000) {
+    document.getElementById('fps').textContent = fpsCount;
+    fpsCount=0; lastFps=ts;
+  }
+}
+
+function startStop() {
+  running=!running;
+  document.getElementById('bPlay').textContent=running?'⏸':'▶';
+  document.getElementById('bPlay').classList.toggle('on',running);
+  if (running) requestAnimationFrame(loop);
+}
+
+// ── LFO tick (always running, independent of sim) ───────────────────────────────
+function lfoTick() {
+  requestAnimationFrame(lfoTick);
+  advanceLFOs();
+  applyPatches();
+  _camTick();
+  if (document.getElementById('lfoPanel').classList.contains('open')) drawLFOCanvases();
+}
+requestAnimationFrame(lfoTick);
+
+// ── Buttons ───────────────────────────────────────────────────────────────────
+document.getElementById('bPlay').onclick   = startStop;
+document.getElementById('bStep').onclick   = ()=>{ if(!running){ if(antMode)stepAnts();else step(); draw(); } };
+document.getElementById('bRnd').onclick    = ()=>{ randomFill(); draw(); };
+document.getElementById('bClear').onclick  = ()=>{
+  if(running) startStop();
+  initGrids(); generation=0; antMode=false;
+  for (let p=0; p<pixels.length; p+=4) pixels[p]=pixels[p+1]=pixels[p+2]=0;
+  draw();
+};
+document.getElementById('bBW').onclick     = ()=>{
+  bwMode=!bwMode;
+  document.getElementById('bBW').classList.toggle('on',bwMode);
+  updateLegend(); draw();
+};
+document.getElementById('bMode').onclick   = ()=>{
+  modeIdx=(modeIdx+1)%MODES.length;
+  document.getElementById('bMode').textContent=`mode: ${MODES[modeIdx]}`;
+  antMode=false;
+  randomFill(); updateLegend(); draw();
+};
+document.getElementById('bGun').onclick    = ()=>{
+  antMode=false;
+  initGrids(); generation=0;
+  placePattern(GLIDER_GUN, Math.floor(ROWS/2)-4, Math.floor(COLS/2)-18, 1);
+  draw();
+};
+document.getElementById('bPulsar').onclick = ()=>{
+  antMode=false;
+  initGrids(); generation=0;
+  for(let k=0;k<4;k++)
+    placePattern(PULSAR,
+      Math.floor(ROWS/4)*(k%2+1)-6,
+      Math.floor(COLS/4)*(Math.floor(k/2)+1)-6,
+      (k%5)+1);
+  draw();
+};
+document.getElementById('bAnt').onclick    = ()=>{
+  initGrids(); generation=0;
+  antMode=true;
+  spawnAnts(8);
+  draw();
+};
+document.getElementById('bChaos').onclick  = ()=>{ chaosBurst(); draw(); };
+document.getElementById('bVoid').onclick   = ()=>{ voidBurst();  draw(); };
+document.getElementById('bMeteor').onclick = ()=>{ dropMeteor(); draw(); };
+document.getElementById('bShot').onclick   = ()=>{
+  const a = document.createElement('a');
+  a.download = `primordial_${generation}.png`;
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+};
+
+document.getElementById('bHover').onclick = () => {
+  drawOnHover = !drawOnHover;
+  const btn = document.getElementById('bHover');
+  btn.textContent = drawOnHover ? 'hover: on' : 'hover: off';
+  btn.classList.toggle('on', drawOnHover);
+};
+document.getElementById('bHoverAction').onclick = () => {
+  hoverErase = !hoverErase;
+  const btn = document.getElementById('bHoverAction');
+  btn.textContent = hoverErase ? 'erase' : 'draw';
+  btn.classList.toggle('on', hoverErase);
+};
+// populate camera device list on first user gesture
+function _populateCamDevices() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+  navigator.mediaDevices.enumerateDevices().then(devices => {
+    const sel = document.getElementById('sCamDevice');
+    const prev = sel.value;
+    // keep placeholder
+    while (sel.options.length > 1) sel.remove(1);
+    devices.filter(d => d.kind === 'videoinput').forEach((d, idx) => {
+      const opt = document.createElement('option');
+      opt.value = d.deviceId;
+      opt.textContent = d.label || ('Kamera ' + (idx + 1));
+      sel.appendChild(opt);
+    });
+    if (prev) sel.value = prev; // restore selection if still available
+    // auto-select first real device if only one option
+    if (sel.options.length === 2) sel.selectedIndex = 1;
+  });
+}
+_populateCamDevices();
+if (navigator.mediaDevices && navigator.mediaDevices.addEventListener)
+  navigator.mediaDevices.addEventListener('devicechange', _populateCamDevices);
+
+document.getElementById('bCamera').onclick = async () => {
+  if (cameraOn) {
+    if (videoEl && videoEl.srcObject)
+      videoEl.srcObject.getTracks().forEach(t => t.stop());
+    videoEl = null; cameraOn = false;
+    // keep offCanvas/offCtx alive — draw() needs them for scale/fisheye paths
+    document.getElementById('camModeRow').style.display = 'none';
+    document.getElementById('scaleRow').style.display = 'none';
+    const btn = document.getElementById('bCamera');
+    btn.textContent = 'cam: off'; btn.classList.remove('on');
+    return;
+  }
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    alert('getUserMedia not available.\nOpen via http://localhost:8080 in Chrome, not file://');
+    return;
+  }
+  // Step 1: get permission with any camera — this unlocks real deviceIds in enumerateDevices
+  let tempStream;
+  try {
+    tempStream = await navigator.mediaDevices.getUserMedia({video: true, audio: false});
+  } catch(err) {
+    alert('camera error: ' + err.name + ' — ' + err.message);
+    return;
+  }
+  // Step 2: now enumerate with real labels + IDs, restore user selection
+  const selEl = document.getElementById('sCamDevice');
+  const prevLabel = selEl.options[selEl.selectedIndex] ? selEl.options[selEl.selectedIndex].textContent : '';
+  const devices = await navigator.mediaDevices.enumerateDevices();
+  while (selEl.options.length > 1) selEl.remove(1);
+  devices.filter(d => d.kind === 'videoinput').forEach((d, idx) => {
+    const opt = document.createElement('option');
+    opt.value = d.deviceId;
+    opt.textContent = d.label || ('Kamera ' + (idx + 1));
+    selEl.appendChild(opt);
+    if (d.label && prevLabel && d.label === prevLabel) selEl.value = d.deviceId;
+  });
+  // Step 3: stop the temp permission stream
+  tempStream.getTracks().forEach(t => t.stop());
+  // Step 4: start the real stream with the selected device
+  const deviceId = selEl.value;
+  const videoConstraints = deviceId
+    ? {deviceId: {exact: deviceId}, width:320, height:240}
+    : {width:320, height:240};
+  let stream;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({video: videoConstraints, audio: false});
+  } catch(err) {
+    alert('camera error: ' + err.name + ' — ' + err.message);
+    return;
+  }
+  videoEl = document.createElement('video');
+  videoEl.srcObject = stream;
+  videoEl.muted = true;
+  videoEl.autoplay = true;
+  videoEl.playsInline = true;
+  videoEl.oncanplay = () => {
+    cameraOn = true;
+    offCanvas = document.createElement('canvas');
+    offCanvas.width = W; offCanvas.height = H;
+    offCtx = offCanvas.getContext('2d', {alpha: false});
+    document.getElementById('camModeRow').style.display = '';
+    document.getElementById('scaleRow').style.display = '';
+    // wire preview if already requested
+    const prev = document.getElementById('camPreview');
+    if (prev.style.display !== 'none') prev.srcObject = stream;
+    const btn = document.getElementById('bCamera');
+    btn.textContent = 'cam: on'; btn.classList.add('on');
+    if (!running) draw();
+  };
+  videoEl.play().catch(e => alert('video.play() failed: ' + e));
+};
+
+document.querySelectorAll('.cammode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const m = +btn.dataset.mode;
+    // clicking active mode or the — button always goes to off
+    camMode = (m === camMode) ? -1 : m;
+    document.querySelectorAll('.cammode-btn').forEach(b => {
+      b.classList.toggle('on', +b.dataset.mode === camMode);
+    });
+    const bgBtn = document.getElementById('bCaptureBg');
+    if (bgBtn) bgBtn.style.opacity = (camMode === 5 || camMode === 6 || camMode === 7) ? '1' : '0.4';
+  });
+});
+document.getElementById('bCamPreview').addEventListener('click', () => {
+  const prev = document.getElementById('camPreview');
+  const btn  = document.getElementById('bCamPreview');
+  if (prev.style.display === 'none') {
+    prev.style.display = 'block';
+    if (videoEl && videoEl.srcObject) prev.srcObject = videoEl.srcObject;
+    btn.classList.add('on'); btn.style.opacity = '1';
+  } else {
+    prev.style.display = 'none';
+    prev.srcObject = null;
+    btn.classList.remove('on'); btn.style.opacity = '0.4';
+  }
+});
+
+document.getElementById('bCaptureBg').addEventListener('click', _captureBg);
+
+document.getElementById('bFisheye').addEventListener('click', () => {
+  fisheyeOn = !fisheyeOn;
+  const btn = document.getElementById('bFisheye');
+  btn.textContent = fisheyeOn ? 'fish: on' : 'fish: off';
+  btn.classList.toggle('on', fisheyeOn);
+  document.querySelectorAll('.fisheye-sub').forEach(b => b.style.opacity = fisheyeOn ? '1' : '0.45');
+  if (fisheyeOn) {
+    document.getElementById('sFishStr').style.opacity = '1';
+    document.getElementById('vFishStr').style.opacity = '1';
+    _buildFisheyeLUT();
+    if (!_vidFishCanvas) {
+      _vidFishCanvas = document.createElement('canvas');
+      _vidFishCanvas.width = W; _vidFishCanvas.height = H;
+      _vidFishCtx = _vidFishCanvas.getContext('2d', {willReadFrequently: true});
+    }
+  }
+});
+
+document.getElementById('bFishCells').addEventListener('click', () => {
+  fisheyeCells = !fisheyeCells;
+  document.getElementById('bFishCells').classList.toggle('on', fisheyeCells);
+});
+
+document.getElementById('bFishCam').addEventListener('click', () => {
+  fisheyeCam = !fisheyeCam;
+  document.getElementById('bFishCam').classList.toggle('on', fisheyeCam);
+  if (fisheyeCam && !_vidFishCanvas) {
+    _vidFishCanvas = document.createElement('canvas');
+    _vidFishCanvas.width = W; _vidFishCanvas.height = H;
+    _vidFishCtx = _vidFishCanvas.getContext('2d', {willReadFrequently: true});
+  }
+});
+
+document.getElementById('sFishStr').addEventListener('input', e => {
+  fisheyeStrength = +e.target.value / 100;
+  document.getElementById('vFishStr').textContent = fisheyeStrength.toFixed(2);
+  if (fisheyeOn) _buildFisheyeLUT();
+});
+
+document.getElementById('sScaleCells').addEventListener('input', e => {
+  scaleCells = +e.target.value / 100;
+  document.getElementById('vScaleCells').textContent = scaleCells.toFixed(2);
+});
+document.getElementById('sScaleCam').addEventListener('input', e => {
+  scaleCam = +e.target.value / 100;
+  document.getElementById('vScaleCam').textContent = scaleCam.toFixed(2);
+});
+
+// ── Round + Kugel ────────────────────────────────────────────────────────────
+function _applyRound() {
+  const r = roundOn ? (Math.min(W,H) * roundRadius / 100) + 'px' : '0';
+  document.getElementById('vignette-overlay').style.borderRadius = r;
+  const c = document.getElementById('c');
+  c.style.borderRadius = r;
+  document.body.style.background = roundOn ? '#000' : '#000';
+}
+
+document.getElementById('bRound').addEventListener('click', () => {
+  roundOn = !roundOn;
+  document.getElementById('bRound').textContent = roundOn ? 'round: on' : 'round: off';
+  document.getElementById('bRound').classList.toggle('on', roundOn);
+  document.getElementById('sRound').style.opacity = roundOn ? '1' : '0.4';
+  document.getElementById('vRound').style.opacity = roundOn ? '1' : '0.4';
+  _applyRound();
+});
+document.getElementById('sRound').addEventListener('input', e => {
+  roundRadius = +e.target.value;
+  document.getElementById('vRound').textContent = roundRadius;
+  if (roundOn) _applyRound();
+});
+
+document.getElementById('bKugel').addEventListener('click', () => {
+  kugelOn = !kugelOn;
+  document.getElementById('bKugel').textContent = kugelOn ? 'kugel: on' : 'kugel: off';
+  document.getElementById('bKugel').classList.toggle('on', kugelOn);
+  document.getElementById('sKugel').style.opacity = kugelOn ? '1' : '0.4';
+  document.getElementById('vKugel').style.opacity = kugelOn ? '1' : '0.4';
+  _updateKugelCSS();
+});
+document.getElementById('sKugel').addEventListener('input', e => {
+  kugelStr = +e.target.value / 100;
+  document.getElementById('vKugel').textContent = kugelStr.toFixed(2);
+  _updateKugelCSS();
+});
+
+// ── Camera Motion Analysis ────────────────────────────────────────────────────
+// Uses a tiny 80×45 scratch canvas — very cheap on CPU
+const _motW = 80, _motH = 45;
+const _motCanvas = document.createElement('canvas');
+_motCanvas.width = _motW; _motCanvas.height = _motH;
+const _motCtx = _motCanvas.getContext('2d', {alpha:false, willReadFrequently:true});
+let _prevMotData = null;
+let _bgData       = null;  // frozen background for silhouette mode
+let _motFrameCount = 0;
+let _silenceTimer = 0;   // frames without motion (mode 3)
+
+function _buildFisheyeLUT() {
+  const n = W * H;
+  _fisheyeLUT = new Int32Array(n);
+  _fisheyeBuf = new Uint8ClampedArray(n * 4);
+  const cx = W / 2, cy = H / 2;
+  const k = fisheyeStrength; // barrel strength
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      const nx = (x - cx) / cx;
+      const ny = (y - cy) / cy;
+      const r2 = nx*nx + ny*ny;
+      // barrel: outer pixels sampled from further out
+      const scale = 1 + k * r2;
+      const sx = Math.round(cx + nx * scale * cx);
+      const sy = Math.round(cy + ny * scale * cy);
+      _fisheyeLUT[y * W + x] = (sx >= 0 && sx < W && sy >= 0 && sy < H) ? (sy * W + sx) : -1;
+    }
+  }
+}
+
+function _applyFisheyePix(src) {
+  const n = W * H;
+  for (let p = 0; p < n; p++) {
+    const s = _fisheyeLUT[p];
+    const dp = p << 2;
+    if (s < 0) {
+      _fisheyeBuf[dp] = _fisheyeBuf[dp+1] = _fisheyeBuf[dp+2] = 0;
+    } else {
+      const sp = s << 2;
+      _fisheyeBuf[dp]   = src[sp];
+      _fisheyeBuf[dp+1] = src[sp+1];
+      _fisheyeBuf[dp+2] = src[sp+2];
+    }
+    _fisheyeBuf[dp+3] = 255;
+  }
+  return _fisheyeBuf;
+}
+
+function _captureBg() {
+  if (!cameraOn || !videoEl || videoEl.readyState < 2) return;
+  _motCtx.save();
+  _motCtx.scale(-1,1);
+  _motCtx.drawImage(videoEl, -_motW, 0, _motW, _motH);
+  _motCtx.restore();
+  _bgData = new Uint8ClampedArray(_motCtx.getImageData(0,0,_motW,_motH).data);
+}
+
+function _camTick() {
+  if (!cameraOn || !videoEl || videoEl.readyState < 2) return;
+  _motFrameCount++;
+  if (_motFrameCount % 3 !== 0) return; // only every 3rd frame
+
+  // draw mirrored tiny frame
+  _motCtx.save();
+  _motCtx.scale(-1, 1);
+  _motCtx.drawImage(videoEl, -_motW, 0, _motW, _motH);
+  _motCtx.restore();
+  const cur = _motCtx.getImageData(0, 0, _motW, _motH).data;
+
+  if (!_prevMotData) { _prevMotData = new Uint8ClampedArray(cur); return; }
+
+  const prev = _prevMotData;
+  let totalDelta = 0;
+  // zone sums (3×3 grid)
+  const zoneSum = new Float32Array(9);
+  // flow vectors (for mode 1)
+  let flowX = 0, flowY = 0;
+  let brightDiff = new Float32Array(5); // per-species-zone (mode 4)
+  // motion centroid (for mode 8)
+  let motSumX = 0, motSumY = 0, motWeight = 0;
+
+  for (let y = 0; y < _motH; y++) {
+    for (let x = 0; x < _motW; x++) {
+      const idx = (y * _motW + x) * 4;
+      const lum = (cur[idx] + cur[idx+1] + cur[idx+2]) / 3;
+      const lumP = (prev[idx] + prev[idx+1] + prev[idx+2]) / 3;
+      const d = Math.abs(lum - lumP);
+      totalDelta += d;
+
+      // zone (3×3)
+      const zx = Math.floor(x / (_motW/3));
+      const zy = Math.floor(y / (_motH/3));
+      zoneSum[zy*3+zx] += d;
+
+      // crude optical flow: left vs right, top vs bottom half
+      if (d > 15) {
+        flowX += (x < _motW/2) ? -d : d;
+        flowY += (y < _motH/2) ? -d : d;
+      }
+
+      // brightness zones for mode 4
+      const bz = Math.floor(lum / 52); // 0-4
+      brightDiff[Math.min(bz,4)] += d;
+
+      // motion centroid for mode 8
+      if (d > 12) { motSumX += x * d; motSumY += y * d; motWeight += d; }
+    }
+  }
+
+  const normDelta = totalDelta / (_motW * _motH); // avg delta per pixel (0-255)
+
+  // ── Dispatch by mode ─────────────────────────────────────────────────────
+  if (camMode === 0) { // motion → burst/void
+    if (normDelta > 18) {
+      const cx = Math.floor(COLS/2 + (flowX / (totalDelta+1)) * COLS * 0.3);
+      const cy = Math.floor(ROWS/2 + (flowY / (totalDelta+1)) * ROWS * 0.3);
+      _burstAt(cx, cy, normDelta > 40 ? 'chaos' : 'void');
+      _silenceTimer = 0;
+    }
+  }
+
+  if (camMode === 1) { // optical flow → meteors
+    if (normDelta > 12) {
+      const fx = flowX / (totalDelta+1);
+      const fy = flowY / (totalDelta+1);
+      const mag = Math.sqrt(fx*fx + fy*fy);
+      if (mag > 0.05) dropMeteor(Math.max(1, Math.round(mag * meteorCount)));
+      _silenceTimer = 0;
+    }
+  }
+
+  if (camMode === 2) { // 3×3 zones → local bursts
+    for (let z = 0; z < 9; z++) {
+      if (zoneSum[z] / (_motW*_motH/9) > 20) {
+        const zx = (z % 3) / 3 + 1/6;
+        const zy = Math.floor(z / 3) / 3 + 1/6;
+        const cr = Math.floor(zy * ROWS);
+        const cc = Math.floor(zx * COLS);
+        _burstAt(cc, cr, 'chaos');
+      }
+    }
+  }
+
+  if (camMode === 3) { // stille = tod
+    if (normDelta > 10) {
+      _silenceTimer = 0;
+      if (normDelta > 30) chaosBurst();
+    } else {
+      _silenceTimer++;
+      if (_silenceTimer > 100) {
+        voidBurst();
+        _silenceTimer = 80;
+      }
+    }
+  }
+
+  if (camMode === 4) { // brightness → species spawn
+    if (normDelta > 8) {
+      const total = brightDiff.reduce((a,b)=>a+b, 0) + 1;
+      let dom = 0;
+      for (let b=1;b<5;b++) if(brightDiff[b]>brightDiff[dom]) dom=b;
+      const sp = dom + 1;
+      const cx = Math.floor(COLS/2 + (flowX/(total+1))*COLS*0.3);
+      const cy = Math.floor(ROWS/2 + (flowY/(total+1))*ROWS*0.3);
+      _spawnSpecies(cx, cy, sp, eventRadius);
+    }
+  }
+
+  if (camMode === 5) { // silhouette — background subtraction
+    if (!_bgData) return; // no background captured yet
+    for (let y = 0; y < _motH; y++) {
+      for (let x = 0; x < _motW; x++) {
+        const idx = (y * _motW + x) * 4;
+        const lum  = (cur[idx]   + cur[idx+1]   + cur[idx+2])   / 3;
+        const lumBg = (_bgData[idx] + _bgData[idx+1] + _bgData[idx+2]) / 3;
+        if (Math.abs(lum - lumBg) > 28 && Math.random() < 0.25) {
+          const gc = Math.floor(x / _motW * COLS);
+          const gr = Math.floor(y / _motH * ROWS);
+          type_grid[i(gr, gc)] = Math.ceil(Math.random() * 5);
+          age_grid[i(gr, gc)] = 1;
+        }
+      }
+    }
+  }
+
+  if (camMode === 6) { // kanten — Sobel edge detection
+    const lum = new Float32Array(_motW * _motH);
+    for (let p = 0; p < _motW * _motH; p++) {
+      lum[p] = (cur[p*4] + cur[p*4+1] + cur[p*4+2]) / 3;
+    }
+    for (let y = 1; y < _motH-1; y++) {
+      for (let x = 1; x < _motW-1; x++) {
+        const g = (dx, dy) => lum[(y+dy)*_motW + (x+dx)];
+        const gx = -g(-1,-1) - 2*g(-1,0) - g(-1,1) + g(1,-1) + 2*g(1,0) + g(1,1);
+        const gy = -g(-1,-1) - 2*g(0,-1) - g(1,-1) + g(-1,1) + 2*g(0,1) + g(1,1);
+        if (Math.sqrt(gx*gx + gy*gy) > 55 && Math.random() < 0.35) {
+          const gc = Math.floor(x / _motW * COLS);
+          const gr = Math.floor(y / _motH * ROWS);
+          type_grid[i(gr, gc)] = Math.ceil(Math.random() * 5);
+          age_grid[i(gr, gc)] = 1;
+        }
+      }
+    }
+  }
+
+  if (camMode === 8) { // shape brush — draws current brush shape at motion centroid
+    if (normDelta > 10 && motWeight > 0) {
+      const px = (1 - (motSumX / motWeight) / _motW) * W; // flip x: motion canvas is mirrored
+      const py = (motSumY / motWeight) / _motH * H;
+      const numTypes = MODES[modeIdx] === 'classic' ? 1 : 5;
+      paintType = Math.floor(Math.random() * numTypes) + 1;
+      applyBrushAt(px, py, 0);
+    }
+  }
+
+  if (camMode === 7) { // verfolgung — colony follows silhouette
+    if (!_bgData) return;
+    for (let y = 0; y < _motH; y++) {
+      for (let x = 0; x < _motW; x++) {
+        const idx = (y * _motW + x) * 4;
+        const lum   = (cur[idx]     + cur[idx+1]     + cur[idx+2])     / 3;
+        const lumBg = (_bgData[idx] + _bgData[idx+1] + _bgData[idx+2]) / 3;
+        const gc = Math.floor(x / _motW * COLS);
+        const gr = Math.floor(y / _motH * ROWS);
+        if (Math.abs(lum - lumBg) > 28) {
+          // inside silhouette: spawn cells densely
+          if (Math.random() < 0.4) {
+            type_grid[i(gr, gc)] = Math.ceil(Math.random() * 5);
+            age_grid[i(gr, gc)] = 1;
+          }
+        } else {
+          // outside silhouette: slowly kill — cells decay behind as you move
+          if (Math.random() < 0.015) {
+            type_grid[i(gr, gc)] = 0;
+            age_grid[i(gr, gc)] = 0;
+          }
+        }
+      }
+    }
+  }
+
+  // copy cur → prev (reuse buffer)
+  prev.set(cur);
+}
+
+function _burstAt(cc, cr, type) {
+  const r = eventRadius;
+  const cr2 = Math.max(0, Math.min(ROWS-1, cr));
+  const cc2 = Math.max(0, Math.min(COLS-1, cc));
+  if (type === 'chaos') {
+    for (let dr=-r;dr<=r;dr++) for (let dc=-r;dc<=r;dc++) {
+      if (dr*dr+dc*dc > r*r) continue;
+      const rr=(cr2+dr+ROWS)%ROWS, rc=(cc2+dc+COLS)%COLS;
+      type_grid[i(rr,rc)] = Math.random()<0.55 ? (Math.ceil(Math.random()*5)) : 0;
+      age_grid[i(rr,rc)] = 1;
+    }
+  } else {
+    for (let dr=-r;dr<=r;dr++) for (let dc=-r;dc<=r;dc++) {
+      if (dr*dr+dc*dc > r*r) continue;
+      const rr=(cr2+dr+ROWS)%ROWS, rc=(cc2+dc+COLS)%COLS;
+      type_grid[i(rr,rc)] = 0; age_grid[i(rr,rc)] = 0;
+    }
+  }
+  if (!running) draw();
+}
+
+function _spawnSpecies(cc, cr, sp, r) {
+  const cr2 = Math.max(0, Math.min(ROWS-1, cr));
+  const cc2 = Math.max(0, Math.min(COLS-1, cc));
+  for (let dr=-r;dr<=r;dr++) for (let dc=-r;dc<=r;dc++) {
+    if (dr*dr+dc*dc > r*r) continue;
+    if (Math.random() > 0.5) continue;
+    const rr=(cr2+dr+ROWS)%ROWS, rc=(cc2+dc+COLS)%COLS;
+    type_grid[i(rr,rc)] = sp; age_grid[i(rr,rc)] = 1;
+  }
+  if (!running) draw();
+}
+document.getElementById('sBlend').addEventListener('change', e => {
+  blendMode = e.target.value;
+});
+
+// ── Sliders ───────────────────────────────────────────────────────────────────
+document.getElementById('sSpeed').addEventListener('input', e=>{
+  const v = +e.target.value;
+  document.getElementById('vSpeed').textContent = v;
+  if (patchMap.fps < 0) { targetFps = v; baseVals.fps = v; }
+});
+document.getElementById('sCellSize').addEventListener('input', e=>{
+  CELL = +e.target.value;
+  document.getElementById('vCellSize').textContent = CELL;
+  resize(); initGrids(); randomFill(); draw();
+});
+document.getElementById('sMutation').addEventListener('input', e=>{
+  const v = +e.target.value;
+  document.getElementById('vMutation').textContent = v;
+  if (patchMap.mutation < 0) { mutationRate = v/100*0.004; baseVals.mutation = v; }
+});
+document.getElementById('sTrail').addEventListener('input', e=>{
+  const v = +e.target.value;
+  document.getElementById('vTrail').textContent = (v/1000).toFixed(3);
+  if (patchMap.trail < 0) { trailDecay = v/1000; baseVals.trail = v; }
+});
+document.getElementById('sDensity').addEventListener('input', e=>{
+  fillDensity = +e.target.value / 100;
+  document.getElementById('vDensity').textContent = e.target.value + '%';
+});
+document.getElementById('sShape').addEventListener('change', e=>{
+  brushShape = e.target.value;
+});
+document.getElementById('bRotate').addEventListener('click', ()=>{
+  brushRotate = !brushRotate;
+  const btn = document.getElementById('bRotate');
+  btn.textContent = brushRotate ? '⟳ on' : '⟳ off';
+  btn.classList.toggle('on', brushRotate);
+  if (!brushRotate) brushAngle = 0;
+});
+document.getElementById('sRadius').addEventListener('input', e=>{
+  const v = +e.target.value;
+  document.getElementById('vRadius').textContent = v;
+  if (patchMap.radius < 0) { eventRadius = v; baseVals.radius = v; }
+});
+document.getElementById('sMeteorCnt').addEventListener('input', e=>{
+  meteorCount = +e.target.value;
+  document.getElementById('vMeteorCnt').textContent = meteorCount;
+});
+document.getElementById('sOffset').addEventListener('input', e=>{
+  const v = +e.target.value;
+  document.getElementById('vOffset').textContent = v;
+  if (patchMap.lag < 0) { brushLag = v/100; baseVals.lag = v; }
+});
+document.getElementById('sHue').addEventListener('input', e=>{
+  const v = +e.target.value;
+  document.getElementById('vHue').textContent = v + '°';
+  if (patchMap.hue < 0) { hueShift = v; baseVals.hue = v; rebuildColors(); draw(); }
+});
+document.getElementById('sSat').addEventListener('input', e=>{
+  const v = +e.target.value;
+  document.getElementById('vSat').textContent = v + '%';
+  if (patchMap.sat < 0) { satScale = v/100; baseVals.sat = v; rebuildColors(); draw(); }
+});
+document.getElementById('sHueDrift').addEventListener('input', e=>{
+  const v = +e.target.value;
+  document.getElementById('vHueDrift').textContent = v;
+  if (patchMap.drift < 0) { hueDrift = v; baseVals.drift = v; }
+});
+document.getElementById('sGlow').addEventListener('input', e=>{
+  const v = +e.target.value;
+  document.getElementById('vGlow').textContent = v;
+  if (patchMap.glow < 0) { glowAmount = v/100; baseVals.glow = v; }
+});
+document.getElementById('sAgeBright').addEventListener('input', e=>{
+  const v = +e.target.value;
+  document.getElementById('vAgeBright').textContent = v;
+  if (patchMap.ageBright < 0) { ageBright = v/100; baseVals.ageBright = v; }
+});
+
+// ── Panel toggle ──────────────────────────────────────────────────────────────
+// (panels are toggled via Shift+C keyboard shortcut or toggle button)
+document.getElementById('panelToggle').addEventListener('click', () => {
+  const open = document.getElementById('panel').classList.toggle('open');
+  document.getElementById('lfoPanel').classList.toggle('open', open);
+  document.getElementById('panelToggle').classList.toggle('open', open);
+  if (open) drawLFOCanvases();
+});
+
+// ── Hollow toggle + slider ────────────────────────────────────────────────────
+document.getElementById('bHollow').addEventListener('click', ()=>{
+  shapeHollow = !shapeHollow;
+  const btn = document.getElementById('bHollow');
+  btn.textContent = shapeHollow ? 'on' : 'off';
+  btn.classList.toggle('on', shapeHollow);
+});
+document.getElementById('sHollow').addEventListener('input', e=>{
+  const v = +e.target.value;
+  document.getElementById('vHollow').textContent = v;
+  if (patchMap.hollow < 0) { hollowThick = v/100; baseVals.hollow = v; }
+});
+
+// ── LFO controls (3 × 6 handlers) ────────────────────────────────────────────
+for (let k=0; k<3; k++) {
+  const lfo = lfos[k];
+  document.getElementById('lfoW'+k).addEventListener('change', e=>{ lfo.wave = e.target.value; });
+  document.getElementById('lfoSpd'+k).addEventListener('input', e=>{
+    lfo.speed = +e.target.value;
+    document.getElementById('lfoSpdV'+k).textContent = e.target.value;
+  });
+  document.getElementById('lfoOff'+k).addEventListener('input', e=>{
+    lfo.offset = +e.target.value / 100;
+    document.getElementById('lfoOffV'+k).textContent = e.target.value;
+  });
+  document.getElementById('lfoAtn'+k).addEventListener('input', e=>{
+    lfo.attn = +e.target.value / 100;
+    document.getElementById('lfoAtnV'+k).textContent = (+e.target.value/100).toFixed(2);
+  });
+  document.getElementById('lfoMod'+k).addEventListener('change', e=>{ lfo.modSrc = +e.target.value; });
+  document.getElementById('lfoMdp'+k).addEventListener('input', e=>{
+    lfo.modDepth = +e.target.value / 100;
+    document.getElementById('lfoMdpV'+k).textContent = lfo.modDepth.toFixed(2);
+  });
+  document.getElementById('lfoPause'+k).addEventListener('click', ()=>{
+    lfo.paused = !lfo.paused;
+    const btn = document.getElementById('lfoPause'+k);
+    btn.textContent = lfo.paused ? '▶' : '⏸';
+    btn.classList.toggle('on', lfo.paused);
+  });
+}
+
+// ── Patch select bindings ─────────────────────────────────────────────────────
+function bindPatch(selId, key) {
+  document.getElementById(selId).addEventListener('change', e=>{
+    const li = +e.target.value;
+    patchMap[key] = li;
+    e.target.classList.toggle('patched', li >= 0);
+    const mEl = document.getElementById(modValIds[key]);
+    const muteBtn = document.getElementById(muteIds[key]);
+    if (li >= 0) {
+      if (mEl) mEl.classList.add('active');
+      if (muteBtn) muteBtn.classList.add('patched');
+    }
+    if (li < 0) {
+      if (mEl) { mEl.textContent = ''; mEl.classList.remove('active'); }
+      if (muteBtn) muteBtn.classList.remove('patched');
+      // restore base value when un-patching
+      const bv = baseVals[key];
+      switch(key) {
+        case 'fps':       targetFps   = bv|0; break;
+        case 'mutation':  mutationRate= bv/100*0.004; break;
+        case 'trail':     trailDecay  = bv/1000; break;
+        case 'radius':    eventRadius = bv|0; break;
+        case 'lag':       brushLag    = bv/100; break;
+        case 'hue':       hueShift    = bv; rebuildColors(); break;
+        case 'sat':       satScale    = bv/100; rebuildColors(); break;
+        case 'drift':     hueDrift    = bv; break;
+        case 'glow':      glowAmount  = bv/100; break;
+        case 'ageBright': ageBright   = bv/100; break;
+        case 'hollow':    hollowThick = bv/100; break;
+      }
+    }
+  });
+}
+bindPatch('pFps',      'fps');
+bindPatch('pMut',      'mutation');
+bindPatch('pTrail',    'trail');
+bindPatch('pRadius',   'radius');
+bindPatch('pLag',      'lag');
+bindPatch('pHue',      'hue');
+bindPatch('pSat',      'sat');
+bindPatch('pDrift',    'drift');
+bindPatch('pGlow',     'glow');
+bindPatch('pAgeBright','ageBright');
+bindPatch('pHollow',   'hollow');
+
+// ── Mute buttons ──────────────────────────────────────────────────────────────
+for (const key in muteMap) {
+  const btn = document.getElementById(muteIds[key]);
+  if (!btn) continue;
+  btn.addEventListener('click', () => {
+    muteMap[key] = !muteMap[key];
+    btn.textContent = muteMap[key] ? '⊘' : '◎';
+    btn.classList.toggle('muted', muteMap[key]);
+  });
+}
+
+// ── LFO speed range buttons ───────────────────────────────────────────────────
+const SPD_RANGES = { lo:[0.1,10], mid:[5,150], hi:[20,500] };
+document.querySelectorAll('.spdbtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (!btn.dataset.rng) return; // skip non-LFO buttons
+    const k = +btn.dataset.lfo;
+    const rng = btn.dataset.rng;
+    const [mn, mx] = SPD_RANGES[rng];
+    const sl = document.getElementById('lfoSpd'+k);
+    sl.min = mn; sl.max = mx;
+    sl.step = (rng === 'lo') ? 0.1 : 1;
+    const clamped = Math.max(mn, Math.min(mx, lfos[k].speed));
+    sl.value = clamped;
+    lfos[k].speed = clamped;
+    document.getElementById('lfoSpdV'+k).textContent = clamped;
+    document.querySelectorAll(`.spdbtn[data-lfo="${k}"]`).forEach(b => b.classList.toggle('on', b === btn));
+  });
+});
+
+// ── Preset helpers ────────────────────────────────────────────────────────────
+function _setSlider(slId, vlId, val, txt) {
+  const sl = document.getElementById(slId); if (sl) sl.value = val;
+  const vl = document.getElementById(vlId); if (vl) vl.textContent = txt;
+}
+
+function savePreset() {
+  const lfoData = lfos.map((l, k) => {
+    const sl = document.getElementById('lfoSpd'+k);
+    const mx = sl ? +sl.max : 30;
+    const rng = mx <= 30 ? 'lo' : mx <= 150 ? 'mid' : 'hi';
+    return { wave:l.wave, speed:l.speed, speedRng:rng,
+             offsetRaw:Math.round(l.offset*100), attnRaw:Math.round(l.attn*100),
+             modSrc:l.modSrc, modDepthRaw:Math.round(l.modDepth*100), paused:l.paused };
+  });
+  const p = {
+    v:2, mode:modeIdx, bw:bwMode,
+    cellSize:CELL, density:Math.round(fillDensity*100),
+    brushShape, shapeHollow, blendMode,
+    baseVals:{...baseVals}, patchMap:{...patchMap},
+    muteMap:{...muteMap}, lfos:lfoData
+  };
+  const blob = new Blob([JSON.stringify(p,null,2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `preset_${Date.now()}.json`;
+  a.click(); URL.revokeObjectURL(a.href);
+}
+
+function applyPreset(p) {
+  if (!p || p.v !== 2) { alert('incompatible preset version'); return; }
+
+  // mode / bw
+  modeIdx = p.mode ?? 0;
+  document.getElementById('bMode').textContent = 'mode: ' + MODES[modeIdx];
+  bwMode = !!p.bw;
+  document.getElementById('bBW').classList.toggle('on', bwMode);
+
+  // cell / density
+  if (p.cellSize && p.cellSize !== CELL) {
+    CELL = p.cellSize; _setSlider('sCellSize','vCellSize', CELL, CELL+'');
+    resize(); initGrids(); randomFill();
+  } else if (p.cellSize) {
+    _setSlider('sCellSize','vCellSize', p.cellSize, p.cellSize+'');
+  }
+  if (p.density != null) { fillDensity = p.density/100; _setSlider('sDensity','vDensity', p.density, p.density+'%'); }
+
+  // shape / blend / hollow-toggle
+  brushShape = p.brushShape || 'circle';
+  document.getElementById('sShape').value = brushShape;
+  shapeHollow = !!p.shapeHollow;
+  document.getElementById('bHollow').textContent = shapeHollow ? 'on' : 'off';
+  document.getElementById('bHollow').classList.toggle('on', shapeHollow);
+  if (p.blendMode) { blendMode = p.blendMode; document.getElementById('sBlend').value = blendMode; }
+
+  // baseVals + sliders
+  const applySlider = {
+    fps:       v => { targetFps    = v|0;           _setSlider('sSpeed',    'vSpeed',    v, v+''); },
+    mutation:  v => { mutationRate = v/100*0.004;   _setSlider('sMutation', 'vMutation', v, v+''); },
+    trail:     v => { trailDecay   = v/1000;         _setSlider('sTrail',    'vTrail',    v, (v/1000).toFixed(3)); },
+    radius:    v => { eventRadius  = v|0;           _setSlider('sRadius',   'vRadius',   v, v+''); },
+    lag:       v => { brushLag     = v/100;         _setSlider('sOffset',   'vOffset',   v, v+''); },
+    hue:       v => { hueShift     = v;             _setSlider('sHue',      'vHue',      v, v+'°'); },
+    sat:       v => { satScale     = v/100;         _setSlider('sSat',      'vSat',      v, v+'%'); },
+    drift:     v => { hueDrift     = v;             _setSlider('sHueDrift', 'vHueDrift', v, v+''); },
+    glow:      v => { glowAmount   = v/100;         _setSlider('sGlow',     'vGlow',     v, v+''); },
+    ageBright: v => { ageBright    = v/100;         _setSlider('sAgeBright','vAgeBright',v, v+''); },
+    hollow:    v => { hollowThick  = v/100;         _setSlider('sHollow',   'vHollow',   v, v+''); },
+  };
+  if (p.baseVals) {
+    for (const key in applySlider) {
+      const v = p.baseVals[key];
+      if (v != null) { baseVals[key] = v; applySlider[key](v); }
+    }
+    rebuildColors();
+  }
+
+  // patchMap
+  if (p.patchMap) {
+    for (const key in patchMap) {
+      const li = p.patchMap[key] ?? -1;
+      patchMap[key] = li;
+      const sel = document.getElementById(pselIds[key]);
+      if (sel) { sel.value = li; sel.classList.toggle('patched', li >= 0); }
+      const mEl = document.getElementById(modValIds[key]);
+      if (mEl) { mEl.classList.toggle('active', li >= 0); if (li < 0) mEl.textContent = ''; }
+      const mb = document.getElementById(muteIds[key]);
+      if (mb) mb.classList.toggle('patched', li >= 0);
+    }
+  }
+
+  // muteMap
+  if (p.muteMap) {
+    for (const key in muteMap) {
+      muteMap[key] = !!p.muteMap[key];
+      const mb = document.getElementById(muteIds[key]);
+      if (mb) { mb.textContent = muteMap[key] ? '⊘' : '◎'; mb.classList.toggle('muted', muteMap[key]); }
+    }
+  }
+
+  // LFOs
+  if (p.lfos) {
+    p.lfos.forEach((pl, k) => {
+      const lfo = lfos[k];
+      lfo.wave     = pl.wave || 'sin';
+      lfo.speed    = pl.speed ?? 10;
+      lfo.offset   = (pl.offsetRaw ?? 0) / 100;
+      lfo.attn     = (pl.attnRaw  ?? 100) / 100;
+      lfo.modSrc   = pl.modSrc ?? -1;
+      lfo.modDepth = (pl.modDepthRaw ?? 0) / 100;
+      lfo.paused   = !!pl.paused;
+      const rng    = pl.speedRng || 'lo';
+      const [mn,mx] = SPD_RANGES[rng];
+      const sl = document.getElementById('lfoSpd'+k);
+      sl.min = mn; sl.max = mx; sl.value = Math.max(mn, Math.min(mx, lfo.speed));
+      document.getElementById('lfoSpdV'+k).textContent = lfo.speed;
+      document.querySelectorAll(`.spdbtn[data-lfo="${k}"]`).forEach(b => b.classList.toggle('on', b.dataset.rng === rng));
+      document.getElementById('lfoW'+k).value = lfo.wave;
+      document.getElementById('lfoOff'+k).value = pl.offsetRaw ?? 0;
+      document.getElementById('lfoOffV'+k).textContent = pl.offsetRaw ?? 0;
+      document.getElementById('lfoAtn'+k).value = pl.attnRaw ?? 100;
+      document.getElementById('lfoAtnV'+k).textContent = lfo.attn.toFixed(2);
+      document.getElementById('lfoMod'+k).value = lfo.modSrc;
+      document.getElementById('lfoMdp'+k).value = pl.modDepthRaw ?? 0;
+      document.getElementById('lfoMdpV'+k).textContent = lfo.modDepth.toFixed(2);
+      const pb = document.getElementById('lfoPause'+k);
+      pb.textContent = lfo.paused ? '▶' : '⏸'; pb.classList.toggle('on', lfo.paused);
+    });
+  }
+  updateLegend();
+  draw();
+}
+
+// ── Preset save / load handlers ───────────────────────────────────────────────
+document.getElementById('bSave').addEventListener('click', savePreset);
+document.getElementById('bLoad').addEventListener('click', () => document.getElementById('presetFile').click());
+document.getElementById('presetFile').addEventListener('change', e => {
+  const f = e.target.files[0]; if (!f) return;
+  const fr = new FileReader();
+  fr.onload = ev => { try { applyPreset(JSON.parse(ev.target.result)); } catch(err) { console.error('preset load error', err); } };
+  fr.readAsText(f);
+  e.target.value = '';
+});
+
+document.addEventListener('keydown', e=>{
+  if (e.code==='Space')  { e.preventDefault(); startStop(); }
+  if (e.code==='KeyB')   { _captureBg(); }
+  if (e.code==='KeyM')   { dropMeteor(); draw(); }
+  if (e.code==='KeyC' && e.shiftKey) {
+    e.preventDefault();
+    const open = document.getElementById('panel').classList.toggle('open');
+    document.getElementById('lfoPanel').classList.toggle('open', open);
+    document.getElementById('panelToggle').classList.toggle('open', open);
+    if (open) drawLFOCanvases();
+  } else if (e.code==='KeyC') { voidBurst();   draw(); }
+  if (e.code==='KeyV')   { chaosBurst();  draw(); }
+  if (e.code==='KeyS')   { const a=document.createElement('a'); a.download=`primordial_${generation}.png`; a.href=canvas.toDataURL('image/png'); a.click(); }
+});
+
+// ── Science Mini Panel Animations ──────────────────────────────────────────
+// 1. LORENZ ATTRACTOR
+(function() {
+  const cv = document.getElementById('lorenz-c');
+  const lc = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  let lx = 0.1, ly = 0, lz = 20;
+  const sig = 10, rho = 28, bet = 8/3, dt = 0.007;
+  const trail = [];
+  const maxT = 260;
+  let minX=-22,maxX=22,minZ=2,maxZ=48;
+  function lorenzTick() {
+    for (let i=0; i<3; i++) {
+      const dx = sig*(ly-lx)*dt;
+      const dy = (lx*(rho-lz)-ly)*dt;
+      const dz = (lx*ly-bet*lz)*dt;
+      lx+=dx; ly+=dy; lz+=dz;
+    }
+    trail.push([lx, lz]);
+    if (trail.length > maxT) trail.shift();
+    lc.fillStyle = 'rgba(0,0,0,0.18)';
+    lc.fillRect(0,0,W,H);
+    lc.beginPath();
+    for (let i=0; i<trail.length; i++) {
+      const sx = (trail[i][0]-minX)/(maxX-minX)*W;
+      const sy = (1-(trail[i][1]-minZ)/(maxZ-minZ))*H;
+      const alpha = i/trail.length;
+      if (i===0) lc.moveTo(sx,sy);
+      else lc.lineTo(sx,sy);
+    }
+    lc.strokeStyle = `rgba(255,183,0,0.8)`;
+    lc.lineWidth = 1;
+    lc.stroke();
+    // dot
+    const cx=(lx-minX)/(maxX-minX)*W, cy=(1-(lz-minZ)/(maxZ-minZ))*H;
+    lc.beginPath(); lc.arc(cx,cy,2,0,Math.PI*2);
+    lc.fillStyle='#FFB700'; lc.fill();
+    requestAnimationFrame(lorenzTick);
+  }
+  lorenzTick();
+})();
+
+// 2. SEMIOSE SIGNAL (Shannon entropy of species distribution)
+(function() {
+  const cv = document.getElementById('entropy-c');
+  const ec = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const hist = new Float32Array(W).fill(0.5);
+  function entropyTick() {
+    // compute entropy from type_grid distribution
+    const counts = new Float32Array(6);
+    for (let k=0; k<type_grid.length; k++) counts[type_grid[k]]++;
+    const total = type_grid.length;
+    let H_val = 0;
+    for (let t=1; t<=5; t++) {
+      const p = counts[t]/total;
+      if (p > 0) H_val -= p*Math.log2(p);
+    }
+    const norm = H_val / Math.log2(5); // 0..1
+    hist.copyWithin(0,1); hist[W-1] = norm;
+    ec.fillStyle='rgba(0,0,0,0.20)';
+    ec.fillRect(0,0,W,H);
+    // midline
+    ec.strokeStyle='rgba(255,255,255,0.07)'; ec.lineWidth=1;
+    ec.beginPath(); ec.moveTo(0,H/2); ec.lineTo(W,H/2); ec.stroke();
+    // waveform
+    ec.beginPath();
+    for (let x=0; x<W; x++) {
+      const y = (1-hist[x])*(H-4)+2;
+      x===0 ? ec.moveTo(x,y) : ec.lineTo(x,y);
+    }
+    ec.strokeStyle='rgba(111,0,255,0.9)'; ec.lineWidth=1.5; ec.stroke();
+    document.getElementById('entropy-val').textContent = `H = ${H_val.toFixed(3)}`;
+    setTimeout(entropyTick, 80);
+  }
+  entropyTick();
+})();
+
+// 3. QUORUM SENSING threshold bar
+(function() {
+  const cv = document.getElementById('quorum-c');
+  const qc = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const THRESHOLD = 0.12;
+  function quorumTick() {
+    const total = type_grid.length;
+    let alive = 0;
+    for (let k=0; k<total; k++) if (type_grid[k]>0) alive++;
+    const density = alive/total;
+    const norm = Math.min(density/0.5, 1);
+    const thresh_x = (THRESHOLD/0.5)*W;
+    qc.clearRect(0,0,W,H);
+    // track bg
+    qc.fillStyle='rgba(255,255,255,0.05)';
+    qc.fillRect(0, H/2-3, W, 6);
+    // fill
+    const active = density >= THRESHOLD;
+    qc.fillStyle = active ? 'rgba(111,0,255,0.85)' : 'rgba(255,183,0,0.6)';
+    qc.fillRect(0, H/2-3, norm*W, 6);
+    // threshold line
+    qc.fillStyle='rgba(255,255,255,0.5)';
+    qc.fillRect(thresh_x-0.5, H*0.2, 1.5, H*0.6);
+    // dot
+    qc.beginPath(); qc.arc(norm*W, H/2, 4, 0, Math.PI*2);
+    qc.fillStyle = active ? '#6F00FF' : '#FFB700'; qc.fill();
+    document.getElementById('quorum-val').textContent =
+      (active ? 'ACTIVE' : 'SILENT') + `  ${(density*100).toFixed(1)}%`;
+    setTimeout(quorumTick, 120);
+  }
+  quorumTick();
+})();
+
+randomFill();
+draw();
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  MIDI ENGINE v3  —  Primordial Soup  —  4 Voices
+//
+//  CH1 · Dichte    Gehaltene Note, folgt Bevölkerungsdichte.
+//                  Pitch C2–D4, retriggert nur bei signifikantem Sprung.
+//                  CC7 = Lautstärke kontinuierlich.
+//
+//  CH2 · Puls      Schmitt-Trigger auf Geburtsrate.
+//                  GoL-Oszillatoren erzeugen natürlichen Rhythmus.
+//                  Kurze Noten, 4 Intensitätsstufen.
+//
+//  CH3 · Harmonie  Sehr langsam (min. 6s) wechselnde gehaltene Note.
+//                  sp2Ratio (Kantenzellen) → PENTA-Pitch.
+//                  500ms Crossfade beim Wechsel.
+//
+//  CH4 · Events    NUR Meteor / Burst / Void. Sonst absolute Stille.
+//
+//  Pause → All Notes Off. Resume → CH1 + CH3 neu.
+// ═══════════════════════════════════════════════════════════════════════════════
+
+(function () {
+  'use strict';
+
+  // ── MIDI Core ─────────────────────────────────────────────────────────────
+  let midiOut = null, midiAccess = null, midiEnabled = false;
+  let LERP     = 0.06;
+  let NOTE_LEN = 120;
+
+  // ── CH1 · Geburt / Leben / Tod ───────────────────────────────────────────
+  // 8 Stimmen. Jede trackt eine echte Gitterzelle.
+  // Note On wenn die Zelle geboren wird (age==1), Note Off wenn sie stirbt.
+  // Pitch = Zeile im Grid (oben = hoch, unten = tief, pentatonisch).
+  const _ch1Pool = Array.from({length: 8}, () => ({note: -1, r: -1, c: -1}));
+  let _ch1MaxVoices = 8; // via Slider steuerbar
+
+  // ── CH2 · Puls ────────────────────────────────────────────────────────────
+  let _schmittHigh = false;
+  const S_ON  = 0.08;
+  const S_OFF = 0.03;
+
+  // ── CH3 · Harmonie ────────────────────────────────────────────────────────
+  const PENTA = [48,50,52,55,57, 60,62,64,67,69, 72,74,76,79,81];
+  let _harmNote = -1, _harmPIdx = -1, _harmLastChange = 0;
+
+  // ── Pause ─────────────────────────────────────────────────────────────────
+  let _wasRunning = false;
+
+  // ── CC Lerp ───────────────────────────────────────────────────────────────
+  let _lVel = 64, _lBirth = 0, _lSolo = 0, _lPan = 64;
+
+  // ── Analyse ───────────────────────────────────────────────────────────────
+  let _n = 0, _s = null;
+
+  // ── UI ────────────────────────────────────────────────────────────────────
+  const statusEl  = document.getElementById('midiStatus');
+  const ccBurstEl = document.getElementById('midiCcBurst');
+  const ccMetEl   = document.getElementById('midiCcMeteor');
+  const ccDensEl  = document.getElementById('midiCcDensity');
+
+  function setStatus(msg, cls) {
+    statusEl.textContent = msg;
+    statusEl.className   = 'midi-status' + (cls ? ' ' + cls : '');
+  }
+
+  document.getElementById('midiToggle').addEventListener('click', () => {
+    const p = document.getElementById('midiPanel');
+    const b = document.getElementById('midiToggle');
+    p.classList.toggle('open');
+    b.classList.toggle('on', p.classList.contains('open'));
+  });
+  document.getElementById('bMidiInit').addEventListener('click', initMidi);
+  document.getElementById('sMidiCh1Div').addEventListener('input', e => {
+    _ch1MaxVoices = +e.target.value;
+    document.getElementById('vMidiCh1Div').textContent = _ch1MaxVoices;
+  });
+  document.getElementById('sMidiRate').addEventListener('input', e => {
+    LERP = 0.02 + (+e.target.value - 1) / 24 * 0.28;
+    const v = +e.target.value;
+    document.getElementById('vMidiRate').textContent = v < 9 ? 'slow' : v < 18 ? 'med' : 'fast';
+  });
+  document.getElementById('sMidiNoteLen').addEventListener('input', e => {
+    NOTE_LEN = +e.target.value;
+    document.getElementById('vMidiNoteLen').textContent = NOTE_LEN + 'ms';
+  });
+
+  // ── Init ──────────────────────────────────────────────────────────────────
+  function initMidi() {
+    if (!navigator.requestMIDIAccess) { setStatus('Web MIDI fehlt — Chrome/Edge', 'err'); return; }
+    setStatus('requesting…');
+    navigator.requestMIDIAccess({ sysex: false })
+      .then(a => { midiAccess = a; _selectOut(); a.onstatechange = _selectOut; })
+      .catch(e => setStatus('denied: ' + e.message, 'err'));
+  }
+  function _selectOut() {
+    if (!midiAccess) return;
+    midiOut = null;
+    for (const o of midiAccess.outputs.values()) {
+      if (!midiOut) midiOut = o;
+      if (o.name && o.name.toLowerCase().includes('iac')) { midiOut = o; break; }
+    }
+    midiEnabled = !!midiOut;
+    setStatus(midiOut ? '✓ ' + midiOut.name : 'kein Output', midiOut ? 'ok' : 'err');
+  }
+
+  // ── Raw MIDI ──────────────────────────────────────────────────────────────
+  function _on(ch, note, vel) {
+    if (!midiEnabled || !midiOut) return;
+    midiOut.send([0x90 | ((ch-1)&0xF), note & 0x7F, Math.max(1, Math.min(127, vel | 0))]);
+  }
+  function _off(ch, note) {
+    if (!midiEnabled || !midiOut) return;
+    midiOut.send([0x80 | ((ch-1)&0xF), note & 0x7F, 0]);
+  }
+  function sendNote(ch, note, vel, ms) {
+    _on(ch, note, vel);
+    setTimeout(() => _off(ch, note), ms || NOTE_LEN);
+  }
+  function sendCC(ch, cc, val) {
+    if (!midiEnabled || !midiOut) return;
+    midiOut.send([0xB0 | ((ch-1)&0xF), cc & 0x7F, Math.max(0, Math.min(127, val | 0))]);
+  }
+
+  // ── All Notes Off ─────────────────────────────────────────────────────────
+  function _allOff() {
+    if (!midiEnabled || !midiOut) return;
+    for (let c = 0; c < 4; c++) {
+      midiOut.send([0xB0 | c, 123, 0]);
+      midiOut.send([0xB0 | c, 120, 0]);
+    }
+    for (const v of _ch1Pool) { v.note = -1; v.r = -1; v.c = -1; }
+    _harmNote = -1; _harmPIdx = -1; _harmLastChange = 0;
+    _schmittHigh = false;
+  }
+
+  // ── Grid-Analyse ──────────────────────────────────────────────────────────
+  function _analyze() {
+    let alive = 0, births = 0, solo = 0;
+    const sp = new Float32Array(6);
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        const idx = r * COLS + c;
+        const t   = type_grid[idx];
+        if (t === 0) continue;
+        alive++; sp[t]++;
+        if (age_grid[idx] === 1) births++;
+        let nb = 0;
+        if (r > 0      && type_grid[(r-1)*COLS+c] > 0) nb++;
+        if (r < ROWS-1 && type_grid[(r+1)*COLS+c] > 0) nb++;
+        if (c > 0      && type_grid[r*COLS+c-1]   > 0) nb++;
+        if (c < COLS-1 && type_grid[r*COLS+c+1]   > 0) nb++;
+        if (nb <= 1) solo++;
+      }
+    }
+    const total = ROWS * COLS;
+    return {
+      alive,
+      density:   alive  / total,
+      birthRate: births / Math.max(alive, 1),
+      soloRatio: solo   / Math.max(alive, 1),
+      sp2Ratio:  sp[2]  / Math.max(alive, 1),
+    };
+  }
+
+  // ── Tick (40ms) ───────────────────────────────────────────────────────────
+  function _tick() {
+    if (!midiEnabled) return;
+
+    if (_wasRunning && !running) { _allOff(); _wasRunning = false; return; }
+    if (!running) return;
+    if (!_wasRunning && _s) _onResume();
+    _wasRunning = true;
+
+    _n++;
+    if (_n % 3 === 0) {
+      _s = _analyze();
+      if (_s) _notes(_s);
+    }
+    if (!_s || _s.alive < 10) return;
+
+    // CH1: CC7 Gesamtlautstärke = Dichte (wie viele Zellen leben)
+    _lVel += (Math.min(127, Math.round(20 + _s.density * 100)) - _lVel) * LERP;
+    sendCC(1, 7, _lVel | 0);
+
+    // CH2: CC1 Geburtsrate → Energie
+    _lBirth += (Math.min(127, Math.round(_s.birthRate * 900)) - _lBirth) * LERP;
+    sendCC(2, 1, _lBirth | 0);
+
+    // CH3: CC1 Solo-Präsenz, CC10 Pan (sp2Ratio)
+    _lSolo += (Math.min(127, Math.round(_s.soloRatio * 500)) - _lSolo) * LERP;
+    _lPan  += (_s.sp2Ratio * 127 - _lPan) * LERP;
+    sendCC(3, 1,  _lSolo | 0);
+    sendCC(3, 10, _lPan  | 0);
+
+    if (ccDensEl) ccDensEl.textContent = Math.round(_s.density * 100) + '%';
+  }
+
+  // ── Note-Logik (alle 120ms) ───────────────────────────────────────────────
+  // Zeile → pentatonischer Pitch: oben im Grid = hoch, unten = tief
+  function _rowPitch(r) {
+    const norm = 1 - r / ROWS; // 0=unten, 1=oben
+    return PENTA[Math.round(norm * (PENTA.length - 1))];
+  }
+
+  function _notes(s) {
+    // ── CH1 · Geburt / Leben / Tod ──────────────────────────────────────
+    // Schritt 1: Tote Zellen → Note Off + Voice freigeben
+    for (const v of _ch1Pool) {
+      if (v.note >= 0 && type_grid[v.r * COLS + v.c] === 0) {
+        _off(1, v.note);
+        v.note = -1; v.r = -1; v.c = -1;
+      }
+    }
+    // Schritt 2: Neugeborene → freie Voices füllen
+    const maxV = Math.min(8, _ch1MaxVoices);
+    let free = 0;
+    for (const v of _ch1Pool) if (v.note < 0) free++;
+    if (free > 0) {
+      // Grid gleichmäßig sampeln um räumliche Verteilung zu bekommen
+      const step = Math.max(1, Math.floor((ROWS * COLS) / (free * 12)));
+      let filled = 0;
+      for (let idx = 0; idx < ROWS * COLS && filled < free; idx += step) {
+        if (age_grid[idx] !== 1) continue;
+        // freien Slot suchen
+        const slot = _ch1Pool.find(v => v.note < 0);
+        if (!slot) break;
+        slot.r    = Math.floor(idx / COLS);
+        slot.c    = idx % COLS;
+        slot.note = _rowPitch(slot.r);
+        const vel = Math.min(127, Math.round(45 + s.birthRate * 350));
+        _on(1, slot.note, vel);
+        filled++;
+      }
+    }
+
+    // ── CH2 · (Schmitt-Trigger entfernt — war stumm im Classic-GoL) ──────
+
+    // ── CH3 · Harmonie → sehr langsame Bewegung ──────────────────────────
+    if (s.alive > 50) {
+      const pIdx = Math.round(s.sp2Ratio * (PENTA.length - 1));
+      const now  = Date.now();
+      if (_harmNote < 0 || (Math.abs(pIdx - _harmPIdx) >= 3 && now - _harmLastChange > 6000)) {
+        const old       = _harmNote;
+        _harmPIdx       = pIdx;
+        _harmNote       = PENTA[pIdx];
+        _harmLastChange = now;
+        _on(3, _harmNote, Math.round(40 + (1 - s.sp2Ratio) * 35));
+        if (old >= 0) setTimeout(() => _off(3, old), 500);
+      }
+    }
+  }
+
+  // ── Resume ────────────────────────────────────────────────────────────────
+  function _onResume() {
+    // CH1 Voices werden beim nächsten _notes()-Aufruf automatisch neu befüllt.
+    // CH3 Harmonie wieder anschlagen.
+    if (_harmNote >= 0) _on(3, _harmNote, 45);
+  }
+
+  setInterval(_tick, 40);
+
+  // ── CH4 · Meteor ──────────────────────────────────────────────────────────
+  function midiMeteor() {
+    if (!midiEnabled) return;
+    sendCC(4, 13, 127);
+    if (ccMetEl) ccMetEl.textContent = 127;
+    sendNote(4, 24, 127, 1400);
+    sendNote(4, 36, 110,  900);
+    setTimeout(() => { sendNote(4, 31, 100, 700); sendCC(4, 74, 127); }, 80);
+    setTimeout(() => { sendNote(3, 48, 65, 500); }, 260);
+    [0, 170, 340].forEach((d, i) => setTimeout(() => {
+      sendNote(4, 72 + i*5, 85 - i*18, 220);
+      sendCC(4, 13, Math.round(127 * (1 - i / 3.2)));
+    }, 400 + d));
+    setTimeout(() => { sendCC(4, 13, 0); sendCC(4, 74, 0); }, 1100);
+  }
+
+  // ── CH4 · Burst ───────────────────────────────────────────────────────────
+  function midiBurst(intensity) {
+    if (!midiEnabled) return;
+    const val = Math.min(127, Math.round(intensity * 127));
+    sendCC(4, 12, val);
+    if (ccBurstEl) ccBurstEl.textContent = val;
+    sendNote(4, 49, Math.min(127, val + 5), 110);
+    const pts = [60, 64, 67, 72, 76, 79];
+    const cnt = 3 + Math.round(intensity * 2);
+    for (let i = 0; i < cnt; i++)
+      setTimeout(() => sendNote(4, pts[i % pts.length], Math.min(127, val - i*10), 210), i * 62);
+    setTimeout(() => sendCC(4, 12, Math.round(val * 0.28)), 480);
+    setTimeout(() => sendCC(4, 12, 0), 820);
+  }
+
+  // ── CH4 · Void ────────────────────────────────────────────────────────────
+  function midiVoid() {
+    if (!midiEnabled) return;
+    sendCC(4, 12, 18);
+    sendNote(4, 24, 25, 3000);
+    setTimeout(() => sendCC(4, 12, 0), 1000);
+  }
+
+  // ── Hooks ─────────────────────────────────────────────────────────────────
+  window._midi = {
+    meteor:    midiMeteor,
+    burst:     midiBurst,
+    void:      midiVoid,
+    allOff:    _allOff,
+    // Brush-Hook: einmal pro applyBrushAt-Aufruf → eine Kurznote auf CH1
+    // Pitch = Zeile der Brush-Mitte (oben=hoch, unten=tief)
+    brushNote(r, btn) {
+      if (!midiEnabled || !midiOut) return;
+      let note = _rowPitch(r);
+      const erase = btn === 2;
+      if (erase) note = Math.max(0, note - 36); // 3 Oktaven tiefer, nicht unter 0
+      const vel  = erase ? 40 : 85;
+      sendNote(1, note, vel, 90);
+      sendNote(2, note, vel, 90); // CH2: Brush erzeugt parallele Note
+    }
+  };
+
+  document.getElementById('bMidiReset').addEventListener('click', () => {
+    _allOff();
+    setStatus('all notes off', 'ok');
+    setTimeout(() => setStatus(midiOut ? '✓ ' + midiOut.name : 'kein Output', midiOut ? 'ok' : 'err'), 1200);
+  });
+
+  console.log('[MIDI v3] ⬡ midi → init midi');
+
+})();
+</script>
+</body>
+</html>

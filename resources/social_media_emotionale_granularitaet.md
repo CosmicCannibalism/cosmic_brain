@@ -11,7 +11,7 @@ bereich: theorie
 
 > Der Like-Button ist eine Lüge: Er reduziert Freude, Überraschung, Stolz, Rührung, Bewunderung auf eine einzige Geste. Social Media bildet Emotion nicht ab — es komprimiert sie auf Reaktivität. Das erodiert nicht nur den Ausdruck, sondern langfristig die Fähigkeit zur Unterscheidung.
 
-**Verwandte Themen:** [[emotionale_granularitaet]] | [[interoception]] | [[dopamin]] | [[dopamin_baseline]] | [[__cosmicbrain__]] | [[__sandbox__]]
+**Verwandte Themen:** [[emotionale_granularitaet]] | [[interoception_affective_labeling|Interoception]] | [[dopamin]] | [[__cosmicbrain__#D|Dopamin-Baseline]] | [[__cosmicbrain__]] | [[__sandbox__]]
 
 ---
 
@@ -69,7 +69,7 @@ Wer Emotion nur noch als Herz kommunizieren kann, verliert die Sprache für Diff
 
 Die Plattform als Instrument der emotionalen Entdifferenzierung: je länger man in ihr lebt, desto gröber wird das Vokabular mit dem man über die eigene Innenwelt sprechen kann.
 
-Gegenkonzept: ein Interface das Emotionen abbildet wie ein Instrument Töne abbildet — nicht ein Knopf, sondern ein Spektrum. Eine Komposition aus Interoception und Sprache statt Reflexreiz und Klick.
+Gegenkonzept: ein Interface das Emotionen abbildet wie ein Instrument Töne abbildet — nicht ein Knopf, sondern ein Spektrum. Eine Komposition aus [[interoception_affective_labeling|Interoception]] und Sprache statt Reflexreiz und Klick.
 
 **Frage für das Werk:** Was wäre ein soziales System das emotionale Granularität *trainiert* statt sie zu zerstören?
 

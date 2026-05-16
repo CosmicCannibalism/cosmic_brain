@@ -122,7 +122,7 @@ Alle sieben Modi sind über Buttons wählbar (Single-Select), die erst erscheine
 
 ### Zellulärer Automat als Medium
 
-Game of Life ist 1970. Primordial Soup verwendet es nicht als historische Referenz, sondern als Arbeitsmaterial — als das niedrigste mögliche Regelwerk für [[emergenz|emergentes Leben]]. Die Erweiterung auf fünf Spezies ist keine Verbesserung des Conway-Systems, sie ist eine Übersetzung: Weg vom binären Zustand (tot/lebendig) hin zu einem [[anabolismus_katabolismus|metabolischen Spektrum]] (wer bist du, wie lange schon, unter welchem Druck).
+[[zellulaere_automaten|Game of Life]] ist 1970. Primordial Soup verwendet es nicht als historische Referenz, sondern als Arbeitsmaterial — als das niedrigste mögliche Regelwerk für [[emergenz|emergentes Leben]]. Die Erweiterung auf fünf Spezies ist keine Verbesserung des Conway-Systems, sie ist eine Übersetzung: Weg vom binären Zustand (tot/lebendig) hin zu einem [[anabolismus_katabolismus|metabolischen Spektrum]] (wer bist du, wie lange schon, unter welchem Druck).
 
 Das entspricht dem Kern von [[artificial_bacteria_konzept]]: nicht mehr zwei Zustände, sondern fünf — Geburt, [[bakterielle_vermehrung|Expansion]], Stabilisierung, [[bakterielle_adaptation|Widerstand]], Auflösung.
 
@@ -181,7 +181,7 @@ Das ist keine Game-Mechanik, das ist ein Verhältnis: Der Körper kann zerstöre
 
 ### Künstlerische Aussage
 
-Das MIDI-System von *Primordial Soup* ist mehr als eine technische Erweiterung: Es ist ein künstlerisches Experiment, das die Prinzipien von Emergenz, Selbstorganisation und künstlichem Leben in den Klangraum übersetzt. Die Musik entsteht nicht durch Komposition im klassischen Sinn, sondern als hörbares Protokoll eines lebenden, generativen Systems. Der Mensch gibt nur den Rahmen vor (Instrumente, Effekte, Soundästhetik in Ableton), die eigentliche Komposition ist das Resultat der Interaktion zahlloser Zellen, Spezies und Ereignisse im Automaten. 
+Das MIDI-System von *Primordial Soup* ist mehr als eine technische Erweiterung: Es ist ein künstlerisches Experiment, das die Prinzipien von [[emergenz|Emergenz]], Selbstorganisation und künstlichem Leben in den Klangraum übersetzt. Die Musik entsteht nicht durch Komposition im klassischen Sinn, sondern als hörbares Protokoll eines lebenden, generativen Systems. Der Mensch gibt nur den Rahmen vor (Instrumente, Effekte, Soundästhetik in Ableton), die eigentliche Komposition ist das Resultat der Interaktion zahlloser Zellen, Spezies und Ereignisse im Automaten. 
 
 **Künstlerische Leitidee:**
 Das System macht die Schönheit und Unvorhersehbarkeit von [[emergenz|emergenten Prozessen]] erfahrbar. Klang wird zum Medium für künstliches Leben, für kollektive Intelligenz, für das Wechselspiel von Ordnung und Chaos. Die Musik ist nie gleich, sie ist ein auditives Abbild des „Zustandsraums“ – ein klingendes, kosmisches Gehirn, das sich selbst beobachtet und verändert. Die Zuhörenden werden Zeug:innen eines Prozesses, nicht eines Werks. Das Soundmapping ist so gestaltet, dass es die Dynamik, Dichte und Ereignisse des Systems direkt in musikalische Parameter übersetzt. 

@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="data:,">
+<title>Metabolic Mimicry — LED Concepts</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; overflow:hidden; font-family:'Courier New',monospace; color:#fff; }
+canvas { position:fixed; inset:0; display:block; }
+
+#controls {
+  position:fixed; top:22px; left:50%; transform:translateX(-50%);
+  display:flex; gap:10px; align-items:center;
+  background:rgba(0,0,0,0.4); box-shadow:0 0 0 1px #1e1e1e;
+  border-radius:12px; padding:9px 20px; z-index:999;
+}
+.sz-btn {
+  background:none; border:1px solid #1e1e1e; border-radius:6px;
+  color:#3a3a3a; font-family:'Courier New',monospace; font-size:.68rem;
+  letter-spacing:.14em; padding:4px 12px; cursor:pointer; transition:all .25s;
+}
+.sz-btn.active { border-color:#404040; color:#999; }
+#ctrl-sep { color:#1a1a1a; }
+#variant-select {
+  background:transparent; border:1px solid #1e1e1e; border-radius:6px;
+  color:#777; font-family:'Courier New',monospace; font-size:.68rem;
+  letter-spacing:.1em; padding:4px 10px; cursor:pointer;
+  -webkit-appearance:none; appearance:none; min-width:190px;
+}
+#infopanel {
+  position:fixed; bottom:24px; left:24px;
+  background:rgba(0,0,0,0.38); box-shadow:0 0 0 1px #1a1a1a;
+  border-radius:12px; padding:11px 20px 9px; z-index:999;
+  pointer-events:none; line-height:1.9;
+}
+.ip-title   { font-size:.82rem; font-weight:700; letter-spacing:.14em; color:#bbb; }
+.ip-concept { font-size:.56rem; letter-spacing:.14em; color:#2e2e2e; }
+.ip-meta    { font-size:.62rem; letter-spacing:.1em; color:#333; }
+.ip-accent  { color:#777; }
+.ip-state   { font-size:.6rem; letter-spacing:.12em; color:#2a2a2a; margin-top:1px; }
+#wordmark {
+  position:fixed; top:22px; right:22px;
+  font-size:.56rem; letter-spacing:.22em; color:#1c1c1c;
+  z-index:999; pointer-events:none; text-transform:uppercase;
+}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="controls">
+  <button class="sz-btn active" data-size="large">19 × 19</button>
+  <button class="sz-btn" data-size="small">9 × 9</button>
+  <span id="ctrl-sep">|</span>
+  <select id="variant-select"></select>
+</div>
+<div id="infopanel">
+  <div class="ip-title" id="ip-name">—</div>
+  <div class="ip-concept" id="ip-concept">—</div>
+  <div class="ip-meta"><span id="ip-leds" class="ip-accent">—</span> LEDs &nbsp;·&nbsp; <span id="ip-size" class="ip-accent">—</span> cm</div>
+  <div class="ip-state" id="ip-state">—</div>
+</div>
+<div id="wordmark">Metabolic Mimicry</div>
+<script>
+'use strict';
+// ═══════════════════════════════════════════════════════════
+//  METABOLIC MIMICRY  —  LED concept visualizer
+//  Visual: phosphor persistence · controlled palettes
+//  No rainbow. No christmas. Movement is the concept.
+// ═══════════════════════════════════════════════════════════
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+function resize(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
+window.addEventListener('resize',resize); resize();
+
+const TAU=Math.PI*2;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*clamp(t,0,1);
+const easeOut=t=>1-(1-t)*(1-t);
+const easeIn=t=>t*t;
+const easeIO=t=>t<.5?2*t*t:1-2*(1-t)*(1-t);
+
+function getScale(sz){ return Math.min(canvas.width,canvas.height)*0.72/(sz==='large'?190:90); }
+
+// Phosphor persistence — fade instead of clearRect
+function fade(a){ ctx.globalAlpha=1; ctx.fillStyle=`rgba(0,0,0,${a})`; ctx.fillRect(0,0,canvas.width,canvas.height); }
+
+// Vignette overlay
+function vignette(){
+  const w=canvas.width,h=canvas.height;
+  const g=ctx.createRadialGradient(w/2,h/2,Math.min(w,h)*0.28, w/2,h/2,Math.sqrt(w*w+h*h)*0.6);
+  g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,'rgba(0,0,0,0.68)');
+  ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+}
+
+// LED glow — 3-layer photographic bloom
+function glow(x,y,br,col,scl){
+  if(br<0.03)return;
+  const[r,g,b]=col, a=clamp(br,0,1);
+  const g1=ctx.createRadialGradient(x,y,0,x,y,20*scl);
+  g1.addColorStop(0,`rgba(${r},${g},${b},${(a*.09).toFixed(3)})`);
+  g1.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=g1; ctx.beginPath(); ctx.arc(x,y,20*scl,0,TAU); ctx.fill();
+  const g2=ctx.createRadialGradient(x,y,0,x,y,6.5*scl);
+  g2.addColorStop(0,`rgba(${r},${g},${b},${(a*.48).toFixed(3)})`);
+  g2.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=g2; ctx.beginPath(); ctx.arc(x,y,6.5*scl,0,TAU); ctx.fill();
+  ctx.beginPath(); ctx.arc(x,y,2.3*scl,0,TAU);
+  ctx.fillStyle=`rgb(${~~(r*a)},${~~(g*a)},${~~(b*a)})`; ctx.fill();
+  if(a>.2){
+    ctx.beginPath(); ctx.arc(x,y,.85*scl,0,TAU);
+    ctx.fillStyle=`rgba(255,255,255,${(a*.52).toFixed(3)})`; ctx.fill();
+  }
+}
+
+// Ghost — minimal spatial marker
+function ghost(x,y,scl){
+  ctx.beginPath(); ctx.arc(x,y,.75*scl,0,TAU);
+  ctx.fillStyle='rgba(255,255,255,0.02)'; ctx.fill();
+}
+
+// Structural guides (faint — read only through persistence)
+function sring(cx,cy,r,a){
+  ctx.save(); ctx.globalAlpha=a; ctx.strokeStyle='#fff'; ctx.lineWidth=0.35;
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,TAU); ctx.stroke(); ctx.restore();
+}
+function sline(x1,y1,x2,y2,a){
+  ctx.save(); ctx.globalAlpha=a; ctx.strokeStyle='#fff'; ctx.lineWidth=0.3;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+
+
+// ═══════════════════════════════════════════════════════════
+//  V1 — GLIDER  Conway B3/S23 · 7×7 · 49 LEDs
+//  Palette: white only — movement is the image
+// ═══════════════════════════════════════════════════════════
+const V1={
+  id:'V1',name:'Glider',concept:'Zelluläre Automaten · Conway B3/S23',size:'large',leds:49,FADE:.18,
+  pts(cx,cy,scl){
+    const p=[],o=14,s=27,h=95;
+    for(let j=0;j<7;j++)for(let i=0;i<7;i++)p.push([cx+(o+i*s-h)*scl,cy+(o+j*s-h)*scl]);
+    return p;
+  },
+  init(){
+    const g=Array.from({length:7},()=>new Uint8Array(7));
+    g[1][2]=1;g[2][3]=1;g[3][1]=1;g[3][2]=1;g[3][3]=1;
+    return{g,br:new Float32Array(49).fill(0),fl:new Float32Array(49).fill(0),timer:0,gen:0};
+  },
+  update(s,dt){
+    s.timer+=dt;
+    for(let i=0;i<49;i++)s.fl[i]*=Math.pow(.004,dt*1.5);
+    if(s.timer>=.28){
+      s.timer-=.28; s.gen++;
+      const nxt=Array.from({length:7},()=>new Uint8Array(7));
+      for(let j=0;j<7;j++)for(let i=0;i<7;i++){
+        let n=0;
+        for(let dj=-1;dj<=1;dj++)for(let di=-1;di<=1;di++){
+          if(!di&&!dj)continue;
+          n+=s.g[(j+dj+7)%7][(i+di+7)%7];
+        }
+        if(s.g[j][i]&&(n===2||n===3))nxt[j][i]=1;
+        else if(!s.g[j][i]&&n===3)nxt[j][i]=1;
+      }
+      for(let i=0;i<49;i++){
+        const j=~~(i/7),k=i%7;
+        if(!s.g[j][k]&&nxt[j][k])s.fl[i]=1;    // born
+        if(s.g[j][k]&&!nxt[j][k])s.fl[i]=-1;   // dying
+      }
+      s.g=nxt;
+    }
+    for(let i=0;i<49;i++){
+      const alive=s.g[~~(i/7)][i%7];
+      s.br[i]=lerp(s.br[i],alive?1:0,alive?14*dt:3*dt);
+    }
+  },
+  render(cx,cy,scl,s){
+    const p=this.pts(cx,cy,scl);
+    for(let j=0;j<7;j++)for(let i=0;i<6;i++){const a=p[j*7+i],b=p[j*7+i+1];sline(a[0],a[1],b[0],b[1],.018);}
+    for(let i=0;i<7;i++)for(let j=0;j<6;j++){const a=p[j*7+i],b=p[(j+1)*7+i];sline(a[0],a[1],b[0],b[1],.018);}
+    for(let i=0;i<49;i++){
+      const[x,y]=p[i];
+      ghost(x,y,scl);
+      const fl=s.fl[i];
+      // born → brief cool blue; dying → brief warm orange; alive → pure white
+      const col=fl>.12?[~~lerp(255,140,fl),~~lerp(255,190,fl),255]
+               :fl<-.12?[255,~~lerp(255,80,-fl),~~lerp(255,20,-fl)]
+               :[255,255,255];
+      glow(x,y,Math.max(s.br[i],fl>0?fl*.65:(-fl)*.5),col,scl);
+    }
+  },
+  stateText(s){return`B3/S23  ·  gen ${s.gen}`;}
+};
+
+
+// ═══════════════════════════════════════════════════════════
+//  V2 — TURING SPOT  Reaktions-Diffusion · 35 LEDs
+//  Palette: warm amber (activator) ↔ deep indigo (inhibitor)
+// ═══════════════════════════════════════════════════════════
+const V2={
+  id:'V2',name:'Turing Spot',concept:'Reaktions-Diffusion · Gray-Scott',size:'large',leds:35,FADE:.08,
+  pts(cx,cy,scl){
+    const p=[[cx,cy]];
+    for(let i=0;i<6;i++){const a=i/6*TAU;p.push([cx+Math.cos(a)*30*scl,cy+Math.sin(a)*30*scl]);}
+    for(let i=0;i<12;i++){const a=i/12*TAU;p.push([cx+Math.cos(a)*60*scl,cy+Math.sin(a)*60*scl]);}
+    for(let i=0;i<16;i++){const a=i/16*TAU;p.push([cx+Math.cos(a)*85*scl,cy+Math.sin(a)*85*scl]);}
+    return p;
+  },
+  init(){return{phase:0,br:new Float32Array(35).fill(0)};},
+  update(s,dt){
+    s.phase=(s.phase+dt/8)%1;
+    const t=s.phase<.5?easeOut(s.phase*2):easeIn(1-(s.phase-.5)*2);
+    const w=t*3.4;
+    const rb=[0,1,2,3].map(r=>Math.exp(-(r-w)*(r-w)*2.2));
+    s.br[0]=lerp(s.br[0],rb[0],6*dt);
+    for(let i=1;i<=6;i++)s.br[i]=lerp(s.br[i],rb[1],6*dt);
+    for(let i=7;i<=18;i++)s.br[i]=lerp(s.br[i],rb[2],6*dt);
+    for(let i=19;i<=34;i++)s.br[i]=lerp(s.br[i],rb[3],6*dt);
+  },
+  render(cx,cy,scl,s){
+    const p=this.pts(cx,cy,scl);
+    sring(cx,cy,30*scl,.022); sring(cx,cy,60*scl,.018); sring(cx,cy,85*scl,.016);
+    const CA=[238,162,50],CI=[50,65,188];
+    const ro=i=>i===0?0:i<=6?1:i<=18?2:3;
+    for(let i=0;i<35;i++){
+      const[x,y]=p[i];
+      ghost(x,y,scl);
+      glow(x,y,Math.max(0,s.br[i]),ro(i)===3?CI:CA,scl);
+    }
+  },
+  stateText(s){
+    const t=s.phase<.5?easeOut(s.phase*2):easeIn(1-(s.phase-.5)*2);
+    return t<.5?'→ activator expanding':'← inhibitor contracting';
+  }
+};
+
+
+// ═══════════════════════════════════════════════════════════
+//  V3 — SCHWARM  Quorum Sensing · Kuramoto · 22 LEDs
+//  Palette: steel blue → ice white at burst
+// ═══════════════════════════════════════════════════════════
+const V3={
+  id:'V3',name:'Schwarm',concept:'Quorum Sensing · Kuramoto',size:'large',leds:22,FADE:.13,
+  cl:[{cx:38,cy:118,n:5,T:2.3},{cx:100,cy:147,n:5,T:1.8},{cx:25,cy:68,n:3,T:3.1},{cx:73,cy:15,n:5,T:2.7},{cx:142,cy:30,n:4,T:1.5}],
+  off(n){
+    if(n===3)return[[0,-13],[-11,12],[11,12]];
+    if(n===4)return[[-11,-11],[11,-11],[-11,11],[11,11]];
+    return[[0,0],[22,0],[-22,0],[0,22],[0,-22]];
+  },
+  pts(cx,cy,scl){
+    const p=[];
+    for(const c of this.cl)for(const[dx,dy]of this.off(c.n))p.push([cx+(c.cx-95+dx)*scl,cy+(c.cy-95+dy)*scl]);
+    return p;
+  },
+  ccs(cx,cy,scl){return this.cl.map(c=>[cx+(c.cx-95)*scl,cy+(c.cy-95)*scl]);},
+  init(){return{ph:[0,Math.PI*.8,Math.PI*1.5,Math.PI*.4,Math.PI*2],sync:0,burst:0,br:new Float32Array(22).fill(0)};},
+  update(s,dt){
+    if(s.burst>0){
+      s.burst=Math.max(0,s.burst-dt);
+      for(let i=0;i<22;i++)s.br[i]=lerp(s.br[i],s.burst>0?1:0,7*dt);
+      return;
+    }
+    const T=[2.3,1.8,3.1,2.7,1.5],avg=s.ph.reduce((a,b)=>a+b)/5;
+    for(let c=0;c<5;c++){
+      s.ph[c]+=(TAU/T[c])*dt;
+      s.ph[c]+=Math.sin(avg-s.ph[c])*s.sync*.65*dt;
+    }
+    s.sync=Math.min(1,s.sync+dt/62);
+    let idx=0;
+    for(let c=0;c<5;c++){
+      const b=(Math.sin(s.ph[c])*.5+.5)*(.18+s.sync*.62)+.04;
+      for(let i=0;i<this.cl[c].n;i++){s.br[idx]=lerp(s.br[idx],b,8*dt);idx++;}
+    }
+    if(s.sync>=1){s.burst=.85;s.sync=0;for(let c=0;c<5;c++)s.ph[c]=Math.random()*TAU;}
+  },
+  render(cx,cy,scl,s){
+    const p=this.pts(cx,cy,scl),cc=this.ccs(cx,cy,scl);
+    const wa=.012+s.sync*.02;
+    for(let i=0;i<5;i++)for(let j=i+1;j<5;j++)sline(cc[i][0],cc[i][1],cc[j][0],cc[j][1],wa);
+    const t=s.sync;
+    const C=[~~lerp(52,220,t),~~lerp(115,238,t),~~lerp(192,255,t)];
+    const W=[255,255,255];
+    let idx=0;
+    for(let c=0;c<this.cl.length;c++){
+      for(let i=0;i<this.cl[c].n;i++){
+        const[x,y]=p[idx]; ghost(x,y,scl);
+        glow(x,y,Math.max(0,s.br[idx]),s.burst>0?W:C,scl); idx++;
+      }
+    }
+  },
+  stateText(s){return s.burst>0?'— QUORUM —':`sync ${~~(s.sync*100)}%`;}
+};
+
+
+// ═══════════════════════════════════════════════════════════
+//  V4 — MEMBRAN  Semipermeable · 15 LEDs
+//  Signals as moving luminous points in space (not ring flashes)
+//  Palette: warm gold / phosphor green / deep blue
+// ═══════════════════════════════════════════════════════════
+const V4={
+  id:'V4',name:'Membran',concept:'Semipermeable Membran · Signal-Wanderung',size:'small',leds:15,FADE:.11,
+  pts(cx,cy,scl){
+    const p=[[cx,cy]];
+    for(let i=0;i<6;i++){const a=i/6*TAU-Math.PI/2;p.push([cx+Math.cos(a)*25*scl,cy+Math.sin(a)*25*scl]);}
+    for(let i=0;i<8;i++){const a=i/8*TAU-Math.PI/2;p.push([cx+Math.cos(a)*38*scl,cy+Math.sin(a)*38*scl]);}
+    return p;
+  },
+  rpt(cx,cy,scl,ring,ang){
+    if(ring===0)return[cx,cy];
+    const r=ring===1?25:38,a=ang*TAU-Math.PI/2;
+    return[cx+Math.cos(a)*r*scl,cy+Math.sin(a)*r*scl];
+  },
+  init(){return{sigs:[],spT:0,ecT:0,base:new Float32Array(15).fill(0)};},
+  update(s,dt){
+    s.spT+=dt;
+    if(s.spT>1.55){s.spT=0;s.sigs.push({fr:2,to:1,ang:Math.random(),pr:0,blocked:Math.random()>.65,br:1});}
+    s.ecT+=dt;
+    if(s.ecT>3.1){s.ecT=0;s.sigs.push({fr:0,to:1,ang:Math.random(),pr:0,blocked:false,br:.65});}
+    for(const sg of s.sigs){
+      sg.pr+=dt*3.8;
+      if(sg.pr>=1){
+        sg.pr=0; sg.br*=.6;
+        if(sg.fr===2){if(sg.to===1&&sg.blocked){sg.fr=-1;continue;}if(sg.to===1){sg.fr=1;sg.to=0;}else{sg.fr=-1;}}
+        else{if(sg.to===1){sg.fr=1;sg.to=2;}else{sg.fr=-1;}}
+      }
+    }
+    s.sigs=s.sigs.filter(sg=>sg.fr>=0&&sg.br>.04);
+    s.base.fill(.03); s.base[0]=.09;
+  },
+  render(cx,cy,scl,s){
+    const p=this.pts(cx,cy,scl);
+    sring(cx,cy,25*scl,.028); sring(cx,cy,38*scl,.022);
+    const C=[[240,205,115],[65,192,104],[44,82,188]];
+    const ro=i=>i===0?0:i<=6?1:2;
+    for(let i=0;i<15;i++){const[x,y]=p[i];ghost(x,y,scl);glow(x,y,s.base[i],C[ro(i)],scl);}
+    for(const sg of s.sigs){
+      const a0=this.rpt(cx,cy,scl,sg.fr,sg.ang);
+      const a1=this.rpt(cx,cy,scl,sg.to,sg.ang);
+      const x=lerp(a0[0],a1[0],easeIO(sg.pr));
+      const y=lerp(a0[1],a1[1],easeIO(sg.pr));
+      const ri=sg.fr===0||sg.to===0?0:sg.fr===2||sg.to===2?2:1;
+      glow(x,y,sg.br,C[clamp(ri,0,2)],scl*1.5);
+    }
+  },
+  stateText(s){const n=s.sigs.length;return`${n} signal${n!==1?'s':''} in transit`;}
+};
+
+
+// ═══════════════════════════════════════════════════════════
+//  V5 — BIOFILM  Bakterielle Vermehrung · 13 LEDs
+//  Palette: amber (G colony) / muted green (e cells)
+//  Phase 3 (Quorum): both converge on warm white
+// ═══════════════════════════════════════════════════════════
+const V5={
+  id:'V5',name:'Biofilm',concept:'Bakterielle Vermehrung · 4-Phasen Zyklus',size:'small',leds:13,FADE:.09,
+  mm:[[20,20],[30,20],[40,20],[20,30],[30,30],[40,30],[20,40],[60,10],[80,20],[60,40],[0,60],[30,70],[60,80]],
+  pts(cx,cy,scl){return this.mm.map(([x,y])=>[cx+(x-45)*scl,cy+(y-45)*scl]);},
+  init(){return{phase:1,pt:0,dur:[0,22,45,40,35],eAct:0,circA:0,br:new Float32Array(13).fill(0)};},
+  update(s,dt){
+    s.pt+=dt; s.circA+=dt*1.9;
+    if(s.pt>=s.dur[s.phase]){
+      s.pt-=s.dur[s.phase]; s.phase=s.phase%4+1;
+      if(s.phase===1){s.eAct=0;s.br.fill(0);}
+      if(s.phase===2)s.eAct=0;
+    }
+    if(s.phase===2)s.eAct=Math.floor(s.pt/s.dur[2]*6);
+    const br=Math.sin(Date.now()*.00082)*.11;
+    for(let i=0;i<13;i++){
+      let t=0;
+      if(i<7){
+        const c=(Math.sin(s.circA-i*.92)*.5+.5);
+        if(s.phase===1)t=.05+c*.2;
+        else if(s.phase===2)t=.2+c*.42;
+        else if(s.phase===3)t=.5+br;
+        else t=.1+c*.18;
+      }else{
+        const e=i-7;
+        if(s.phase===2&&e<s.eAct)t=.72;
+        else if(s.phase===3)t=.33+br;
+        else if(s.phase===4){
+          const pr=s.pt/s.dur[4];
+          const dr=[2,0,1,5,3,4][e]??e;
+          t=pr*6>dr?.02:.28;
+        }
+      }
+      s.br[i]=lerp(s.br[i],t,5*dt);
+    }
+  },
+  render(cx,cy,scl,s){
+    const p=this.pts(cx,cy,scl);
+    for(let i=0;i<7;i++)for(let j=i+1;j<7;j++)sline(p[i][0],p[i][1],p[j][0],p[j][1],.016);
+    for(let e=7;e<13;e++)sline(p[e][0],p[e][1],p[3][0],p[3][1],.01);
+    const G=[196,106,36],E=[60,178,78];
+    const q=s.phase===3?s.pt/s.dur[3]:0;
+    const GQ=[~~lerp(G[0],238,q),~~lerp(G[1],208,q),~~lerp(G[2],155,q)];
+    const EQ=[~~lerp(E[0],215,q),~~lerp(E[1],215,q),~~lerp(E[2],172,q)];
+    for(let i=0;i<13;i++){
+      const[x,y]=p[i]; ghost(x,y,scl);
+      glow(x,y,Math.max(0,s.br[i]),i<7?GQ:EQ,scl);
+    }
+  },
+  stateText(s){const n=['','Adhesion','Wachstum','Quorum','Sporulation'];return`Phase ${s.phase} — ${n[s.phase]}  ${~~(s.pt/s.dur[s.phase]*100)}%`;}
+};
+
+
+// ═══════════════════════════════════════════════════════════
+//  V6 — PHYLLOTAXIS  Goldener Winkel 137.5° · 13 LEDs
+//  Palette: single cool white — brightness wave only
+// ═══════════════════════════════════════════════════════════
+const V6={
+  id:'V6',name:'Phyllotaxis',concept:'Goldener Winkel 137.5° · Fibonacci-Spirale',size:'small',leds:13,FADE:.14,
+  mm:[[36,53],[46,29],[57,61],[22,41],[67,31],[38,72],[31,18],[76,56],[13,58],[60,12],[57,81],[11,25],[86,36]],
+  pts(cx,cy,scl){return this.mm.map(([x,y])=>[cx+(x-45)*scl,cy+(y-45)*scl]);},
+  init(){return{head:0,wt:0,br:new Float32Array(13).fill(0)};},
+  update(s,dt){
+    s.wt+=dt;
+    if(s.wt>=.15){s.wt-=.15;s.head=(s.head+1)%13;}
+    for(let i=0;i<13;i++){
+      const fwd=(i-s.head+13)%13,bwd=13-fwd,d=Math.min(fwd,bwd);
+      s.br[i]=lerp(s.br[i],Math.exp(-d*d*.48)*.9+.05,9*dt);
+    }
+  },
+  render(cx,cy,scl,s){
+    const p=this.pts(cx,cy,scl);
+    for(let i=0;i<12;i++)sline(p[i][0],p[i][1],p[i+1][0],p[i+1][1],.03);
+    sline(p[12][0],p[12][1],p[0][0],p[0][1],.018);
+    const C=[188,212,255];
+    for(let i=0;i<13;i++){const[x,y]=p[i];ghost(x,y,scl);glow(x,y,Math.max(.04,s.br[i]),C,scl);}
+  },
+  stateText(s){return`wave · step ${s.head+1}/13 · Δ137.5°`;}
+};
+
+
+// ═══════════════════════════════════════════════════════════
+//  CONTROLLER
+// ═══════════════════════════════════════════════════════════
+const LARGE=[V1,V2,V3],SMALL=[V4,V5,V6],ALL={V1,V2,V3,V4,V5,V6};
+let cur=V1,state=cur.init(),lastTs=0;
+
+const selEl=document.getElementById('variant-select');
+function populateSel(sz){
+  selEl.innerHTML='';
+  for(const v of sz==='large'?LARGE:SMALL){
+    const o=document.createElement('option');
+    o.value=v.id; o.textContent=`${v.id}  —  ${v.name}`; selEl.appendChild(o);
+  }
+  cur=ALL[selEl.value]; state=cur.init();
+}
+populateSel('large');
+
+selEl.addEventListener('change',()=>{cur=ALL[selEl.value];state=cur.init();});
+document.querySelectorAll('.sz-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.sz-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active'); populateSel(btn.dataset.size);
+  });
+});
+
+function updateInfo(v,s){
+  document.getElementById('ip-name').textContent=`${v.id}  ·  ${v.name}`;
+  document.getElementById('ip-concept').textContent=v.concept;
+  document.getElementById('ip-leds').textContent=v.leds;
+  document.getElementById('ip-size').textContent=v.size==='large'?'19 × 19':'9 × 9';
+  document.getElementById('ip-state').textContent=v.stateText(s);
+}
+
+function frame(ts){
+  const dt=Math.min((ts-lastTs)/1e3,.05); lastTs=ts;
+  fade(cur.FADE);
+
+  const cx=canvas.width/2,cy=canvas.height/2,scl=getScale(cur.size);
+  // Surface boundary — equilibrium alpha via persistence
+  const half=(cur.size==='large'?190:90)*scl/2;
+  ctx.save(); ctx.globalAlpha=.038; ctx.strokeStyle='#fff';
+  ctx.lineWidth=.5; ctx.setLineDash([3,8]);
+  ctx.strokeRect(cx-half,cy-half,half*2,half*2);
+  ctx.setLineDash([]); ctx.restore();
+
+  cur.update(state,dt);
+  cur.render(cx,cy,scl,state);
+  vignette();
+  updateInfo(cur,state);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
